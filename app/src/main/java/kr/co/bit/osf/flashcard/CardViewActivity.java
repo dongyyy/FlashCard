@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +19,8 @@ import java.util.List;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDTO;
+import kr.co.bit.osf.flashcard.flip3d.DisplayNextView;
+import kr.co.bit.osf.flashcard.flip3d.Flip3dAnimation;
 
 public class CardViewActivity extends AppCompatActivity {
     final String TAG = "FlashCardCardViewTag";
@@ -128,13 +131,13 @@ public class CardViewActivity extends AppCompatActivity {
         // read holder
         PagerHolder holder = (PagerHolder)view.getTag();
 
-        // switch image <--> text
+        // flip animation
         if (holder.isFront()) {
-            holder.imageView.setVisibility(View.INVISIBLE);
-            holder.textView.setVisibility(View.VISIBLE);
+            // show text
+            applyRotation(holder.isFront(), 0, -90, holder.getImageView(), holder.getTextView());
         } else {
-            holder.imageView.setVisibility(View.VISIBLE);
-            holder.textView.setVisibility(View.INVISIBLE);
+            // show image
+            applyRotation(holder.isFront(), 0, 90, holder.getImageView(), holder.getTextView());
         }
 
         // change front/back state
@@ -143,6 +146,28 @@ public class CardViewActivity extends AppCompatActivity {
         // write holder
         view.setTag(holder);
         Log.i(TAG, "childViewClicked:holder:" + holder);
+    }
+
+    // http://www.inter-fuser.com/2009/08/android-animations-3d-flip.html
+    private void applyRotation(boolean isFirstImage, float start, float end,
+                               ImageView imageView, TextView textView) {
+        // Find the center of image
+        final float centerX = imageView.getWidth() / 2.0f;
+        final float centerY = imageView.getHeight() / 2.0f;
+
+        // Create a new 3D rotation with the supplied parameter
+        // The animation listener is used to trigger the next animation
+        final Flip3dAnimation rotation = new Flip3dAnimation(start, end, centerX, centerY);
+        rotation.setDuration(500);
+        rotation.setFillAfter(true);
+        rotation.setInterpolator(new AccelerateInterpolator());
+        rotation.setAnimationListener(new DisplayNextView(isFirstImage, imageView, textView));
+
+        if (isFirstImage) {
+            imageView.startAnimation(rotation);
+        } else {
+            textView.startAnimation(rotation);
+        }
     }
 
     // inner class for pager adapter item and flip animation
