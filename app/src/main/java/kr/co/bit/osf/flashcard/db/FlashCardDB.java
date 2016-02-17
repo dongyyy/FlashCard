@@ -553,6 +553,6 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
     public boolean initialize() {
         return createBoxDemoData()
                 && createCardDemoData()
-                && addState(1, 1);
+                && addState(0, 0);
     }
 }
