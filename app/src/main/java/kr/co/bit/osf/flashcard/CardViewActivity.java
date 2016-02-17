@@ -1,6 +1,7 @@
 package kr.co.bit.osf.flashcard;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -17,6 +18,10 @@ public class CardViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_view);
+
+        // todo: full screen
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.hide();
 
         // read state from db
         db = new FlashCardDB(this);
