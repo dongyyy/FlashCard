@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">FlashCard</string>
     <string name="title_activity_card_view">CardViewActivity</string>
+    <!--box demo data-->
+    <string name="box_demo_data_name">동물</string>
+    <!--card demo data-->
+    <string name="card_demo_data1_name">dog</string>
+    <string name="card_demo_data1_image_name">dog</string>
+    <string name="card_demo_data2_name">cat</string>
+    <string name="card_demo_data2_image_name">cat</string>
+    <string name="card_demo_data3_name">rabbit</string>
+    <string name="card_demo_data3_image_name">rabbit</string>
 </resources>
