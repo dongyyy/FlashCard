@@ -1,6 +1,7 @@
 package kr.co.bit.osf.flashcard;
 
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +18,8 @@ public class CardViewActivity extends AppCompatActivity {
     FlashCardDB db = null;
     StateDTO cardState = null;
     List<CardDTO> cardList = null;
+
+    ViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,5 +39,9 @@ public class CardViewActivity extends AppCompatActivity {
         cardList = db.getCardByBoxId(cardState.getBoxId());
         Log.i(TAG, "card list:size:" + cardList.size());
         Log.i(TAG, "card list:value:" + cardList);
+
+        // todo: show card list
+        // view pager
+        pager = (ViewPager) findViewById(R.id.cardViewPager);
     }
 }
