@@ -90,14 +90,16 @@ public class CardViewActivity extends AppCompatActivity {
             Log.i(TAG, "instantiateItem:position:" + position);
 
             View view = inflater.inflate(R.layout.activity_card_view_pager_child, null);
-
             ImageView imageView = (ImageView) view.findViewById(R.id.cardViewPagerChildImage);
-            String imagePath = list.get(position).getImagePath();
+            TextView textView = (TextView) view.findViewById(R.id.cardViewPagerChildText);
+
+            PagerHolder holder = new PagerHolder(list.get(position), true, imageView, textView);
+
+            String imagePath = holder.getCard().getImagePath();
             int imageId = context.getResources().getIdentifier("drawable/" + imagePath, null, context.getPackageName());
             imageView.setImageResource(imageId);
 
-            TextView textView = (TextView) view.findViewById(R.id.cardViewPagerChildText);
-            textView.setText(list.get(position).getName());
+            textView.setText(holder.getCard().getName());
 
             // todo: switch image between text
             // set click event
@@ -124,5 +126,48 @@ public class CardViewActivity extends AppCompatActivity {
     private void childViewClicked(View view) {
         CardDTO card = (CardDTO)view.getTag();
         Toast.makeText(getApplicationContext(), card.getName(), Toast.LENGTH_SHORT).show();
+    }
+
+    // inner class for pager adapter item and flip animation
+    private class PagerHolder {
+        private CardDTO card;
+        private boolean isFront;
+        private ImageView imageView;
+        private TextView textView;
+
+        public PagerHolder(CardDTO card, boolean isFront, ImageView imageView, TextView textView) {
+            this.isFront = isFront;
+            this.imageView = imageView;
+            this.textView = textView;
+            this.card = card;
+        }
+
+        public ImageView getImageView() {
+            return imageView;
+        }
+
+        public TextView getTextView() {
+            return textView;
+        }
+
+        public boolean isFront() {
+            return isFront;
+        }
+
+        public void flip() {
+            this.isFront = !this.isFront;
+        }
+
+        public CardDTO getCard() {
+            return card;
+        }
+
+        @Override
+        public String toString() {
+            return "pagerHolder{" +
+                    "isFront=" + isFront +
+                    ", card=" + card +
+                    '}';
+        }
     }
 }
