@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -94,14 +93,15 @@ public class CardViewActivity extends AppCompatActivity {
             TextView textView = (TextView) view.findViewById(R.id.cardViewPagerChildText);
 
             PagerHolder holder = new PagerHolder(list.get(position), true, imageView, textView);
-
+            // image
             String imagePath = holder.getCard().getImagePath();
             int imageId = context.getResources().getIdentifier("drawable/" + imagePath, null, context.getPackageName());
             imageView.setImageResource(imageId);
-
+            imageView.setVisibility(View.VISIBLE);
+            // text
             textView.setText(holder.getCard().getName());
+            textView.setVisibility(View.INVISIBLE);
 
-            // todo: switch image between text
             // set click event
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -110,7 +110,8 @@ public class CardViewActivity extends AppCompatActivity {
                 }
             });
 
-            view.setTag(list.get(position));
+            // write holder
+            view.setTag(holder);
             container.addView(view);
 
             return view;
@@ -124,8 +125,24 @@ public class CardViewActivity extends AppCompatActivity {
     }
 
     private void childViewClicked(View view) {
-        CardDTO card = (CardDTO)view.getTag();
-        Toast.makeText(getApplicationContext(), card.getName(), Toast.LENGTH_SHORT).show();
+        // read holder
+        PagerHolder holder = (PagerHolder)view.getTag();
+
+        // switch image <--> text
+        if (holder.isFront()) {
+            holder.imageView.setVisibility(View.INVISIBLE);
+            holder.textView.setVisibility(View.VISIBLE);
+        } else {
+            holder.imageView.setVisibility(View.VISIBLE);
+            holder.textView.setVisibility(View.INVISIBLE);
+        }
+
+        // change front/back state
+        holder.flip();
+
+        // write holder
+        view.setTag(holder);
+        Log.i(TAG, "childViewClicked:holder:" + holder);
     }
 
     // inner class for pager adapter item and flip animation
