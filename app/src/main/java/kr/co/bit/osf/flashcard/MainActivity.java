@@ -1,5 +1,6 @@
 package kr.co.bit.osf.flashcard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -32,5 +33,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.i(TAG, "db already initialized");
         }
+
+        // start box list activity
+        Intent intent = new Intent(this, BoxListActivity.class);
+        startActivity(intent);
     }
 }
