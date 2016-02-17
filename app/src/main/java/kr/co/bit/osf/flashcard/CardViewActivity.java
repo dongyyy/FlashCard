@@ -9,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -45,7 +48,7 @@ public class CardViewActivity extends AppCompatActivity {
         Log.i(TAG, "card list:size:" + cardList.size());
         Log.i(TAG, "card list:value:" + cardList);
 
-        // todo: show card list
+        // show card list
         // view pager
         pager = (ViewPager) findViewById(R.id.cardViewPager);
         // set pager adapter
@@ -53,7 +56,7 @@ public class CardViewActivity extends AppCompatActivity {
         pager.setAdapter(pagerAdapter);
     }
 
-    // todo: pager adapter
+    // pager adapter
     private class CardViewPagerAdapter extends PagerAdapter {
         private Context context = null;
         private LayoutInflater inflater;
@@ -79,6 +82,32 @@ public class CardViewActivity extends AppCompatActivity {
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Log.i(TAG, "instantiateItem:position:" + position);
+
+            View view = inflater.inflate(R.layout.activity_card_view_pager_child, null);
+
+            ImageView imageView = (ImageView) view.findViewById(R.id.cardViewPagerChildImage);
+            String imagePath = list.get(position).getImagePath();
+            int imageId = context.getResources().getIdentifier("drawable/" + imagePath, null, context.getPackageName());
+            imageView.setImageResource(imageId);
+
+            TextView textView = (TextView) view.findViewById(R.id.cardViewPagerChildText);
+            textView.setText(list.get(position).getName());
+
+            view.setTag(list.get(position));
+            container.addView(view);
+
+            return view;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            Log.i(TAG, "destroyItem:position:" + position);
+            container.removeView((View) object);
         }
     }
 
