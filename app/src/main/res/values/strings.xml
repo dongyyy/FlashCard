@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FlashCard</string>
+    <string name="title_activity_card_view">CardViewActivity</string>
 </resources>
