@@ -1,11 +1,13 @@
 package kr.co.bit.osf.flashcard;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import java.util.List;
@@ -47,23 +49,36 @@ public class CardViewActivity extends AppCompatActivity {
         // view pager
         pager = (ViewPager) findViewById(R.id.cardViewPager);
         // set pager adapter
-        pagerAdapter = new CardViewPagerAdapter();
+        pagerAdapter = new CardViewPagerAdapter(this, cardList);
         pager.setAdapter(pagerAdapter);
     }
 
     // todo: pager adapter
     private class CardViewPagerAdapter extends PagerAdapter {
-        public CardViewPagerAdapter() {
+        private Context context = null;
+        private LayoutInflater inflater;
+        List<CardDTO> list = null;
+
+        public CardViewPagerAdapter(Context context, List<CardDTO> list) {
+            super();
+            this.context = context;
+            this.list = list;
+            inflater = LayoutInflater.from(context);
+            Log.i(TAG, "list:size():" + list.size());
         }
 
         @Override
         public int getCount() {
-            return 0;
+            if (list != null) {
+                return list.size();
+            } else {
+                return 0;
+            }
         }
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            return false;
+            return view == object;
         }
     }
 
