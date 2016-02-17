@@ -1,10 +1,12 @@
 package kr.co.bit.osf.flashcard;
 
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class CardViewActivity extends AppCompatActivity {
     List<CardDTO> cardList = null;
 
     ViewPager pager;
+    CardViewPagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,5 +46,25 @@ public class CardViewActivity extends AppCompatActivity {
         // todo: show card list
         // view pager
         pager = (ViewPager) findViewById(R.id.cardViewPager);
+        // set pager adapter
+        pagerAdapter = new CardViewPagerAdapter();
+        pager.setAdapter(pagerAdapter);
     }
+
+    // todo: pager adapter
+    private class CardViewPagerAdapter extends PagerAdapter {
+        public CardViewPagerAdapter() {
+        }
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return false;
+        }
+    }
+
 }
