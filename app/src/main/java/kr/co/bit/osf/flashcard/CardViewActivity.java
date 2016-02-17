@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -98,6 +99,15 @@ public class CardViewActivity extends AppCompatActivity {
             TextView textView = (TextView) view.findViewById(R.id.cardViewPagerChildText);
             textView.setText(list.get(position).getName());
 
+            // todo: switch image between text
+            // set click event
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    childViewClicked(v);
+                }
+            });
+
             view.setTag(list.get(position));
             container.addView(view);
 
@@ -111,4 +121,8 @@ public class CardViewActivity extends AppCompatActivity {
         }
     }
 
+    private void childViewClicked(View view) {
+        CardDTO card = (CardDTO)view.getTag();
+        Toast.makeText(getApplicationContext(), card.getName(), Toast.LENGTH_SHORT).show();
+    }
 }
