@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDTO;
@@ -98,8 +99,14 @@ public class CardViewActivity extends AppCompatActivity {
             PagerHolder holder = new PagerHolder(list.get(position), true, imageView, textView);
             // image
             String imagePath = holder.getCard().getImagePath();
-            int imageId = context.getResources().getIdentifier("drawable/" + imagePath, null, context.getPackageName());
-            imageView.setImageResource(imageId);
+            if (holder.card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
+                // load image from sd card
+                ImageUtil.showImageFileInImageView(imagePath, imageView);
+            } else {
+                // card demo data
+                int imageId = context.getResources().getIdentifier("drawable/" + imagePath, null, context.getPackageName());
+                imageView.setImageResource(imageId);
+            }
             imageView.setVisibility(View.VISIBLE);
             // text
             textView.setText(holder.getCard().getName());
