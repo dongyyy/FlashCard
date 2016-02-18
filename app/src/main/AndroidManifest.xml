@@ -21,9 +21,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BoxListActivity" android:label="@string/title_activity_box_list" />
-        <activity android:name=".CardListActivity" android:label="@string/title_activity_card_list" />
-        <activity android:name=".CardViewActivity" android:label="@string/title_activity_card_view" />
+        <activity
+            android:name=".BoxListActivity"
+            android:label="@string/title_activity_box_list" />
+        <activity
+            android:name=".CardListActivity"
+            android:label="@string/title_activity_card_list" />
+        <activity
+            android:name=".CardViewActivity"
+            android:label="@string/title_activity_card_view" />
+        <activity android:name=".CardEditActivity"></activity>
     </application>
 
 </manifest>
