@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -120,6 +121,15 @@ public class CardViewActivity extends AppCompatActivity {
                 }
             });
 
+            // set long click listener
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    childViewLongClicked(v);
+                    return true;
+                }
+            });
+
             // write holder
             view.setTag(holder);
             container.addView(view);
@@ -153,6 +163,16 @@ public class CardViewActivity extends AppCompatActivity {
         // write holder
         view.setTag(holder);
         Log.i(TAG, "childViewClicked:holder:" + holder);
+    }
+
+    private void childViewLongClicked(View view) {
+        Log.i(TAG, "childViewLongClicked");
+        PagerHolder holder = (PagerHolder)view.getTag();
+        holder.getCard().setName("is updated");
+        Toast.makeText(getApplicationContext(),
+                holder.getCard().getName(), Toast.LENGTH_SHORT).show();
+        view.setTag(holder);
+        Log.i(TAG, "holder card:" + holder.getCard());
     }
 
     // http://www.inter-fuser.com/2009/08/android-animations-3d-flip.html
