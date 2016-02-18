@@ -61,6 +61,19 @@ public class CardViewActivity extends AppCompatActivity {
         // set pager adapter
         pagerAdapter = new CardViewPagerAdapter(this, cardList);
         pager.setAdapter(pagerAdapter);
+
+        // set start position by state card id
+        int startPosition = 0;
+        int stateCardId = cardState.getCardId();
+        for (int i = 0; i < cardList.size(); i++) {
+            if (stateCardId == cardList.get(i).getId()) {
+                startPosition = i;
+                break;
+            }
+        }
+        if (startPosition < cardList.size()) {
+            pager.setCurrentItem(startPosition);
+        }
     }
 
     // pager adapter

@@ -30,7 +30,9 @@
         <activity
             android:name=".CardViewActivity"
             android:label="@string/title_activity_card_view" />
-        <activity android:name=".CardEditActivity"></activity>
+        <activity
+            android:name=".CardEditActivity"
+            android:label="@string/title_activity_card_edit" />
     </application>
 
 </manifest>

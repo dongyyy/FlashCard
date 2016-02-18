@@ -4,6 +4,7 @@
     <string name="title_activity_box_list">BoxList</string>
     <string name="title_activity_card_list">CardList</string>
     <string name="title_activity_card_view">CardView</string>
+    <string name="title_activity_card_edit">CardEdit</string>
     <!--box demo data-->
     <string name="box_demo_data_name">동물</string>
     <!--card demo data-->
