@@ -8,6 +8,7 @@ import android.util.Log;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDAO;
 import kr.co.bit.osf.flashcard.db.StateDTO;
+import kr.co.bit.osf.flashcard.test.SetupInitialState;
 
 public class MainActivity extends AppCompatActivity {
     final String TAG = "FlashCardMainTag";
@@ -33,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.i(TAG, "db already initialized");
         }
+
+        // test setup
+        SetupInitialState.setupState(db);
 
         // start box list activity
         Intent intent = new Intent(this, BoxListActivity.class);
