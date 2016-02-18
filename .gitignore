@@ -57,3 +57,4 @@ Thumbs.db
 *.ipr
 *~
 *.swp
+app/src/main/java/kr/co/bit/osf/flashcard/test/SetupInitialState.java
