@@ -1,6 +1,9 @@
 package kr.co.bit.osf.flashcard.db;
 
-public class BoxDTO {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class BoxDTO implements Parcelable {
     private long id;
     private String name;
     private int type;           // 0:user box, 1:demo box
@@ -18,6 +21,38 @@ public class BoxDTO {
         this.type = type;
         this.seq = seq;
     }
+
+    protected BoxDTO(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        type = in.readInt();
+        seq = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeInt(type);
+        dest.writeInt(seq);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<BoxDTO> CREATOR = new Creator<BoxDTO>() {
+        @Override
+        public BoxDTO createFromParcel(Parcel in) {
+            return new BoxDTO(in);
+        }
+
+        @Override
+        public BoxDTO[] newArray(int size) {
+            return new BoxDTO[size];
+        }
+    };
 
     public long getId() {
         return id;
