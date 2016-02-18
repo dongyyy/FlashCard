@@ -3,16 +3,14 @@ package kr.co.bit.osf.flashcard;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDAO;
 import kr.co.bit.osf.flashcard.db.StateDTO;
+import kr.co.bit.osf.flashcard.debug.Dlog;
 import kr.co.bit.osf.flashcard.test.SetupInitialState;
 
 public class MainActivity extends AppCompatActivity {
-    final String TAG = "FlashCardMainTag";
-
     FlashCardDB db = null;
     StateDAO stateDao = null;
     StateDTO state = null;
@@ -27,12 +25,12 @@ public class MainActivity extends AppCompatActivity {
         stateDao = db;
         state = stateDao.getState();
         if (state == null) {
-            Log.i(TAG, "db initialize");
+            Dlog.i("db initialize");
             db.initialize();
             state = stateDao.getState();
-            Log.i(TAG, "state:" + state);
+            Dlog.i("state:" + state);
         } else {
-            Log.i(TAG, "db already initialized");
+            Dlog.i("db already initialized");
         }
 
         // test setup

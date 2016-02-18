@@ -7,7 +7,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +22,11 @@ import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDTO;
+import kr.co.bit.osf.flashcard.debug.Dlog;
 import kr.co.bit.osf.flashcard.flip3d.DisplayNextView;
 import kr.co.bit.osf.flashcard.flip3d.Flip3dAnimation;
 
 public class CardViewActivity extends AppCompatActivity {
-    final String TAG = "FlashCardCardViewTag";
-
     FlashCardDB db = null;
     StateDTO cardState = null;
     List<CardDTO> cardList = null;
@@ -48,12 +46,12 @@ public class CardViewActivity extends AppCompatActivity {
         // read state from db
         db = new FlashCardDB(this);
         cardState = db.getState();
-        Log.i(TAG, "read card state:" + cardState);
+        Dlog.i("read card state:" + cardState);
 
         // read card list by state
         cardList = db.getCardByBoxId(cardState.getBoxId());
-        Log.i(TAG, "card list:size:" + cardList.size());
-        Log.i(TAG, "card list:value:" + cardList);
+        Dlog.i("card list:size:" + cardList.size());
+        Dlog.i("card list:value:" + cardList);
 
         // show card list
         // view pager
@@ -87,7 +85,7 @@ public class CardViewActivity extends AppCompatActivity {
             this.context = context;
             this.list = list;
             inflater = LayoutInflater.from(context);
-            Log.i(TAG, "list:size():" + list.size());
+            Dlog.i("list:size():" + list.size());
         }
 
         @Override
@@ -106,7 +104,7 @@ public class CardViewActivity extends AppCompatActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Log.i(TAG, "instantiateItem:position:" + position);
+            Dlog.i("position:" + position);
 
             View view = inflater.inflate(R.layout.activity_card_view_pager_child, null);
             ImageView imageView = (ImageView) view.findViewById(R.id.cardViewPagerChildImage);
@@ -154,7 +152,7 @@ public class CardViewActivity extends AppCompatActivity {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            Log.i(TAG, "destroyItem:position:" + position);
+            Dlog.i("position:" + position);
             container.removeView((View) object);
         }
 
@@ -162,7 +160,6 @@ public class CardViewActivity extends AppCompatActivity {
         public int getItemPosition(Object object) {
             // refresh view pager
             // http://stackoverflow.com/questions/10611018/how-to-update-viewpager-content
-            // update ViewPager content, but not so good
             return POSITION_NONE;
         }
     }
@@ -185,29 +182,28 @@ public class CardViewActivity extends AppCompatActivity {
 
         // write holder
         view.setTag(holder);
-        Log.i(TAG, "childViewClicked:holder:" + holder);
+        Dlog.i("holder:" + holder);
     }
 
     private void childViewLongClicked(View view) {
-        Log.i(TAG, "childViewLongClicked");
         // start card edit activity
         CardDTO sendCard = ((PagerHolder) view.getTag()).getCard();
         Intent intent = new Intent(this, CardEditActivity.class);
         intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
         intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
         startActivityForResult(intent, IntentRequestCode.CARD_EDIT);
-        Log.i(TAG, "sendData:" + sendCard);
+        Dlog.i("sendData:" + sendCard);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "requestCode=" + requestCode + ",resultCode=" + resultCode);
+        Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case IntentRequestCode.CARD_EDIT:
                     // get result data
                     CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
-                    Log.i(TAG, "returnData:" + returnCard);
+                    Dlog.i("returnData:" + returnCard);
                     // todo: refresh data
                     // refresh view pager
                     pagerAdapter.notifyDataSetChanged();
