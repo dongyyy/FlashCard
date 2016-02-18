@@ -1,6 +1,7 @@
 package kr.co.bit.osf.flashcard;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -13,11 +14,12 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
+import kr.co.bit.osf.flashcard.common.IntentExtrasName;
+import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDTO;
@@ -175,14 +177,30 @@ public class CardViewActivity extends AppCompatActivity {
 
     private void childViewLongClicked(View view) {
         Log.i(TAG, "childViewLongClicked");
-        PagerHolder holder = (PagerHolder)view.getTag();
-        holder.getCard().setName("is updated");
-        Toast.makeText(getApplicationContext(),
-                holder.getCard().getName(), Toast.LENGTH_SHORT).show();
-        view.setTag(holder);
-        Log.i(TAG, "holder card:" + holder.getCard());
-        // refresh view pager
-        pagerAdapter.notifyDataSetChanged();
+        // start card edit activity
+        CardDTO sendCard = ((PagerHolder) view.getTag()).getCard();
+        Intent intent = new Intent(this, CardEditActivity.class);
+        intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
+        intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
+        startActivityForResult(intent, IntentRequestCode.CARD_EDIT);
+        Log.i(TAG, "sendData:" + sendCard);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "requestCode=" + requestCode + ",resultCode=" + resultCode);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case IntentRequestCode.CARD_EDIT:
+                    // get result data
+                    CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
+                    Log.i(TAG, "returnData:" + returnCard);
+                    // todo: refresh data
+                    // refresh view pager
+                    pagerAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
     }
 
     // http://www.inter-fuser.com/2009/08/android-animations-3d-flip.html
