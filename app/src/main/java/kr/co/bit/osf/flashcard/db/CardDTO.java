@@ -1,6 +1,9 @@
 package kr.co.bit.osf.flashcard.db;
 
-public class CardDTO {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class CardDTO implements Parcelable {
     private long id;
     private String name;
     private String imagePath;   // image full path
@@ -30,6 +33,42 @@ public class CardDTO {
         this(id, name, imagePath, type, boxId);
         this.seq = seq;
     }
+
+    protected CardDTO(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        imagePath = in.readString();
+        type = in.readInt();
+        seq = in.readInt();
+        boxId = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeString(imagePath);
+        dest.writeInt(type);
+        dest.writeInt(seq);
+        dest.writeInt(boxId);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<CardDTO> CREATOR = new Creator<CardDTO>() {
+        @Override
+        public CardDTO createFromParcel(Parcel in) {
+            return new CardDTO(in);
+        }
+
+        @Override
+        public CardDTO[] newArray(int size) {
+            return new CardDTO[size];
+        }
+    };
 
     public long getId() {
         return id;
