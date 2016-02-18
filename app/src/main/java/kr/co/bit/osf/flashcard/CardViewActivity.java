@@ -142,6 +142,14 @@ public class CardViewActivity extends AppCompatActivity {
             Log.i(TAG, "destroyItem:position:" + position);
             container.removeView((View) object);
         }
+
+        @Override
+        public int getItemPosition(Object object) {
+            // refresh view pager
+            // http://stackoverflow.com/questions/10611018/how-to-update-viewpager-content
+            // update ViewPager content, but not so good
+            return POSITION_NONE;
+        }
     }
 
     private void childViewClicked(View view) {
@@ -173,6 +181,8 @@ public class CardViewActivity extends AppCompatActivity {
                 holder.getCard().getName(), Toast.LENGTH_SHORT).show();
         view.setTag(holder);
         Log.i(TAG, "holder card:" + holder.getCard());
+        // refresh view pager
+        pagerAdapter.notifyDataSetChanged();
     }
 
     // http://www.inter-fuser.com/2009/08/android-animations-3d-flip.html
