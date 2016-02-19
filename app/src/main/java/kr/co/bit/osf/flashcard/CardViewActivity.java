@@ -14,11 +14,12 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
 import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.db.CardDTO;
@@ -65,6 +66,7 @@ public class CardViewActivity extends AppCompatActivity {
         // set pager adapter
         pagerAdapter = new CardViewPagerAdapter(this, cardList);
         pager.setAdapter(pagerAdapter);
+        pager.setOffscreenPageLimit(1);
 
         // set start position by state card id
         int startPosition = 0;
@@ -154,12 +156,12 @@ public class CardViewActivity extends AppCompatActivity {
             // image
             String imagePath = holder.getCard().getImagePath();
             if (holder.card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
-                // load image from sd card
-                ImageUtil.showImageFileInImageView(imagePath, imageView);
+                // load image from sd card(glide)
+                Glide.with(context).load(imagePath).into(imageView);
             } else {
-                // card demo data
-                int imageId = context.getResources().getIdentifier("drawable/" + imagePath, null, context.getPackageName());
-                imageView.setImageResource(imageId);
+                // card demo data(glide)
+                Glide.with(context).fromResource()
+                        .load(Integer.parseInt(imagePath)).into(imageView);
             }
             imageView.setVisibility(View.VISIBLE);
             // text
