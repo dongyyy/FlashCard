@@ -267,7 +267,7 @@ public class CardViewActivity extends AppCompatActivity {
                                ImageView imageView, TextView textView,
                                boolean isNoAnimation) {
         long duration = 500;
-        if (isNoAnimation) duration = 100;
+        if (isNoAnimation) duration = 0;
 
         // Find the center of image
         final float centerX = imageView.getWidth() / 2.0f;
