@@ -2,9 +2,12 @@ package kr.co.bit.osf.flashcard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -18,8 +21,11 @@ public class CardEditActivity extends AppCompatActivity {
     private int intentRequestCode = 0;
     private int intentResultCode = RESULT_CANCELED;
     private CardDTO card = null;
-    private TextView textView = null;
     private ImageView imageView = null;
+    private EditText editText = null;
+    private Button yesButton = null;
+    private Button noButton = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +33,11 @@ public class CardEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_card_edit);
 
         Dlog.i("started");
+
+        // todo: full screen
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.hide();
+
         // get intent data
         Intent intent = getIntent();
         intentRequestCode = intent.getIntExtra(IntentExtrasName.REQUEST_CODE, 0);
@@ -45,8 +56,9 @@ public class CardEditActivity extends AppCompatActivity {
         // todo: process requested task
         Dlog.i("getExtras:sendData:" + card);
         intentResultCode = RESULT_OK;
-        textView = (TextView)findViewById(R.id.cardEditTextView);
+        editText = (EditText)findViewById(R.id.cardEditText);
         imageView = (ImageView)findViewById(R.id.cardEditImageView);
+
 
         //show card
         if( intentRequestCode == IntentRequestCode.CARD_EDIT){
@@ -60,8 +72,40 @@ public class CardEditActivity extends AppCompatActivity {
                         .load(Integer.parseInt(imagePath)).into(imageView);
             }
         }
-        textView.setText(card.getName());
+        editText.setText(card.getName());
+        editText.setSelection(editText.length()); //커서를 맨 뒤로 이동
+
+
+        //yes, no Button
+        yesButton = (Button)findViewById(R.id.cardEditYesButton);
+        noButton =(Button)findViewById(R.id.cardEditNoButton);
+
+        yesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FlashCardDB db = null;
+                String cardName = editText.getText().toString();
+
+                db = new FlashCardDB(getApplicationContext());
+                //card.setImagePath();
+                card.setName(cardName);
+                db.updateCard(card);
+
+                finish();
+
+            }
+        });
+
+        noButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intentResultCode = RESULT_CANCELED;
+                finish();
+            }
+        });
     }
+
+
 
     @Override
     public void finish() {

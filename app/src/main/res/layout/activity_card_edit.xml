@@ -33,16 +33,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <TextView
+        <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/cardEditTextView"
+            android:id="@+id/cardEditText"
+            android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:layout_alignBaseline="@+id/relativeLayout"
             android:layout_alignBottom="@+id/relativeLayout"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:hint = "@string/card_edit_editText_hint"
+            android:gravity="center_vertical|center_horizontal" />
     </LinearLayout>
 
     <RelativeLayout
