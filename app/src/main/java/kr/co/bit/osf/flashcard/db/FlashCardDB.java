@@ -531,7 +531,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         return addBox(demoBox);
     }
     public boolean createCardDemoData() {
-        return createCardDemoDataNumber();
+        return (createCardDemoDataNumber() && createCardDemoDataHD());
     }
 
     public boolean createCardDemoDataNumber() {
@@ -547,6 +547,23 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         for (int i = 0; i < nameList.length; i++) {
             card.setName(nameList[i]);
             card.setImagePath("" + (R.drawable.number_01 + i)); // imagePath --> image id
+            card.setSeq(i + 1);
+            if (addCard(card) == false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean createCardDemoDataHD() {
+        CardDTO card = new CardDTO();
+        card.setBoxId(3);
+        card.setType(CardEntry.TYPE_DEMO);
+
+        for (int i = 0; i < 20; i++) {
+            card.setName("hd " + i);
+            card.setImagePath("" + (R.drawable.hd_01 + i));
             card.setSeq(i + 1);
             if (addCard(card) == false) {
                 return false;

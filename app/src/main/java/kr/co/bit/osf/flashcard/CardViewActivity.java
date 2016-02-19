@@ -58,6 +58,10 @@ public class CardViewActivity extends AppCompatActivity {
         // read card list by state
         cardList = db.getCardByBoxId(cardState.getBoxId());
         Dlog.i("card list:size:" + cardList.size());
+        if (cardList.size() == 0) {
+            finish();
+            return ;
+        }
         Dlog.i("card list:value:" + cardList);
 
         // show card list
