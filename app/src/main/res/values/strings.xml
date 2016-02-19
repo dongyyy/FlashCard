@@ -14,5 +14,7 @@
     <string name="card_demo_data2_image_name">cat</string>
     <string name="card_demo_data3_name">rabbit</string>
     <string name="card_demo_data3_image_name">rabbit</string>
-
+    <!--card edit activity-->
+    <string name="card_edit_yes_button_text">좋아요</string>
+    <string name="card_edit_no_button_text">아니요</string>
 </resources>
