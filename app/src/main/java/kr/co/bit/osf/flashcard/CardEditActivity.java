@@ -61,7 +61,7 @@ public class CardEditActivity extends AppCompatActivity {
 
 
         //show card
-        if( intentRequestCode == IntentRequestCode.CARD_EDIT){
+        if(intentRequestCode == IntentRequestCode.CARD_EDIT){
             String imagePath = card.getImagePath();
             if (card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
                 // load image from sd card(glide)
@@ -75,7 +75,6 @@ public class CardEditActivity extends AppCompatActivity {
         editText.setText(card.getName());
         editText.setSelection(editText.length()); //커서를 맨 뒤로 이동
 
-
         //yes, no Button
         yesButton = (Button)findViewById(R.id.cardEditYesButton);
         noButton =(Button)findViewById(R.id.cardEditNoButton);
@@ -83,16 +82,14 @@ public class CardEditActivity extends AppCompatActivity {
         yesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FlashCardDB db = null;
                 String cardName = editText.getText().toString();
 
-                db = new FlashCardDB(getApplicationContext());
+                FlashCardDB db = new FlashCardDB(getApplicationContext());
                 //card.setImagePath();
                 card.setName(cardName);
                 db.updateCard(card);
 
                 finish();
-
             }
         });
 
@@ -104,8 +101,6 @@ public class CardEditActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
     @Override
     public void finish() {

@@ -42,7 +42,7 @@
             android:layout_alignBaseline="@+id/relativeLayout"
             android:layout_alignBottom="@+id/relativeLayout"
             android:layout_centerHorizontal="true"
-            android:hint = "@string/card_edit_editText_hint"
+            android:hint = "@string/card_edit_edit_text_hint"
             android:gravity="center_vertical|center_horizontal" />
     </LinearLayout>
 
