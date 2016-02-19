@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class BoxDTO implements Parcelable {
-    private long id;
+    private int id;
     private String name;
     private int type;           // 0:user box, 1:demo box
     int seq;
@@ -23,7 +23,7 @@ public class BoxDTO implements Parcelable {
     }
 
     protected BoxDTO(Parcel in) {
-        id = in.readLong();
+        id = in.readInt();
         name = in.readString();
         type = in.readInt();
         seq = in.readInt();
@@ -31,7 +31,7 @@ public class BoxDTO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
+        dest.writeInt(id);
         dest.writeString(name);
         dest.writeInt(type);
         dest.writeInt(seq);
@@ -54,11 +54,11 @@ public class BoxDTO implements Parcelable {
         }
     };
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -102,7 +102,7 @@ public class BoxDTO implements Parcelable {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = id;
         result = 31 * result + name.hashCode();
         result = 31 * result + type;
         return result;

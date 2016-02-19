@@ -243,7 +243,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         SQLiteDatabase db = this.getWritableDatabase();
 
         // http://developer.android.com/intl/ko/training/basics/data-storage/databases.html#WriteDbRow
-        long newRowId = db.insert(BoxEntry.TABLE_NAME, null, values);
+        int newRowId = (int)db.insert(BoxEntry.TABLE_NAME, null, values);
         box.setId(newRowId);
         db.close();
 
@@ -331,7 +331,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         values.put(CardEntry.COLUMN_NAME_BOX_ID, card.getBoxId());
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long newRowId = db.insert(CardEntry.TABLE_NAME, null, values);
+        int newRowId = (int)db.insert(CardEntry.TABLE_NAME, null, values);
         card.setId(newRowId);
         db.close();
 
@@ -453,7 +453,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         values.put(StateEntry.COLUMN_NAME_CARD_ID, cardId);
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long newRowId = db.insert(StateEntry.TABLE_NAME, null, values);
+        int newRowId = (int)db.insert(StateEntry.TABLE_NAME, null, values);
         db.close();
 
         return (newRowId > 0);

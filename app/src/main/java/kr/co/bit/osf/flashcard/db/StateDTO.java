@@ -1,7 +1,7 @@
 package kr.co.bit.osf.flashcard.db;
 
 public class StateDTO {
-    private long id;
+    private int id;
     int boxId;                  // Box id
     int cardId;                 // Card id
 
@@ -17,11 +17,11 @@ public class StateDTO {
         this.id = id;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -56,7 +56,7 @@ public class StateDTO {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = id;
         result = 31 * result + boxId;
         result = 31 * result + cardId;
         return result;
