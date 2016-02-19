@@ -40,6 +40,10 @@ public class BoxListActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CardListActivity.class);
             startActivity(intent);
         }
+        else{
+            Intent intent = new Intent(this,BoxListModeActivity.class);
+            startActivity(intent);
+        }
 
     }
 
