@@ -7,7 +7,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
@@ -24,18 +25,21 @@ import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDTO;
+import kr.co.bit.osf.flashcard.debug.Dlog;
 import kr.co.bit.osf.flashcard.flip3d.DisplayNextView;
 import kr.co.bit.osf.flashcard.flip3d.Flip3dAnimation;
 
 public class CardViewActivity extends AppCompatActivity {
-    final String TAG = "FlashCardCardViewTag";
-
     FlashCardDB db = null;
     StateDTO cardState = null;
     List<CardDTO> cardList = null;
     Button List_View_Mode;
     ViewPager pager;
     CardViewPagerAdapter pagerAdapter;
+
+    // view pager item map
+    Map<Integer, View> itemViewMap = new HashMap<>();
+    int lastPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +62,12 @@ public class CardViewActivity extends AppCompatActivity {
         // read state from db
         db = new FlashCardDB(this);
         cardState = db.getState();
-        Log.i(TAG, "read card state:" + cardState);
+        Dlog.i("read card state:" + cardState);
 
         // read card list by state
         cardList = db.getCardByBoxId(cardState.getBoxId());
-        Log.i(TAG, "card list:size:" + cardList.size());
-        Log.i(TAG, "card list:value:" + cardList);
+        Dlog.i("card list:size:" + cardList.size());
+        Dlog.i("card list:value:" + cardList);
 
         // show card list
         // view pager
@@ -71,6 +75,53 @@ public class CardViewActivity extends AppCompatActivity {
         // set pager adapter
         pagerAdapter = new CardViewPagerAdapter(this, cardList);
         pager.setAdapter(pagerAdapter);
+
+        // set start position by state card id
+        int startPosition = 0;
+        int stateCardId = cardState.getCardId();
+        for (int i = 0; i < cardList.size(); i++) {
+            if (stateCardId == cardList.get(i).getId()) {
+                startPosition = i;
+                break;
+            }
+        }
+        if (startPosition < cardList.size()) {
+            pager.setCurrentItem(startPosition);
+        }
+
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                Dlog.i("position:" + position + ", lastPosition=" + lastPosition);
+                // view pager item map
+                View lastView = itemViewMap.get(lastPosition);
+                if (lastView != null) {
+                    Dlog.i("lastView is not null");
+                    PagerHolder holder = (PagerHolder) lastView.getTag();
+                    if (!holder.isFront()) {
+                        Dlog.i("lastView is back");
+                        // show image
+                        applyRotation(holder.isFront(), 0, 90,
+                                holder.getImageView(), holder.getTextView(), true);
+                        holder.flip();
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                    lastPosition = pager.getCurrentItem();
+                }
+            }
+        });
     }
 
     // pager adapter
@@ -84,7 +135,7 @@ public class CardViewActivity extends AppCompatActivity {
             this.context = context;
             this.list = list;
             inflater = LayoutInflater.from(context);
-            Log.i(TAG, "list:size():" + list.size());
+            Dlog.i("list:size():" + list.size());
         }
 
         @Override
@@ -103,7 +154,7 @@ public class CardViewActivity extends AppCompatActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Log.i(TAG, "instantiateItem:position:" + position);
+            Dlog.i("position:" + position);
 
             View view = inflater.inflate(R.layout.activity_card_view_pager_child, null);
             ImageView imageView = (ImageView) view.findViewById(R.id.cardViewPagerChildImage);
@@ -146,12 +197,15 @@ public class CardViewActivity extends AppCompatActivity {
             view.setTag(holder);
             container.addView(view);
 
+            // view pager item map
+            itemViewMap.put(position, view);
+
             return view;
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            Log.i(TAG, "destroyItem:position:" + position);
+            Dlog.i("position:" + position);
             container.removeView((View) object);
         }
 
@@ -159,7 +213,6 @@ public class CardViewActivity extends AppCompatActivity {
         public int getItemPosition(Object object) {
             // refresh view pager
             // http://stackoverflow.com/questions/10611018/how-to-update-viewpager-content
-            // update ViewPager content, but not so good
             return POSITION_NONE;
         }
     }
@@ -182,29 +235,28 @@ public class CardViewActivity extends AppCompatActivity {
 
         // write holder
         view.setTag(holder);
-        Log.i(TAG, "childViewClicked:holder:" + holder);
+        Dlog.i("holder:" + holder);
     }
 
     private void childViewLongClicked(View view) {
-        Log.i(TAG, "childViewLongClicked");
         // start card edit activity
         CardDTO sendCard = ((PagerHolder) view.getTag()).getCard();
         Intent intent = new Intent(this, CardEditActivity.class);
         intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
         intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
         startActivityForResult(intent, IntentRequestCode.CARD_EDIT);
-        Log.i(TAG, "sendData:" + sendCard);
+        Dlog.i("sendData:" + sendCard);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "requestCode=" + requestCode + ",resultCode=" + resultCode);
+        Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case IntentRequestCode.CARD_EDIT:
                     // get result data
                     CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
-                    Log.i(TAG, "returnData:" + returnCard);
+                    Dlog.i("returnData:" + returnCard);
                     // todo: refresh data
                     // refresh view pager
                     pagerAdapter.notifyDataSetChanged();
@@ -216,6 +268,15 @@ public class CardViewActivity extends AppCompatActivity {
     // http://www.inter-fuser.com/2009/08/android-animations-3d-flip.html
     private void applyRotation(boolean isFirstImage, float start, float end,
                                ImageView imageView, TextView textView) {
+        applyRotation(isFirstImage, start, end, imageView, textView, false);
+    }
+
+    private void applyRotation(boolean isFirstImage, float start, float end,
+                               ImageView imageView, TextView textView,
+                               boolean isNoAnimation) {
+        long duration = 500;
+        if (isNoAnimation) duration = 100;
+
         // Find the center of image
         final float centerX = imageView.getWidth() / 2.0f;
         final float centerY = imageView.getHeight() / 2.0f;
@@ -223,7 +284,7 @@ public class CardViewActivity extends AppCompatActivity {
         // Create a new 3D rotation with the supplied parameter
         // The animation listener is used to trigger the next animation
         final Flip3dAnimation rotation = new Flip3dAnimation(start, end, centerX, centerY);
-        rotation.setDuration(500);
+        rotation.setDuration(duration);
         rotation.setFillAfter(true);
         rotation.setInterpolator(new AccelerateInterpolator());
         rotation.setAnimationListener(new DisplayNextView(isFirstImage, imageView, textView));

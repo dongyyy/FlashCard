@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class CardDTO implements Parcelable {
-    private long id;
+    private int id;
     private String name;
     private String imagePath;   // image full path
     private int type;           // 0:user card, 1:demo card
@@ -24,18 +24,18 @@ public class CardDTO implements Parcelable {
         this.type = type;
     }
 
-    public CardDTO(long id, String name, String imagePath, int type, int boxId) {
+    public CardDTO(int id, String name, String imagePath, int type, int boxId) {
         this(name, imagePath, type, boxId);
         this.id = id;
     }
 
-    public CardDTO(long id, String name, String imagePath, int type, int seq, int boxId) {
+    public CardDTO(int id, String name, String imagePath, int type, int seq, int boxId) {
         this(id, name, imagePath, type, boxId);
         this.seq = seq;
     }
 
     protected CardDTO(Parcel in) {
-        id = in.readLong();
+        id = in.readInt();
         name = in.readString();
         imagePath = in.readString();
         type = in.readInt();
@@ -45,7 +45,7 @@ public class CardDTO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
+        dest.writeInt(id);
         dest.writeString(name);
         dest.writeString(imagePath);
         dest.writeInt(type);
@@ -70,11 +70,11 @@ public class CardDTO implements Parcelable {
         }
     };
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -136,7 +136,7 @@ public class CardDTO implements Parcelable {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = id;
         result = 31 * result + name.hashCode();
         result = 31 * result + imagePath.hashCode();
         result = 31 * result + type;
