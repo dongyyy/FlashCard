@@ -31,26 +31,20 @@ import kr.co.bit.osf.flashcard.db.FlashCardDB;
  * Created by bit-user on 2016-02-19.
  */
 public class BoxListModeActivity extends AppCompatActivity {
-    EditText createBoxName;
-    BoxListAdapter boxListAdapter;
-    ListView Box_List_View;
-    List<BoxDTO> BoxList;
-    FlashCardDB db = null;
-    Button Btn_Box_List_Create;
-    Button Btn_Box_List_Delete;
-    Button Btn_Box_List_Update;
-    BoxDTO boxDTO;
-    BoxDAO boxDAO;
-    Integer LastNumber;
-    String BoxName;
+    private EditText createBoxName;
+    private BoxListAdapter boxListAdapter;
+    private ListView Box_List_View;
+    private List<BoxDTO> BoxList;
+    private FlashCardDB db = null;
+    private Button Btn_Box_List_Create;
+    private BoxDTO boxDTO;
+    private BoxDAO boxDAO;
+    private Integer LastNumber;
+    private String BoxName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_list_mode);
-
-
-
-
         Box_List_View = (ListView) findViewById(R.id.Box_Custom_List_View);
         BoxList = new ArrayList<>();
         db = new FlashCardDB(this);
