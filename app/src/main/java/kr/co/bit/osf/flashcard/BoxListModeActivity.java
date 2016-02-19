@@ -71,7 +71,7 @@ public class BoxListModeActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
                 View view2 = (View) View.inflate(BoxListModeActivity.this, R.layout.custom_box_edit, null);
-                AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListModeActivity.this);
+                final AlertDialog.Builder dialog2 = new AlertDialog.Builder(BoxListModeActivity.this);
 
                 Button Btn_Box_List_Update = (Button)view2.findViewById(R.id.Custom_List_Update);
                 Button Btn_Box_List_Delete= (Button)view2.findViewById(R.id.Custom_List_Delete);
@@ -85,7 +85,7 @@ public class BoxListModeActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         View view = (View) View.inflate(BoxListModeActivity.this, R.layout.custom_box_create, null);
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListModeActivity.this);
+                       AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListModeActivity.this);
 
                         final TextView updateBoxNumber = (TextView) view.findViewById(R.id.Custom_Box_Create_Number);
                         final EditText updateBoxName = (EditText)view.findViewById(R.id.Custom_Box_Create_Name);
@@ -121,34 +121,68 @@ public class BoxListModeActivity extends AppCompatActivity {
 
                     }
                 });
-                //todo: box delete
-                Btn_Box_List_Delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+
+                    //todo: box delete
+                    Btn_Box_List_Delete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            if(BoxList.get(position) != null ) {
+
+                            final AlertDialog.Builder dlg = new AlertDialog.Builder(BoxListModeActivity.this);
+                            dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
 
-                        boolean sw = false;
-                         int id = BoxList.get(position).getId();
-                        try {
-                            sw = boxDAO.deleteBox(id);
-                            if (sw == true) {
-                                BoxList.remove(position);
-                                refreshBox(BoxList);
-                            } else {
-                                Log.i("Delete Check", "false!"+id);
+                                    boolean sw = false;
+                                    int id = BoxList.get(position).getId();
+                                    sw = boxDAO.deleteBox(id);
+                                    if (sw == true) {
+                                        BoxList.remove(position);
+                                        refreshBox(BoxList);
+                                        dialog2.setCancelable(true);
+
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "삭제할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                                    }
+
+
+                                }
+                            });
+
+                            dlg.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    dlg.setCancelable(true);
+
+
+                                }
+                            });
+
+                            dlg.setTitle("삭제 확인");
+
+                            dlg.show();
+
+
+                        } else{
+                                Toast.makeText(getApplicationContext(), "삭제할 대상이 없습니다.", Toast.LENGTH_SHORT).show();
+                                dialog2.setCancelable(true);
                             }
-                        }catch(Exception e){
-                            e.printStackTrace();
-                        }
                     }
+                    });
 
+                dialog2.setTitle("메뉴");
+                dialog2.setView(view2);
+                dialog2.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
                 });
-
-                dialog.setTitle("메뉴");
-                dialog.setView(view2);
-                dialog.setPositiveButton("확인",null);
-                dialog.setNegativeButton("취소",null);
-                dialog.show();
+                dialog2.setNegativeButton("취소",null);
+                dialog2.show();
 
 
 
@@ -222,11 +256,15 @@ public class BoxListModeActivity extends AppCompatActivity {
 
         @Override
         public Object getItem(int position) {
+            Log.i("getItem","check");
             return position;
+
         }
 
         @Override
         public long getItemId(int position) {
+
+            Log.i("getItemId","check");
             return position;
         }
 
