@@ -14,7 +14,9 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
@@ -33,6 +35,10 @@ public class CardViewActivity extends AppCompatActivity {
 
     ViewPager pager;
     CardViewPagerAdapter pagerAdapter;
+
+    // view pager item map
+    Map<Integer, View> itemViewMap = new HashMap<>();
+    int lastPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +78,40 @@ public class CardViewActivity extends AppCompatActivity {
         if (startPosition < cardList.size()) {
             pager.setCurrentItem(startPosition);
         }
+
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                Dlog.i("position:" + position + ", lastPosition=" + lastPosition);
+                // view pager item map
+                View lastView = itemViewMap.get(lastPosition);
+                if (lastView != null) {
+                    Dlog.i("lastView is not null");
+                    PagerHolder holder = (PagerHolder) lastView.getTag();
+                    if (!holder.isFront()) {
+                        Dlog.i("lastView is back");
+                        // show image
+                        applyRotation(holder.isFront(), 0, 90,
+                                holder.getImageView(), holder.getTextView(), true);
+                        holder.flip();
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                    lastPosition = pager.getCurrentItem();
+                }
+            }
+        });
     }
 
     // pager adapter
@@ -147,6 +187,9 @@ public class CardViewActivity extends AppCompatActivity {
             view.setTag(holder);
             container.addView(view);
 
+            // view pager item map
+            itemViewMap.put(position, view);
+
             return view;
         }
 
@@ -215,6 +258,15 @@ public class CardViewActivity extends AppCompatActivity {
     // http://www.inter-fuser.com/2009/08/android-animations-3d-flip.html
     private void applyRotation(boolean isFirstImage, float start, float end,
                                ImageView imageView, TextView textView) {
+        applyRotation(isFirstImage, start, end, imageView, textView, false);
+    }
+
+    private void applyRotation(boolean isFirstImage, float start, float end,
+                               ImageView imageView, TextView textView,
+                               boolean isNoAnimation) {
+        long duration = 500;
+        if (isNoAnimation) duration = 100;
+
         // Find the center of image
         final float centerX = imageView.getWidth() / 2.0f;
         final float centerY = imageView.getHeight() / 2.0f;
@@ -222,7 +274,7 @@ public class CardViewActivity extends AppCompatActivity {
         // Create a new 3D rotation with the supplied parameter
         // The animation listener is used to trigger the next animation
         final Flip3dAnimation rotation = new Flip3dAnimation(start, end, centerX, centerY);
-        rotation.setDuration(500);
+        rotation.setDuration(duration);
         rotation.setFillAfter(true);
         rotation.setInterpolator(new AccelerateInterpolator());
         rotation.setAnimationListener(new DisplayNextView(isFirstImage, imageView, textView));
