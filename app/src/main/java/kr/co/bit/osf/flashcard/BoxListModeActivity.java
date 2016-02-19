@@ -41,7 +41,7 @@ public class BoxListModeActivity extends AppCompatActivity {
     Button Btn_Box_List_Update;
     BoxDTO boxDTO;
     BoxDAO boxDAO;
-    Long LastNumber;
+    Integer LastNumber;
     String BoxName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,17 +76,54 @@ public class BoxListModeActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                View view2 = (View) View.inflate(BoxListModeActivity.this,R.layout.custom_box_edit,null);
+                View view2 = (View) View.inflate(BoxListModeActivity.this, R.layout.custom_box_edit, null);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListModeActivity.this);
 
                 Button Btn_Box_List_Update = (Button)view2.findViewById(R.id.Custom_List_Update);
                 Button Btn_Box_List_Delete= (Button)view2.findViewById(R.id.Custom_List_Delete);
 
 
+
+
+
                 //todo:box update
                 Btn_Box_List_Update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        View view = (View) View.inflate(BoxListModeActivity.this, R.layout.custom_box_create, null);
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListModeActivity.this);
+
+                        final TextView updateBoxNumber = (TextView) view.findViewById(R.id.Custom_Box_Create_Number);
+                        final EditText updateBoxName = (EditText)view.findViewById(R.id.Custom_Box_Create_Name);
+                        final Integer Updateid = BoxList.get(position).getId();
+                        updateBoxNumber.setText( Updateid.toString() );
+                        updateBoxName.setText(BoxList.get(position).getName());
+                        dialog.setTitle("박스 수정");
+                        dialog.setView(view);
+                        dialog.setPositiveButton("생성", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    BoxDTO dto = new BoxDTO();
+                                    BoxName = updateBoxName.getText().toString();
+                                    dto.setId(Updateid);
+                                    dto.setName(BoxName);
+                                    dto.setType(0);
+                                    dto.setId(Updateid);
+                                    boxDAO.updateBox(dto);
+                                    BoxList.set(position,dto);
+                                    refreshBox(BoxList);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        });
+                        dialog.setNegativeButton("취소", null);
+                        dialog.show();
+
+
+
 
                     }
                 });
@@ -97,9 +134,9 @@ public class BoxListModeActivity extends AppCompatActivity {
 
 
                         boolean sw = false;
-                        Long id = boxDAO.getBox(position).getId();
+                         int id = BoxList.get(position).getId();
                         try {
-                            sw = boxDAO.deleteBox(id.intValue());
+                            sw = boxDAO.deleteBox(id);
                             if (sw == true) {
                                 BoxList.remove(position);
                                 refreshBox(BoxList);
@@ -214,7 +251,7 @@ public class BoxListModeActivity extends AppCompatActivity {
             TextView boxName = (TextView) view.findViewById(R.id.Custom_Box_Text);
 
             String str = list.get(position).getName();
-            Long str1 = list.get(position).getId();
+            Integer str1 = list.get(position).getId();
             String str2 = str1.toString();
             boxNum.setText(str2 + ". ");
             boxName.setText(str);
