@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,7 +33,7 @@ public class CardViewActivity extends AppCompatActivity {
     FlashCardDB db = null;
     StateDTO cardState = null;
     List<CardDTO> cardList = null;
-
+    Button List_View_Mode;
     ViewPager pager;
     CardViewPagerAdapter pagerAdapter;
 
@@ -40,6 +41,15 @@ public class CardViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_view);
+
+        List_View_Mode = (Button)findViewById(R.id.Go_List_View_Mode);
+        List_View_Mode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),BoxListModeActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // todo: full screen
         ActionBar actionBar = getSupportActionBar();

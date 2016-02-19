@@ -31,6 +31,7 @@
             android:name=".CardViewActivity"
             android:label="@string/title_activity_card_view" />
         <activity android:name=".CardEditActivity"></activity>
+        <activity android:name=".BoxListModeActivity"></activity>
     </application>
 
 </manifest>

@@ -4,17 +4,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ListView;
 
+import java.util.List;
+
+import kr.co.bit.osf.flashcard.db.BoxDAO;
+import kr.co.bit.osf.flashcard.db.BoxDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDAO;
 import kr.co.bit.osf.flashcard.db.StateDTO;
 
 public class BoxListActivity extends AppCompatActivity {
     final String TAG = "FlashCardBoxListTag";
-
+    ListView Box_List_View;
+    List<BoxDTO> BoxList;
     FlashCardDB db = null;
     StateDAO stateDao = null;
     StateDTO cardState = null;
+    BoxDTO boxDTO;
+    BoxDAO boxDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,5 +40,7 @@ public class BoxListActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CardListActivity.class);
             startActivity(intent);
         }
+
     }
+
 }
