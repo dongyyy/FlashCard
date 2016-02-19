@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,11 +94,23 @@ public class BoxListModeActivity extends AppCompatActivity {
                 Btn_Box_List_Delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Long dto = boxDTO.getId();
-                        boxDAO.deleteBox(position);
-                        BoxList.remove(position);
-                        refreshBox(BoxList);
+
+
+                        boolean sw = false;
+                        Long id = boxDAO.getBox(position).getId();
+                        try {
+                            sw = boxDAO.deleteBox(id.intValue());
+                            if (sw == true) {
+                                BoxList.remove(position);
+                                refreshBox(BoxList);
+                            } else {
+                                Log.i("Delete Check", "false!"+id);
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                     }
+
                 });
 
                 dialog.setTitle("메뉴");
@@ -138,13 +151,6 @@ public class BoxListModeActivity extends AppCompatActivity {
                         try {
                             BoxDTO dto = new BoxDTO();
                             BoxName = createBoxName.getText().toString();
-//                            boxDTO.setSeq(LastNumber);
-//                            boxDTO.setName(BoxName);
-//                            boxDTO.setType(0);
-//                            boxDTO.setId(LastNumber);
-//                            boxDAO.addBox(boxDTO);
-//                            boxDAO.addBox(boxDTO);
-//                            BoxList.add(boxDTO);
                             dto.setId(LastNumber);
                             dto.setName(BoxName);
                             dto.setType(0);
@@ -163,7 +169,7 @@ public class BoxListModeActivity extends AppCompatActivity {
 
             }
         });
-       // boxListAdapter.notifyDataSetChanged();
+
     }
 
     public class BoxListAdapter extends BaseAdapter {
@@ -202,7 +208,8 @@ public class BoxListModeActivity extends AppCompatActivity {
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.custom_box_list, null);
             }
-            Collections.sort(list,new NoAscCompare() );
+            Collections.sort( list,new NoAscCompare() );//정렬 id 번호별로
+
             TextView boxNum = (TextView) view.findViewById(R.id.Custom_Box_Number);
             TextView boxName = (TextView) view.findViewById(R.id.Custom_Box_Text);
 
@@ -215,14 +222,12 @@ public class BoxListModeActivity extends AppCompatActivity {
 
             return view;
         }
+
     }
 
     public void refreshBox(List<BoxDTO> list){
         BoxList = list;
         boxListAdapter.notifyDataSetChanged();
-        //Intent intent = new Intent(getApplicationContext(),BoxListModeActivity.class);
-        //startActivity(intent);
-
     }
 
     static class NoAscCompare implements Comparator<BoxDTO> {
