@@ -41,6 +41,9 @@ public class CardViewActivity extends AppCompatActivity {
     Map<Integer, View> itemViewMap = new HashMap<>();
     int lastPosition = -1;
 
+    // send card
+    int sendCardListIndex = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,7 +159,7 @@ public class CardViewActivity extends AppCompatActivity {
             ImageView imageView = (ImageView) view.findViewById(R.id.cardViewPagerChildImage);
             TextView textView = (TextView) view.findViewById(R.id.cardViewPagerChildText);
 
-            PagerHolder holder = new PagerHolder(list.get(position), true, imageView, textView);
+            PagerHolder holder = new PagerHolder(list.get(position), position, true, imageView, textView);
             // image
             String imagePath = holder.getCard().getImagePath();
             if (holder.card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
@@ -237,6 +240,7 @@ public class CardViewActivity extends AppCompatActivity {
     private void childViewLongClicked(View view) {
         // start card edit activity
         CardDTO sendCard = ((PagerHolder) view.getTag()).getCard();
+        sendCardListIndex = ((PagerHolder) view.getTag()).getCardIndex();
         Intent intent = new Intent(this, CardEditActivity.class);
         intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
         intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
@@ -253,7 +257,8 @@ public class CardViewActivity extends AppCompatActivity {
                     // get result data
                     CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
                     Dlog.i("returnData:" + returnCard);
-                    // todo: refresh data
+                    // refresh returned data
+                    cardList.set(sendCardListIndex, returnCard);
                     // refresh view pager
                     pagerAdapter.notifyDataSetChanged();
                     break;
@@ -298,12 +303,14 @@ public class CardViewActivity extends AppCompatActivity {
         private boolean isFront;
         private ImageView imageView;
         private TextView textView;
+        private int cardIndex;
 
-        public PagerHolder(CardDTO card, boolean isFront, ImageView imageView, TextView textView) {
+        public PagerHolder(CardDTO card, int index, boolean isFront, ImageView imageView, TextView textView) {
             this.isFront = isFront;
             this.imageView = imageView;
             this.textView = textView;
             this.card = card;
+            this.cardIndex = index;
         }
 
         public ImageView getImageView() {
@@ -326,11 +333,16 @@ public class CardViewActivity extends AppCompatActivity {
             return card;
         }
 
+        public int getCardIndex() {
+            return cardIndex;
+        }
+
         @Override
         public String toString() {
             return "pagerHolder{" +
                     "isFront=" + isFront +
                     ", card=" + card +
+                    ", cardIndex=" + cardIndex +
                     '}';
         }
     }
