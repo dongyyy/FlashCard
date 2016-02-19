@@ -14,7 +14,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +33,7 @@ import kr.co.bit.osf.flashcard.db.FlashCardDB;
 public class BoxListModeActivity extends AppCompatActivity {
     private EditText createBoxName;
     private BoxListAdapter boxListAdapter;
-    private ListView Box_List_View;
+    private GridView Box_List_View;
     private List<BoxDTO> BoxList;
     private FlashCardDB db = null;
     private Button Btn_Box_List_Create;
@@ -45,7 +45,7 @@ public class BoxListModeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_list_mode);
-        Box_List_View = (ListView) findViewById(R.id.Box_Custom_List_View);
+        Box_List_View = (GridView) findViewById(R.id.Box_Custom_List_View);
         BoxList = new ArrayList<>();
         db = new FlashCardDB(this);
         boxDTO = new BoxDTO();

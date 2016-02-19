@@ -22,14 +22,18 @@
 </LinearLayout>
 
 
-    <ListView
+    <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/Box_Custom_List_View"
         android:listSelector="@drawable/selector"
         android:dividerHeight="0px"
         android:divider="#ffffff"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:columnWidth="100dp"
 
-        ></ListView>
+
+        ></GridView>
 
 </LinearLayout>
