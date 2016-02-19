@@ -1,5 +1,6 @@
 package kr.co.bit.osf.flashcard;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,8 +26,6 @@ import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDTO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
-import kr.co.bit.osf.flashcard.flip3d.DisplayNextView;
-import kr.co.bit.osf.flashcard.flip3d.Flip3dAnimation;
 
 public class CardViewActivity extends AppCompatActivity {
     FlashCardDB db = null;
@@ -98,11 +96,7 @@ public class CardViewActivity extends AppCompatActivity {
                 if (lastView != null) {
                     Dlog.i("lastView is not null");
                     PagerHolder holder = (PagerHolder) lastView.getTag();
-                    if (!holder.isFront()) {
-                        Dlog.i("lastView is back");
-                        // show image
-                        applyRotation(holder.isFront(), 0, 90,
-                                holder.getImageView(), holder.getTextView(), true);
+                    if (holder.isFlipped()) {
                         holder.flip();
                     }
                 }
@@ -159,7 +153,11 @@ public class CardViewActivity extends AppCompatActivity {
             ImageView imageView = (ImageView) view.findViewById(R.id.cardViewPagerChildImage);
             TextView textView = (TextView) view.findViewById(R.id.cardViewPagerChildText);
 
-            PagerHolder holder = new PagerHolder(list.get(position), position, true, imageView, textView);
+            ValueAnimator flipAnimator = ValueAnimator.ofFloat(0f, 1f);
+            flipAnimator.addUpdateListener(new FlipListener(imageView, textView));
+
+            PagerHolder holder = new PagerHolder(list.get(position), position,
+                    imageView, textView, flipAnimator);
             // image
             String imagePath = holder.getCard().getImagePath();
             if (holder.card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
@@ -170,10 +168,8 @@ public class CardViewActivity extends AppCompatActivity {
                 Glide.with(context).fromResource()
                         .load(Integer.parseInt(imagePath)).into(imageView);
             }
-            imageView.setVisibility(View.VISIBLE);
             // text
             textView.setText(holder.getCard().getName());
-            textView.setVisibility(View.INVISIBLE);
 
             // set click event
             view.setOnClickListener(new View.OnClickListener() {
@@ -221,15 +217,6 @@ public class CardViewActivity extends AppCompatActivity {
         PagerHolder holder = (PagerHolder)view.getTag();
 
         // flip animation
-        if (holder.isFront()) {
-            // show text
-            applyRotation(holder.isFront(), 0, -90, holder.getImageView(), holder.getTextView());
-        } else {
-            // show image
-            applyRotation(holder.isFront(), 0, 90, holder.getImageView(), holder.getTextView());
-        }
-
-        // change front/back state
         holder.flip();
 
         // write holder
@@ -266,37 +253,6 @@ public class CardViewActivity extends AppCompatActivity {
         }
     }
 
-    // http://www.inter-fuser.com/2009/08/android-animations-3d-flip.html
-    private void applyRotation(boolean isFirstImage, float start, float end,
-                               ImageView imageView, TextView textView) {
-        applyRotation(isFirstImage, start, end, imageView, textView, false);
-    }
-
-    private void applyRotation(boolean isFirstImage, float start, float end,
-                               ImageView imageView, TextView textView,
-                               boolean isNoAnimation) {
-        long duration = 500;
-        if (isNoAnimation) duration = 0;
-
-        // Find the center of image
-        final float centerX = imageView.getWidth() / 2.0f;
-        final float centerY = imageView.getHeight() / 2.0f;
-
-        // Create a new 3D rotation with the supplied parameter
-        // The animation listener is used to trigger the next animation
-        final Flip3dAnimation rotation = new Flip3dAnimation(start, end, centerX, centerY);
-        rotation.setDuration(duration);
-        rotation.setFillAfter(true);
-        rotation.setInterpolator(new AccelerateInterpolator());
-        rotation.setAnimationListener(new DisplayNextView(isFirstImage, imageView, textView));
-
-        if (isFirstImage) {
-            imageView.startAnimation(rotation);
-        } else {
-            textView.startAnimation(rotation);
-        }
-    }
-
     // inner class for pager adapter item and flip animation
     private class PagerHolder {
         private CardDTO card;
@@ -304,13 +260,15 @@ public class CardViewActivity extends AppCompatActivity {
         private ImageView imageView;
         private TextView textView;
         private int cardIndex;
+        ValueAnimator flipAnimator;
 
-        public PagerHolder(CardDTO card, int index, boolean isFront, ImageView imageView, TextView textView) {
-            this.isFront = isFront;
-            this.imageView = imageView;
-            this.textView = textView;
+        public PagerHolder(CardDTO card, int index,
+                           ImageView imageView, TextView textView, ValueAnimator flipAnimator) {
             this.card = card;
             this.cardIndex = index;
+            this.imageView = imageView;
+            this.textView = textView;
+            this.flipAnimator = flipAnimator;
         }
 
         public ImageView getImageView() {
@@ -321,12 +279,20 @@ public class CardViewActivity extends AppCompatActivity {
             return textView;
         }
 
-        public boolean isFront() {
-            return isFront;
+        public void flip() {
+            toggleFlip();
         }
 
-        public void flip() {
-            this.isFront = !this.isFront;
+        private void toggleFlip() {
+            if(isFlipped()){
+                flipAnimator.reverse();
+            } else {
+                flipAnimator.start();
+            }
+        }
+
+        public boolean isFlipped() {
+            return flipAnimator.getAnimatedFraction() == 1;
         }
 
         public CardDTO getCard() {
@@ -344,6 +310,49 @@ public class CardViewActivity extends AppCompatActivity {
                     ", card=" + card +
                     ", cardIndex=" + cardIndex +
                     '}';
+        }
+    }
+
+
+    // flip animation
+    // http://stackoverflow.com/questions/7785649/creating-a-3d-flip-animation-in-android-using-xml
+    private class FlipListener implements ValueAnimator.AnimatorUpdateListener {
+        private final View mFrontView;
+        private final View mBackView;
+        private boolean mFlipped;
+
+        public FlipListener(final View front, final View back) {
+            this.mFrontView = front;
+            this.mBackView = back;
+            this.mBackView.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onAnimationUpdate(final ValueAnimator animation) {
+            final float value = animation.getAnimatedFraction();
+            final float scaleValue = 0.625f + (1.5f * (value - 0.5f) * (value - 0.5f));
+
+            if(value <= 0.5f){
+                this.mFrontView.setRotationY(180 * value);
+                this.mFrontView.setScaleX(scaleValue);
+                this.mFrontView.setScaleY(scaleValue);
+                if(mFlipped){
+                    setStateFlipped(false);
+                }
+            } else {
+                this.mBackView.setRotationY(-180 * (1f- value));
+                this.mBackView.setScaleX(scaleValue);
+                this.mBackView.setScaleY(scaleValue);
+                if(!mFlipped){
+                    setStateFlipped(true);
+                }
+            }
+        }
+
+        private void setStateFlipped(boolean flipped) {
+            mFlipped = flipped;
+            this.mFrontView.setVisibility(flipped ? View.GONE : View.VISIBLE);
+            this.mBackView.setVisibility(flipped ? View.VISIBLE : View.GONE);
         }
     }
 }
