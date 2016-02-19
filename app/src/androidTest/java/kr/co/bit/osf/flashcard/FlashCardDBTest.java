@@ -276,11 +276,16 @@ public class FlashCardDBTest extends AndroidTestCase {
     public void testCreateCardDemoData() throws Exception {
         assertEquals(true, db.createCardDemoData());
 
-        CardDTO card = cardDao.getCard(3);
-        assertEquals(true, context.getString(R.string.card_demo_data3_name).equals(card.getName()));
-        assertEquals(true, context.getString(R.string.card_demo_data3_image_name).equals(card.getImagePath()));
+        int findId = 9;
+        String findName = "nine";
+        String findImagePath = "" + R.drawable.number_09;
+        int findBoxId = 2;
+
+        CardDTO card = cardDao.getCard(findId);
+        assertEquals(true, findName.equals(card.getName()));
+        assertEquals(true, findImagePath.equals(card.getImagePath()));
         assertEquals(true, (card.getType() == FlashCardDB.CardEntry.TYPE_DEMO));
-        assertEquals(true, (card.getBoxId() == 1));
+        assertEquals(true, (card.getBoxId() == findBoxId));
     }
 
     // initialize
@@ -295,19 +300,13 @@ public class FlashCardDBTest extends AndroidTestCase {
         assertEquals(true, (box.getType() == FlashCardDB.BoxEntry.TYPE_DEMO));
         assertEquals(true, (box.getSeq() == 1));
 
-        List<CardDTO> cardList = cardDao.getCardByBoxId(1);
-        assertEquals(true, (cardList.size() == 3));
-
-        CardDTO card = cardDao.getCard(3);
-        assertEquals(true, context.getString(R.string.card_demo_data3_name).equals(card.getName()));
-        assertEquals(true, context.getString(R.string.card_demo_data3_image_name).equals(card.getImagePath()));
-        assertEquals(true, (card.getType() == FlashCardDB.CardEntry.TYPE_DEMO));
-        assertEquals(true, (card.getBoxId() == 1));
+        List<CardDTO> cardList = cardDao.getCardByBoxId(2);
+        assertEquals(true, (cardList.size() == 20));
 
         StateDTO state = stateDao.getState();
         assertNotNull(state);
-        assertEquals(true, (state.getBoxId() == 1));
-        assertEquals(true, (state.getCardId() == 1));
+        assertEquals(true, (state.getBoxId() == 0));
+        assertEquals(true, (state.getCardId() == 0));
     }
 
 }

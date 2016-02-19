@@ -531,22 +531,29 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         return addBox(demoBox);
     }
     public boolean createCardDemoData() {
-        CardDTO[] demoList = {
-                new CardDTO(0,
-                        context.getString(R.string.card_demo_data1_name),
-                        context.getString(R.string.card_demo_data1_image_name),
-                        CardEntry.TYPE_DEMO, 1, 1),
-                new CardDTO(0,
-                        context.getString(R.string.card_demo_data2_name),
-                        context.getString(R.string.card_demo_data2_image_name),
-                        CardEntry.TYPE_DEMO, 2, 1),
-                new CardDTO(0,
-                        context.getString(R.string.card_demo_data3_name),
-                        context.getString(R.string.card_demo_data3_image_name),
-                        CardEntry.TYPE_DEMO, 3, 1)
-        };
+        return createCardDemoDataNumber();
+    }
 
-        return (addCard(demoList[0]) && addCard(demoList[1]) && addCard(demoList[2]));
+    public boolean createCardDemoDataNumber() {
+        String nameList[] = {"one", "two", "three", "four", "five",
+                "six", "seven", "eight", "nine", "ten",
+                "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+                "sixteen", "seventeen", "eighteen", "nineteen", "twenty" };
+
+        CardDTO card = new CardDTO();
+        card.setBoxId(2);
+        card.setType(CardEntry.TYPE_DEMO);
+
+        for (int i = 0; i < nameList.length; i++) {
+            card.setName(nameList[i]);
+            card.setImagePath("" + (R.drawable.number_01 + i)); // image id --> imagePath
+            card.setSeq(i + 1);
+            if (addCard(card) == false) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // initialize db
