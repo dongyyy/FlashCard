@@ -41,7 +41,7 @@ public class CardViewActivity extends AppCompatActivity {
     Map<Integer, View> itemViewMap = new HashMap<>();
     int lastPosition = -1;
 
-    // receive card
+    // send card
     int sendCardListIndex = 0;
 
     @Override
@@ -257,7 +257,7 @@ public class CardViewActivity extends AppCompatActivity {
                     // get result data
                     CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
                     Dlog.i("returnData:" + returnCard);
-                    // todo: refresh data
+                    // refresh returned data
                     cardList.set(sendCardListIndex, returnCard);
                     // refresh view pager
                     pagerAdapter.notifyDataSetChanged();
