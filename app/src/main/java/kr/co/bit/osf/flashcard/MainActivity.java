@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         SetupInitialStateTemplate.setupState(db);
 
         // start box list activity
-        Intent intent = new Intent(getApplicationContext(), BoxListActivity.class);
+        Intent intent = new Intent(getApplicationContext(), BoxListModeActivity.class);
         startActivity(intent);
     }
 }

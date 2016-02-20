@@ -85,7 +85,7 @@ public class BoxListModeActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         View view = (View) View.inflate(BoxListModeActivity.this, R.layout.custom_box_create, null);
-                       AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListModeActivity.this);
+                       AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListModeActivity.this);//수정 다이아로그
 
                         final TextView updateBoxNumber = (TextView) view.findViewById(R.id.Custom_Box_Create_Number);
                         final EditText updateBoxName = (EditText)view.findViewById(R.id.Custom_Box_Create_Name);
@@ -94,7 +94,7 @@ public class BoxListModeActivity extends AppCompatActivity {
                         updateBoxName.setText(BoxList.get(position).getName());
                         dialog.setTitle("박스 수정");
                         dialog.setView(view);
-                        dialog.setPositiveButton("생성", new DialogInterface.OnClickListener() {
+                        dialog.setPositiveButton("수정", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
@@ -105,8 +105,9 @@ public class BoxListModeActivity extends AppCompatActivity {
                                     dto.setType(0);
                                     dto.setId(Updateid);
                                     boxDAO.updateBox(dto);
-                                    BoxList.set(position,dto);
+                                    BoxList.set(position, dto);
                                     refreshBox(BoxList);
+                                    dialog.cancel();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -127,10 +128,9 @@ public class BoxListModeActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
 
-                            if(BoxList.get(position) != null ) {
-
                             final AlertDialog.Builder dlg = new AlertDialog.Builder(BoxListModeActivity.this);
-                            dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+
+                                dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
@@ -139,9 +139,15 @@ public class BoxListModeActivity extends AppCompatActivity {
                                     int id = BoxList.get(position).getId();
                                     sw = boxDAO.deleteBox(id);
                                     if (sw == true) {
+                                        Toast.makeText(getApplicationContext(), BoxList.get(position).getName()+"이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                                        Log.i("삭제 : ", BoxList.get(position).getName());
                                         BoxList.remove(position);
                                         refreshBox(BoxList);
-                                        dialog2.setCancelable(true);
+
+                                        finish();
+
+                                        Intent intent = new Intent(getApplicationContext(),BoxListModeActivity.class);
+                                        startActivity(intent);
 
                                     } else {
                                         Toast.makeText(getApplicationContext(), "삭제할 수 없습니다.", Toast.LENGTH_SHORT).show();
@@ -162,14 +168,8 @@ public class BoxListModeActivity extends AppCompatActivity {
                             });
 
                             dlg.setTitle("삭제 확인");
-
                             dlg.show();
 
-
-                        } else{
-                                Toast.makeText(getApplicationContext(), "삭제할 대상이 없습니다.", Toast.LENGTH_SHORT).show();
-                                dialog2.setCancelable(true);
-                            }
                     }
                     });
 
@@ -181,7 +181,7 @@ public class BoxListModeActivity extends AppCompatActivity {
 
                     }
                 });
-                dialog2.setNegativeButton("취소",null);
+                dialog2.setNegativeButton("취소", null);
                 dialog2.show();
 
 
