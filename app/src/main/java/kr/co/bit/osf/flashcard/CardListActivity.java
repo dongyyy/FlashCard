@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,6 @@ public class CardListActivity extends AppCompatActivity {
         GridView Card_Custom_Grid_View = (GridView)findViewById(R.id.Card_Custom_List_View);
         adapter = new CardListAdapter(this);
         Card_Custom_Grid_View.setAdapter(adapter);
-
         // activity change CardViewActivity
         Card_Custom_Grid_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,14 +61,11 @@ public class CardListActivity extends AppCompatActivity {
                 int boxId = cardList.get(position).getBoxId();
                 int cardId = cardList.get(position).getId();
                 db.updateState(boxId, cardId);
-                Dlog.i("update state:boxId=" + boxId + ", cardId=" + cardId);
                 Intent intent = new Intent(getApplicationContext(),CardViewActivity.class);
                 startActivity(intent);
             }
         });
-
         //편집
-        //todo: activity change CardEditActivity
         Card_Custom_Grid_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -78,8 +75,12 @@ public class CardListActivity extends AppCompatActivity {
                 Intent intent = new Intent(CardListActivity.this, CardEditActivity.class);
                 intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
                 intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
+               final boolean DELETE_QUESTION = intent.getBooleanExtra("DELETE_OK",false);//삭제 요청이 오면 삭제
+                if(DELETE_QUESTION == true){
+                    Toast.makeText(CardListActivity.this, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    refreshCard(cardList);
+                }
                 startActivityForResult(intent, IntentRequestCode.CARD_EDIT);
-                Dlog.i("sendData:" + sendCard);
                 return true;
             }
         });
@@ -90,7 +91,6 @@ public class CardListActivity extends AppCompatActivity {
         public CardListAdapter(Context c){
             context = c;
         }
-
 
         @Override
         public int getCount() {
@@ -118,11 +118,10 @@ public class CardListActivity extends AppCompatActivity {
 
             String Card_List_Number = "BoxID." + cardList.get(position).getBoxId() + " CardID." + cardList.get(position).getId();
             String Card_List_Name = cardList.get(position).getName();
-
-            ((TextView)view.findViewById(R.id.Card_Custom_List_Number)).setText(Card_List_Number);//숫자
             ((TextView)view.findViewById(R.id.Card_Custom_List_Name)).setText(Card_List_Name);//이름
             ImageUtil.showImageFileInImageView(CardListActivity.this, cardList.get(position), ((ImageView) view.findViewById(R.id.Card_Custom_List_Image)));
             lastNumber = cardList.get(position).getId()+1;//임시 아이디,seq
+
             return view;
         }
     }
@@ -143,6 +142,10 @@ public class CardListActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+    public void refreshCard(List<CardDTO> list){//새로고침 함수
+        cardList = list;
+        adapter.notifyDataSetChanged();
     }
 
 }

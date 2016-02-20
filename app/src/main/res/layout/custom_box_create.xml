@@ -8,7 +8,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/Custom_Box_Create_Number"
-        android:text="Custom_Box_Create_Number"/>
+        android:text="Custom_Box_Create_Number"
+        android:visibility="invisible"
+        />
 
     <EditText
         android:layout_width="wrap_content"
