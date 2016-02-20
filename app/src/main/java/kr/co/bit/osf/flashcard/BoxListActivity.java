@@ -41,6 +41,7 @@ public class BoxListActivity extends AppCompatActivity {
     private BoxDAO boxDAO;
     private Integer LastNumber;
     private String BoxName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,12 +55,10 @@ public class BoxListActivity extends AppCompatActivity {
         boxListAdapter = new BoxListAdapter(this, BoxList);
         Box_List_View.setAdapter(boxListAdapter);
 
-        //todo: short click
         Box_List_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), BoxList.get(position).getName(), Toast.LENGTH_SHORT).show();
-                //todo: Box Choice
                 Intent intent = new Intent(getApplicationContext(), CardListActivity.class);
                 Integer BoxId = BoxList.get(position).getId();
                 intent.putExtra("BoxId",BoxId);//박스번호를 카드리스트에 전송
@@ -67,28 +66,19 @@ public class BoxListActivity extends AppCompatActivity {
             }
         });
 
-        //todo: long click
         Box_List_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-
                 View view2 = (View) View.inflate(BoxListActivity.this, R.layout.custom_box_edit, null);
                 final AlertDialog.Builder dialog2 = new AlertDialog.Builder(BoxListActivity.this);
-
                 Button Btn_Box_List_Update = (Button)view2.findViewById(R.id.Custom_List_Update);
                 Button Btn_Box_List_Delete= (Button)view2.findViewById(R.id.Custom_List_Delete);
 
-
-
-
-
-                //todo:box update
                 Btn_Box_List_Update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         View view = (View) View.inflate(BoxListActivity.this, R.layout.custom_box_create, null);
                        AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListActivity.this);//수정 다이아로그
-
                         final TextView updateBoxNumber = (TextView) view.findViewById(R.id.Custom_Box_Create_Number);
                         final EditText updateBoxName = (EditText)view.findViewById(R.id.Custom_Box_Create_Name);
                         final Integer Updateid = BoxList.get(position).getId();
@@ -96,6 +86,7 @@ public class BoxListActivity extends AppCompatActivity {
                         updateBoxName.setText(BoxList.get(position).getName());
                         dialog.setTitle("박스 수정");
                         dialog.setView(view);
+
                         dialog.setPositiveButton("수정", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -113,19 +104,13 @@ public class BoxListActivity extends AppCompatActivity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-
                             }
                         });
                         dialog.setNegativeButton("취소", null);
                         dialog.show();
-
-
-
-
                     }
                 });
 
-                    //todo: box delete
                     Btn_Box_List_Delete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -135,8 +120,6 @@ public class BoxListActivity extends AppCompatActivity {
                                 dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
-
                                     boolean sw = false;
                                     int id = BoxList.get(position).getId();
                                     sw = boxDAO.deleteBox(id);
@@ -145,60 +128,44 @@ public class BoxListActivity extends AppCompatActivity {
                                         Log.i("삭제 : ", BoxList.get(position).getName());
                                         BoxList.remove(position);
                                         refreshBox(BoxList);
-
                                         finish();
-
                                         Intent intent = new Intent(getApplicationContext(),BoxListActivity.class);
                                         startActivity(intent);
-
                                     } else {
                                         Toast.makeText(getApplicationContext(), "삭제할 수 없습니다.", Toast.LENGTH_SHORT).show();
                                     }
-
-
                                 }
                             });
 
                             dlg.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
                                     dlg.setCancelable(true);
-
-
                                 }
                             });
-
                             dlg.setTitle("삭제 확인");
                             dlg.show();
-
                     }
                     });
-
                 dialog2.setTitle("메뉴");
                 dialog2.setView(view2);
+
                 dialog2.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                     }
                 });
+
                 dialog2.setNegativeButton("취소", null);
                 dialog2.show();
-
-
-
                 return true;
             }
         });
 
-
-        //todo: Create Box Button
         Btn_Box_List_Create = (Button)findViewById(R.id.Custom_List_Create);
         Btn_Box_List_Create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo:Create Box
                 View view = (View) View.inflate(BoxListActivity.this, R.layout.custom_box_create, null);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListActivity.this);
 
@@ -206,10 +173,7 @@ public class BoxListActivity extends AppCompatActivity {
                 createBoxName = (EditText) view.findViewById(R.id.Custom_Box_Create_Name);
 
                 // BoxList = boxDAO.getBoxAll();
-
-
                 createBoxNumber.setText( LastNumber.toString() );
-
                 dialog.setTitle("박스 생성");
                 dialog.setView(view);
                 dialog.setPositiveButton("생성", new DialogInterface.OnClickListener() {
@@ -228,24 +192,18 @@ public class BoxListActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                     }
                 });
                 dialog.setNegativeButton("취소", null);
                 dialog.show();
-
             }
         });
-
     }
 
     public class BoxListAdapter extends BaseAdapter {
         private Context context;
         private List<BoxDTO> list;
-
-        public BoxListAdapter() {
-        }
-
+        public BoxListAdapter() {}
         public BoxListAdapter(Context c, List<BoxDTO> list) {
             context = c;
             this.list = list;
@@ -260,12 +218,10 @@ public class BoxListActivity extends AppCompatActivity {
         public Object getItem(int position) {
             Log.i("getItem","check");
             return position;
-
         }
 
         @Override
         public long getItemId(int position) {
-
             Log.i("getItemId","check");
             return position;
         }
@@ -280,7 +236,6 @@ public class BoxListActivity extends AppCompatActivity {
                 view = inflater.inflate(R.layout.custom_box_list, null);
             }
             Collections.sort( list,new NoAscCompare() );//정렬 id 번호별로
-
             TextView boxNum = (TextView) view.findViewById(R.id.Custom_Box_Number);
             TextView boxName = (TextView) view.findViewById(R.id.Custom_Box_Text);
 
@@ -290,22 +245,17 @@ public class BoxListActivity extends AppCompatActivity {
             boxNum.setText(str2 + ". ");
             boxName.setText(str);
             LastNumber = list.get(position).getId()+1;
-
             return view;
         }
 
     }
 
-    public void refreshBox(List<BoxDTO> list){
+    public void refreshBox(List<BoxDTO> list){//새로고침 함수
         BoxList = list;
         boxListAdapter.notifyDataSetChanged();
     }
 
-    static class NoAscCompare implements Comparator<BoxDTO> {
-
-        /**
-         * 오름차순(ASC)
-         */
+    static class NoAscCompare implements Comparator<BoxDTO> {//오름차순 정렬 함수
         @Override
         public int compare(BoxDTO arg0, BoxDTO arg1) {
             // TODO Auto-generated method stub
