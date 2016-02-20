@@ -36,23 +36,11 @@ public class CardListActivity extends AppCompatActivity {
 
         dao = db;
 
-        dto = new CardDTO();
+        dto = new CardDTO();//이미지셋팅용 테스트
         Intent getItem = getIntent();
         Integer BoxId = getItem.getIntExtra("BoxId",0);
 
         CardList = dao.getCardByBoxId(BoxId);
-
-//        dto.setType(1);
-//        dto.setName("캣");
-//        dto.setSeq(LastNumber);
-//        dto.setBoxId(BoxId);
-//        dto.setId(LastNumber);
-//        Integer ImagePath = R.drawable.cat;
-//        dto.setImagePath(ImagePath.toString());
-//        CardList.set(LastNumber,dto);
-
-
-
 
         GridView Card_Custom_Grid_View = (GridView)findViewById(R.id.Card_Custom_List_View);
 
@@ -117,18 +105,18 @@ public class CardListActivity extends AppCompatActivity {
                 view = inflater.inflate(R.layout.custom_card_list,null);
             }
 
-            TextView Card_Custom_List_Name = (TextView)view.findViewById(R.id.Card_Custom_List_Name);
-            ImageView Card_Custom_List_Image = (ImageView)view.findViewById(R.id.Card_Custom_List_Image);
 
-            String Card_List_Name = "BoxID." + CardList.get(position).getBoxId() + " CardID." + CardList.get(position).getId() + " CardName." + CardList.get(position).getName();
-            String Card_List_Image = CardList.get(position).getImagePath();
-            Card_Custom_List_Name.setText(Card_List_Name);
+
+            String Card_List_Number = "BoxID." + CardList.get(position).getBoxId() + " CardID." + CardList.get(position).getId();
+            String Card_List_Name = CardList.get(position).getName();
+
+            ((TextView)view.findViewById(R.id.Card_Custom_List_Number)).setText(Card_List_Number);//숫자
+            ((TextView)view.findViewById(R.id.Card_Custom_List_Name)).setText(Card_List_Name);//이름
             //ImageUtil.showImageFileInImageView(Card_List_Image, Card_Custom_List_Image);
-
+            String Card_List_Image = CardList.get(position).getImagePath();
             Integer Card_List_Image_Path = view.getResources().getIdentifier("drawable/" + Card_List_Image, null, CardListActivity.this.getPackageName());
-            Card_Custom_List_Image.setImageResource(Card_List_Image_Path);
-            LastNumber = CardList.get(position).getId()+1;
-
+            ((ImageView)view.findViewById(R.id.Card_Custom_List_Image)).setImageResource(Card_List_Image_Path);//이미지 셋팅
+            LastNumber = CardList.get(position).getId()+1;//임시 아이디,seq
             return view;
         }
     }

@@ -13,7 +13,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/Card_Custom_List_Name"
+        android:id="@+id/Card_Custom_List_Number"
         android:hint="error"
         />
 
@@ -22,6 +22,11 @@
         android:layout_height="75dp"
         android:id="@+id/Card_Custom_List_Image"
         />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Card_Custom_List_Name"
+        android:hint="error"/>
 
 
 </LinearLayout>
