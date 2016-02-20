@@ -10,13 +10,6 @@
     android:paddingRight="20dp"
     >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/Card_Custom_List_Number"
-        android:hint="error"
-        />
-
     <ImageView
         android:layout_width="100dp"
         android:layout_height="75dp"

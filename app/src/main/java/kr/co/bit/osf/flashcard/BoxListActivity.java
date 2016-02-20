@@ -31,7 +31,6 @@ import kr.co.bit.osf.flashcard.db.FlashCardDB;
  * Created by bit-user on 2016-02-19.
  */
 public class BoxListActivity extends AppCompatActivity {
-    private EditText createBoxName;
     private BoxListAdapter boxListAdapter;
     private GridView Box_List_View;
     private List<BoxDTO> BoxList;
@@ -39,7 +38,6 @@ public class BoxListActivity extends AppCompatActivity {
     private Button Btn_Box_List_Create;
     private BoxDTO boxDTO;
     private BoxDAO boxDAO;
-    private Integer LastNumber;
     private String BoxName;
 
     @Override
@@ -58,10 +56,9 @@ public class BoxListActivity extends AppCompatActivity {
         Box_List_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), BoxList.get(position).getName(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), CardListActivity.class);
                 Integer BoxId = BoxList.get(position).getId();
-                intent.putExtra("BoxId",BoxId);//박스번호를 카드리스트에 전송
+                intent.putExtra("BoxId", BoxId);//박스번호를 카드리스트에 전송
                 startActivity(intent);
             }
         });
@@ -81,6 +78,7 @@ public class BoxListActivity extends AppCompatActivity {
                        AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListActivity.this);//수정 다이아로그
                         final TextView updateBoxNumber = (TextView) view.findViewById(R.id.Custom_Box_Create_Number);
                         final EditText updateBoxName = (EditText)view.findViewById(R.id.Custom_Box_Create_Name);
+                        updateBoxNumber.setVisibility(View.VISIBLE);
                         final Integer Updateid = BoxList.get(position).getId();
                         updateBoxNumber.setText( Updateid.toString() );
                         updateBoxName.setText(BoxList.get(position).getName());
@@ -162,36 +160,26 @@ public class BoxListActivity extends AppCompatActivity {
             }
         });
 
-        Btn_Box_List_Create = (Button)findViewById(R.id.Custom_List_Create);
-        Btn_Box_List_Create.setOnClickListener(new View.OnClickListener() {
+
+        (findViewById(R.id.Custom_Box_List_Create)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 View view = (View) View.inflate(BoxListActivity.this, R.layout.custom_box_create, null);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(BoxListActivity.this);
-
-                final TextView createBoxNumber = (TextView) view.findViewById(R.id.Custom_Box_Create_Number);
-                createBoxName = (EditText) view.findViewById(R.id.Custom_Box_Create_Name);
-
+               final EditText createBoxName = (EditText) view.findViewById(R.id.Custom_Box_Create_Name);
                 // BoxList = boxDAO.getBoxAll();
-                createBoxNumber.setText( LastNumber.toString() );
                 dialog.setTitle("박스 생성");
                 dialog.setView(view);
                 dialog.setPositiveButton("생성", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        try {
                             BoxDTO dto = new BoxDTO();
                             BoxName = createBoxName.getText().toString();
-                            dto.setId(LastNumber);
                             dto.setName(BoxName);
                             dto.setType(0);
-                            dto.setId(LastNumber);
                             boxDAO.addBox(dto);
                             BoxList.add(dto);
                             refreshBox(BoxList);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                     }
                 });
                 dialog.setNegativeButton("취소", null);
@@ -228,7 +216,6 @@ public class BoxListActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            //todo: CustomListView Create
             View view = convertView;
 
             if (view == null) {
@@ -236,15 +223,8 @@ public class BoxListActivity extends AppCompatActivity {
                 view = inflater.inflate(R.layout.custom_box_list, null);
             }
             Collections.sort( list,new NoAscCompare() );//정렬 id 번호별로
-            TextView boxNum = (TextView) view.findViewById(R.id.Custom_Box_Number);
             TextView boxName = (TextView) view.findViewById(R.id.Custom_Box_Text);
-
-            String str = list.get(position).getName();
-            Integer str1 = list.get(position).getId();
-            String str2 = str1.toString();
-            boxNum.setText(str2 + ". ");
-            boxName.setText(str);
-            LastNumber = list.get(position).getId()+1;
+            boxName.setText(list.get(position).getName());
             return view;
         }
 
@@ -258,7 +238,6 @@ public class BoxListActivity extends AppCompatActivity {
     static class NoAscCompare implements Comparator<BoxDTO> {//오름차순 정렬 함수
         @Override
         public int compare(BoxDTO arg0, BoxDTO arg1) {
-            // TODO Auto-generated method stub
             return arg0.getId() < arg1.getId() ? -1 : arg0.getId() > arg1.getId() ? 1:0;
         }
 
