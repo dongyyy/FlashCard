@@ -61,6 +61,8 @@ public class BoxListModeActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), BoxList.get(position).getName(), Toast.LENGTH_SHORT).show();
                 //todo: Box Choice
                 Intent intent = new Intent(getApplicationContext(), CardListActivity.class);
+                Integer BoxId = BoxList.get(position).getId();
+                intent.putExtra("BoxId",BoxId);//박스번호를 카드리스트에 전송
                 startActivity(intent);
             }
         });
