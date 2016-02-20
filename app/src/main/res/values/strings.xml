@@ -17,4 +17,6 @@
     <!--card edit activity-->
     <string name="card_edit_yes_button_text">좋아요</string>
     <string name="card_edit_no_button_text">아니요</string>
+    <string name="card_edit_edit_text_hint">단어를 입력해주세요</string>
+    <string name="card_edit_gallery_title">좋은 사진 고를래요</string>
 </resources>
