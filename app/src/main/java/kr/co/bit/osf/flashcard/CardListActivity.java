@@ -16,48 +16,54 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.co.bit.osf.flashcard.common.ImageUtil;
+import kr.co.bit.osf.flashcard.common.IntentExtrasName;
+import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.db.CardDAO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
+import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class CardListActivity extends AppCompatActivity {
 
-    List<CardDTO> CardList;
+    List<CardDTO> cardList;
     FlashCardDB db;
     CardDAO dao;
     CardDTO dto;
-    Integer LastNumber = 0;
+    Integer lastNumber = 0;
+    CardListAdapter adapter;
+
+    // send card
+    int sendCardListIndex = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
-        CardList = new ArrayList<>();
+
+        cardList = new ArrayList<>();
         db = new FlashCardDB(this);
-
         dao = db;
-
         dto = new CardDTO();//이미지셋팅용 테스트
         Intent getItem = getIntent();
         Integer BoxId = getItem.getIntExtra("BoxId",0);
 
-        CardList = dao.getCardByBoxId(BoxId);
+        cardList = dao.getCardByBoxId(BoxId);
 
         GridView Card_Custom_Grid_View = (GridView)findViewById(R.id.Card_Custom_List_View);
-
-        CardListAdapter adapter = new CardListAdapter(this);
-
+        adapter = new CardListAdapter(this);
         Card_Custom_Grid_View.setAdapter(adapter);
 
-
-        //todo: activity change CardViewActivity
-        //카드리스트 이동
+        // activity change CardViewActivity
         Card_Custom_Grid_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                int boxId = cardList.get(position).getBoxId();
+                int cardId = cardList.get(position).getId();
+                db.updateState(boxId, cardId);
+                Dlog.i("update state:boxId=" + boxId + ", cardId=" + cardId);
                 Intent intent = new Intent(getApplicationContext(),CardViewActivity.class);
                 startActivity(intent);
-
             }
         });
 
@@ -66,12 +72,17 @@ public class CardListActivity extends AppCompatActivity {
         Card_Custom_Grid_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                // start card edit activity
+                sendCardListIndex = position;
+                CardDTO sendCard = cardList.get(sendCardListIndex);
+                Intent intent = new Intent(CardListActivity.this, CardEditActivity.class);
+                intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
+                intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
+                startActivityForResult(intent, IntentRequestCode.CARD_EDIT);
+                Dlog.i("sendData:" + sendCard);
                 return true;
             }
         });
-
-
-
     }
 
     public class CardListAdapter extends BaseAdapter{
@@ -83,7 +94,7 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return CardList.size();
+            return cardList.size();
         }
 
         @Override
@@ -105,19 +116,32 @@ public class CardListActivity extends AppCompatActivity {
                 view = inflater.inflate(R.layout.custom_card_list,null);
             }
 
-
-
-            String Card_List_Number = "BoxID." + CardList.get(position).getBoxId() + " CardID." + CardList.get(position).getId();
-            String Card_List_Name = CardList.get(position).getName();
+            String Card_List_Number = "BoxID." + cardList.get(position).getBoxId() + " CardID." + cardList.get(position).getId();
+            String Card_List_Name = cardList.get(position).getName();
 
             ((TextView)view.findViewById(R.id.Card_Custom_List_Number)).setText(Card_List_Number);//숫자
             ((TextView)view.findViewById(R.id.Card_Custom_List_Name)).setText(Card_List_Name);//이름
-            //ImageUtil.showImageFileInImageView(Card_List_Image, Card_Custom_List_Image);
-            String Card_List_Image = CardList.get(position).getImagePath();
-            Integer Card_List_Image_Path = view.getResources().getIdentifier("drawable/" + Card_List_Image, null, CardListActivity.this.getPackageName());
-            ((ImageView)view.findViewById(R.id.Card_Custom_List_Image)).setImageResource(Card_List_Image_Path);//이미지 셋팅
-            LastNumber = CardList.get(position).getId()+1;//임시 아이디,seq
+            ImageUtil.showImageFileInImageView(CardListActivity.this, cardList.get(position), ((ImageView) view.findViewById(R.id.Card_Custom_List_Image)));
+            lastNumber = cardList.get(position).getId()+1;//임시 아이디,seq
             return view;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case IntentRequestCode.CARD_EDIT:
+                    // get result data
+                    CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
+                    Dlog.i("returnData:" + returnCard);
+                    // refresh returned data
+                    cardList.set(sendCardListIndex, returnCard);
+                    // refresh view pager
+                    adapter.notifyDataSetChanged();
+                    break;
+            }
         }
     }
 

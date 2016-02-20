@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-
 import java.io.File;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
@@ -67,16 +65,8 @@ public class CardEditActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.cardEditImageView);
 
         //show card
-        if(intentRequestCode == IntentRequestCode.CARD_EDIT){
-            String imagePath = card.getImagePath();
-            if (card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
-                // load image from sd card(glide)
-                Glide.with(getApplicationContext()).load(imagePath).into(imageView);
-            } else {
-                // card demo data(glide)
-                Glide.with(getApplicationContext()).fromResource()
-                        .load(Integer.parseInt(imagePath)).into(imageView);
-            }
+        if(intentRequestCode == IntentRequestCode.CARD_EDIT) {
+            ImageUtil.showImageFileInImageView(this, card, imageView);
         }
         editText.setText(card.getName());
         editText.setSelection(editText.length()); //커서를 맨 뒤로 이동
@@ -139,9 +129,9 @@ public class CardEditActivity extends AppCompatActivity {
                     if (requestCode== IntentRequestCode.SELECT_PICTURE) {
                         photoFilePath = ImageUtil.getImagePathFromIntentData(this, data);
                     }
-                    Glide.with(getApplicationContext()).load(photoFilePath).into(imageView);
                     card.setImagePath(photoFilePath);
                     card.setType(FlashCardDB.CardEntry.TYPE_USER);
+                    ImageUtil.showImageFileInImageView(this, card, imageView);
                     Dlog.i("photoFilePath:" + card.getImagePath());
                     break;
               }
