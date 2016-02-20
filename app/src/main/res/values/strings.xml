@@ -13,6 +13,11 @@
     <string name="box1_card_demo_data_name1">pig</string>
     <string name="box1_card_demo_data_name2">chick</string>
     <string name="box1_card_demo_data_name3">rat</string>
+    <!--box list activity-->
+    <string name="box_list_add_button_text">카드를 만들어 보자</string>
+    <string name="box_list_add_dialog_title">박스 이름은?</string>
+    <string name="box_list_add_dialog_yes_text">만들기</string>
+    <string name="box_list_add_dialog_no_text">다음에</string>
     <!--card edit activity-->
     <string name="card_edit_yes_button_text">좋아요</string>
     <string name="card_edit_no_button_text">아니요</string>

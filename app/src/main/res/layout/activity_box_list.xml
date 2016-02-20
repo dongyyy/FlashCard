@@ -17,8 +17,8 @@
         android:divider="#ffffff"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:columnWidth="100dp"
-        ></GridView>
+        android:columnWidth="100dp" />
+
 </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,8 +30,8 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/Custom_Box_List_Create"
-            android:text="카드를 만들어보자"
+            android:id="@+id/boxListAddButton"
+            android:text="@string/box_list_add_button_text"
             android:layout_gravity="center"
             />
 
