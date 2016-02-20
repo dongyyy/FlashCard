@@ -10,6 +10,6 @@ public interface IntentRequestCode {
     int BOX_DELETE = 1102;
     int BOX_EDIT = 1103;
 
-    int CAPTURE_IMAGE = 1201;
+    int CAPTURE_IMAGECAPTURE_IMAGE = 1201;
     int SELECT_PICTURE = 1202;
 }
