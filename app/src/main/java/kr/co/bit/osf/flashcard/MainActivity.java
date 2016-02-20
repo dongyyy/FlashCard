@@ -3,18 +3,19 @@ package kr.co.bit.osf.flashcard;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
+import android.widget.Button;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDAO;
 import kr.co.bit.osf.flashcard.db.StateDTO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
-import kr.co.bit.osf.flashcard.test.SetupInitialState;
+import kr.co.bit.osf.flashcard.test.SetupInitialStateTemplate;
+
 
 public class MainActivity extends AppCompatActivity {
     FlashCardDB db = null;
     StateDAO stateDao = null;
     StateDTO state = null;
-
+    Button btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // test setup
-        SetupInitialState.setupState(db);
+        SetupInitialStateTemplate.setupState(db);
 
         // start box list activity
-        Intent intent = new Intent(this, BoxListActivity.class);
+        Intent intent = new Intent(getApplicationContext(), BoxListActivity.class);
         startActivity(intent);
     }
 }

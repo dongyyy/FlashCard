@@ -113,9 +113,10 @@ public class FlashCardDBTest extends AndroidTestCase {
     public void testDeleteBox() throws Exception {
         setupBoxData();
         int deleteId = 2;
+         int id = (int)deleteId;
 
-        assertEquals(true, (boxDao.deleteBox(deleteId)));
-        assertNull(boxDao.getBox(deleteId));
+        assertEquals(true, (boxDao.deleteBox(id)));
+        assertNull(boxDao.getBox(id));
     }
 
     public void testUpdateBox() throws Exception {
