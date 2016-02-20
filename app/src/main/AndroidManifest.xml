@@ -16,7 +16,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".BoxListActivity"
+            android:label="@string/title_activity_box_list">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,12 +30,11 @@
         <activity
             android:name=".CardViewActivity"
             android:label="@string/title_activity_card_view" />
-
-        <activity android:name=".CardEditActivity"></activity>
-        <activity android:name=".BoxListActivity"></activity>
-        <!--<activity-->
-            <!--android:name=".CardEditActivity"-->
-            <!--android:label="@string/title_activity_card_edit" />-->
+        <activity
+            android:name=".CardEditActivity"
+            android:label="@string/title_activity_card_edit" />
+        <activity android:name=".SplashActivity">
+        </activity>
     </application>
 
 </manifest>
