@@ -11,7 +11,7 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="75dp"
-        android:src="@drawable/cat"
+        android:src="@drawable/animal_01"
         android:layout_gravity="center"
         />
 

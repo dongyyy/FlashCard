@@ -6,14 +6,13 @@
     <string name="title_activity_card_view">CardView</string>
     <string name="title_activity_card_edit">CardEdit</string>
     <!--box demo data-->
-    <string name="box_demo_data_name">동물</string>
-    <!--card demo data-->
-    <string name="card_demo_data1_name">dog</string>
-    <string name="card_demo_data1_image_name">dog</string>
-    <string name="card_demo_data2_name">cat</string>
-    <string name="card_demo_data2_image_name">cat</string>
-    <string name="card_demo_data3_name">rabbit</string>
-    <string name="card_demo_data3_image_name">rabbit</string>
+    <string name="box_demo_data_name1">동물</string>
+    <string name="box_demo_data_name2">숫자</string>
+    <string name="box_demo_data_name3">알파벳</string>
+    <!--box1 card demo data-->
+    <string name="box1_card_demo_data_name1">pig</string>
+    <string name="box1_card_demo_data_name2">chick</string>
+    <string name="box1_card_demo_data_name3">rat</string>
     <!--card edit activity-->
     <string name="card_edit_yes_button_text">좋아요</string>
     <string name="card_edit_no_button_text">아니요</string>

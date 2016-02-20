@@ -269,7 +269,7 @@ public class FlashCardDBTest extends AndroidTestCase {
         //assertEquals(true, "동물".equals(context.getString(R.string.box_demo_data_name)));
         //assertEquals(true, "동물".equals(db.getBox(1).getName()));
         BoxDTO box = boxDao.getBox(1);
-        assertEquals(true, context.getString(R.string.box_demo_data_name).equals(box.getName()));
+        assertEquals(true, context.getString(R.string.box_demo_data_name1).equals(box.getName()));
         assertEquals(true, (box.getType() == FlashCardDB.BoxEntry.TYPE_DEMO));
         assertEquals(true, (box.getSeq() == 1));
     }
@@ -277,12 +277,25 @@ public class FlashCardDBTest extends AndroidTestCase {
     public void testCreateCardDemoData() throws Exception {
         assertEquals(true, db.createCardDemoData());
 
-        int findId = 9;
-        String findName = "nine";
-        String findImagePath = "" + R.drawable.number_09;
-        int findBoxId = 2;
+        // box 2
+        int findBoxId = 1;
+        int findId = 2;
+        String findName = "chick";
+        String findImagePath = "" + R.drawable.animal_02;
 
         CardDTO card = cardDao.getCard(findId);
+        assertEquals(true, findName.equals(card.getName()));
+        assertEquals(true, findImagePath.equals(card.getImagePath()));
+        assertEquals(true, (card.getType() == FlashCardDB.CardEntry.TYPE_DEMO));
+        assertEquals(true, (card.getBoxId() == findBoxId));
+
+        // box 3
+        findBoxId = 3;
+        findId = 9+3+20;
+        findName = "I";
+        findImagePath = "" + R.drawable.alphabet_i;
+
+        card = cardDao.getCard(findId);
         assertEquals(true, findName.equals(card.getName()));
         assertEquals(true, findImagePath.equals(card.getImagePath()));
         assertEquals(true, (card.getType() == FlashCardDB.CardEntry.TYPE_DEMO));
@@ -294,10 +307,10 @@ public class FlashCardDBTest extends AndroidTestCase {
         assertEquals(true, db.initialize());
 
         List<BoxDTO> boxList = boxDao.getBoxAll();
-        assertEquals(true, (boxList.size() == 1));
+        assertEquals(true, (boxList.size() == 3));
 
         BoxDTO box = boxDao.getBox(1);
-        assertEquals(true, context.getString(R.string.box_demo_data_name).equals(box.getName()));
+        assertEquals(true, context.getString(R.string.box_demo_data_name1).equals(box.getName()));
         assertEquals(true, (box.getType() == FlashCardDB.BoxEntry.TYPE_DEMO));
         assertEquals(true, (box.getSeq() == 1));
 
