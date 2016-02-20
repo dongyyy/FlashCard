@@ -61,6 +61,7 @@ public class CardEditActivity extends AppCompatActivity {
         // todo: process requested task
         Dlog.i("getExtras:sendData:" + card);
         intentResultCode = RESULT_OK;
+
         editText = (EditText) findViewById(R.id.cardEditText);
         imageView = (ImageView) findViewById(R.id.cardEditImageView);
 
@@ -97,6 +98,24 @@ public class CardEditActivity extends AppCompatActivity {
                 startActivityForResult(
                         Intent.createChooser(intent, "Select Picture"),
                         IntentRequestCode.SELECT_PICTURE);
+            }
+        });
+
+        //Delete Button
+        (findViewById(R.id.cardEditDeleteButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dlog.i("delete data:" + card);
+
+                // delete card
+                FlashCardDB db = new FlashCardDB(CardEditActivity.this);
+                if (db.deleteCard(card.getId()) == false) {
+                    Dlog.i("delete error:" + card);
+                }
+
+                Intent deleteIntent = new Intent();
+                deleteIntent.putExtra("delete", card);
+                finish();
             }
         });
 
