@@ -522,6 +522,11 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         return (count > 0);
     }
 
+    @Override
+    public boolean updateState(int boxId, int cardId) {
+        return updateState(new StateDTO(1,boxId, cardId));
+    }
+
     // demo data
     public boolean createBoxDemoData() {
         BoxDTO [] demoBox = {

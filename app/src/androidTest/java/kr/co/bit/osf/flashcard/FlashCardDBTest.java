@@ -261,6 +261,15 @@ public class FlashCardDBTest extends AndroidTestCase {
         StateDTO updatedValue = stateDao.getState(updateId);
         assertNotNull(updatedValue);
         assertEquals(true, (newValue.equals(updatedValue)));
+
+        //
+        int boxId = 5;
+        int cardId = 6;
+        assertEquals(true, (stateDao.updateState(boxId, cardId)));
+        updatedValue = stateDao.getState(updateId);
+        assertNotNull(updatedValue);
+        assertEquals(true, (updatedValue.getBoxId() == boxId));
+        assertEquals(true, (updatedValue.getCardId() == cardId));
     }
 
     // demo data

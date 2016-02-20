@@ -6,4 +6,5 @@ public interface StateDAO {
     StateDTO getState(int id);
     boolean deleteState(int id);
     boolean updateState(StateDTO newValue);
+    boolean updateState(int boxId, int cardId);
 }
