@@ -7,7 +7,6 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -31,9 +30,7 @@ public class CardEditActivity extends AppCompatActivity {
     // view
     private ImageView imageView = null;
     private EditText editText = null;
-    private Button yesButton = null;
-    private Button noButton = null;
-    // camera
+    // camera, gallery
     private File photoFile = null;
     private String photoFilePath = null;
 
@@ -84,25 +81,47 @@ public class CardEditActivity extends AppCompatActivity {
         editText.setText(card.getName());
         editText.setSelection(editText.length()); //커서를 맨 뒤로 이동
 
-        //yes, no Button
-        yesButton = (Button)findViewById(R.id.cardEditYesButton);
-        noButton =(Button)findViewById(R.id.cardEditNoButton);
-
-        yesButton.setOnClickListener(new View.OnClickListener() {
+        //camera Button
+        (findViewById(R.id.cardEditCameraButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String cardName = editText.getText().toString();
+                photoFile = ImageUtil.getOutputMediaFile(ImageUtil.MEDIA_TYPE_IMAGE);
+                photoFilePath = photoFile.getAbsolutePath();
 
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(intent, IntentRequestCode.CAPTURE_IMAGECAPTURE_IMAGE);
+                }
+            }
+        });
+
+        //gallery Button
+        (findViewById(R.id.cardEditGalleryButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dlog.i("cardViewGalleryButton clicked");
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");
+                startActivityForResult(
+                        Intent.createChooser(intent, "Select Picture"),
+                        IntentRequestCode.SELECT_PICTURE);
+            }
+        });
+
+        //yes, no Button
+        (findViewById(R.id.cardEditYesButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 FlashCardDB db = new FlashCardDB(getApplicationContext());
-                //card.setImagePath();
-                card.setName(cardName);
+                card.setName(editText.getText().toString().trim());
                 db.updateCard(card);
-
                 finish();
             }
         });
 
-        noButton.setOnClickListener(new View.OnClickListener() {
+        (findViewById(R.id.cardEditNoButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intentResultCode = RESULT_CANCELED;
@@ -111,34 +130,21 @@ public class CardEditActivity extends AppCompatActivity {
         });
     }
 
-    //camera capture
-    public void onCameraButtonClicked(View v) {
-
-        photoFile = ImageUtil.getOutputMediaFile(ImageUtil.MEDIA_TYPE_IMAGE);
-        photoFilePath = photoFile.getAbsolutePath();
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, IntentRequestCode.CAPTURE_IMAGECAPTURE_IMAGE);
-        }
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
-
         if(resultCode == RESULT_OK){
             switch(requestCode) {
                 case IntentRequestCode.CAPTURE_IMAGECAPTURE_IMAGE:
+                case IntentRequestCode.SELECT_PICTURE:
+                    if (requestCode== IntentRequestCode.SELECT_PICTURE) {
+                        photoFilePath = ImageUtil.getImagePathFromIntentData(this, data);
+                    }
                     Glide.with(getApplicationContext()).load(photoFilePath).into(imageView);
                     card.setImagePath(photoFilePath);
                     card.setType(FlashCardDB.CardEntry.TYPE_USER);
                     Dlog.i("photoFilePath:" + card.getImagePath());
                     break;
-                case IntentRequestCode.SELECT_PICTURE:
-
-                    break;
-            }
+              }
         }
     }
 
