@@ -184,14 +184,13 @@ public class CardViewActivity extends AppCompatActivity {
             PagerHolder holder = new PagerHolder(list.get(position), position,
                     imageView, textView, flipAnimator);
             // image
-            String imagePath = holder.getCard().getImagePath();
             if (holder.card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
                 // load image from sd card(glide)
-                Glide.with(context).load(imagePath).into(imageView);
+                Glide.with(context).load(holder.getCard().getImagePath()).into(imageView);
             } else {
                 // card demo data(glide)
                 Glide.with(context).fromResource()
-                        .load(Integer.parseInt(imagePath)).into(imageView);
+                        .load(holder.getCard().getImageId()).into(imageView);
             }
             // text
             textView.setText(holder.getCard().getName());
