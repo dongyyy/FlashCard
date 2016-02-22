@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,15 +28,18 @@ import kr.co.bit.osf.flashcard.db.StateDTO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class CardViewActivity extends AppCompatActivity {
+    // db
     FlashCardDB db = null;
     StateDTO cardState = null;
     List<CardDTO> cardList = null;
-    Button List_View_Mode;
+
+    // view pager
     ViewPager pager;
     CardViewPagerAdapter pagerAdapter;
 
     // view pager item map
     Map<Integer, View> itemViewMap = new HashMap<>();
+    int currentPosition = 0;
     int lastPosition = -1;
 
     // send card
@@ -74,24 +76,26 @@ public class CardViewActivity extends AppCompatActivity {
         pager.setAdapter(pagerAdapter);
         pager.setOffscreenPageLimit(1);
 
-        // set start position by state card id
-        int startPosition = 0;
+        // set current position by state card id
         int stateCardId = cardState.getCardId();
         for (int i = 0; i < cardList.size(); i++) {
             if (stateCardId == cardList.get(i).getId()) {
-                startPosition = i;
+                currentPosition = i;
                 break;
             }
         }
-        if (startPosition < cardList.size()) {
-            pager.setCurrentItem(startPosition);
+        if (currentPosition < cardList.size()) {
+            pager.setCurrentItem(currentPosition);
+            Dlog.i("setCurrentItem:currentPosition:" + currentPosition);
         }
 
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                Dlog.i("position:" + position + ", lastPosition=" + lastPosition);
+                // current position
+                currentPosition = position;
+                Dlog.i("currentPosition:" + position + ", lastPosition=" + lastPosition);
                 // view pager item map
                 View lastView = itemViewMap.get(lastPosition);
                 if (lastView != null) {
@@ -116,6 +120,24 @@ public class CardViewActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Dlog.i("");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Dlog.i("currentPosition:" + currentPosition);
+        // save current state
+        if (db != null) {
+            int cardId = cardList.get(currentPosition).getId();
+            Dlog.i("onSaveInstanceState:cardId:" + cardId);
+            db.updateState(cardState.getBoxId(), cardId);
+        }
     }
 
     // pager adapter
@@ -313,7 +335,6 @@ public class CardViewActivity extends AppCompatActivity {
                     '}';
         }
     }
-
 
     // flip animation
     // http://stackoverflow.com/questions/7785649/creating-a-3d-flip-animation-in-android-using-xml
