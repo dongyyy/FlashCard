@@ -290,11 +290,11 @@ public class FlashCardDBTest extends AndroidTestCase {
         int findBoxId = 1;
         int findId = 2;
         String findName = "chick";
-        String findImagePath = "" + R.drawable.animal_02;
+        int findImageId = R.drawable.animal_02;
 
         CardDTO card = cardDao.getCard(findId);
         assertEquals(true, findName.equals(card.getName()));
-        assertEquals(true, findImagePath.equals(card.getImagePath()));
+        assertEquals(true, findImageId == card.getImageId());
         assertEquals(true, (card.getType() == FlashCardDB.CardEntry.TYPE_DEMO));
         assertEquals(true, (card.getBoxId() == findBoxId));
 
@@ -302,11 +302,11 @@ public class FlashCardDBTest extends AndroidTestCase {
         findBoxId = 3;
         findId = 9+3+20;
         findName = "I";
-        findImagePath = "" + R.drawable.alphabet_i;
+        findImageId = R.drawable.alphabet_i;
 
         card = cardDao.getCard(findId);
         assertEquals(true, findName.equals(card.getName()));
-        assertEquals(true, findImagePath.equals(card.getImagePath()));
+        assertEquals(true, findImageId == card.getImageId());
         assertEquals(true, (card.getType() == FlashCardDB.CardEntry.TYPE_DEMO));
         assertEquals(true, (card.getBoxId() == findBoxId));
     }

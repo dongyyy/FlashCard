@@ -558,7 +558,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
 
         for (int i = 0; i < nameList.length; i++) {
             card.setName(nameList[i]);
-            card.setImagePath("" + (R.drawable.animal_01 + i));
+            card.setImagePath("");
             card.setImageId(R.drawable.animal_01 + i);
             card.setSeq(i + 1);
             if (addCard(card) == false) {
@@ -581,7 +581,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
 
         for (int i = 0; i < nameList.length; i++) {
             card.setName(nameList[i]);
-            card.setImagePath("" + (R.drawable.number_01 + i));
+            card.setImagePath("");
             card.setImageId(R.drawable.number_01 + i);
             card.setSeq(i + 1);
             if (addCard(card) == false) {
@@ -599,7 +599,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
 
         for (int i = 0; i < 20; i++) {
             card.setName(String.valueOf(Character.toChars('A' + i)));
-            card.setImagePath("" + (R.drawable.alphabet_a + i));
+            card.setImagePath("");
             card.setImageId(R.drawable.alphabet_a + i);
             card.setSeq(i + 1);
             if (addCard(card) == false) {
