@@ -137,15 +137,14 @@ public class ImageUtil {
         return imageList;
     }
 
-    public static void showImageFileInImageView(Context context, CardDTO card, ImageView imageView) {
-        String imagePath = card.getImagePath();
+    public static void loadCardImageIntoImageView(Context context, CardDTO card, ImageView imageView) {
         if (card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
             // load image from sd card(glide)
-            Glide.with(context).load(imagePath).into(imageView);
+            Glide.with(context).load(card.getImagePath()).into(imageView);
         } else {
             // card demo data(glide)
             Glide.with(context).fromResource()
-                    .load(Integer.parseInt(imagePath)).into(imageView);
+                    .load(card.getImageId()).into(imageView);
         }
     }
 

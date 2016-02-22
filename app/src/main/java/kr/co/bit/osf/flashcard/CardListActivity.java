@@ -119,7 +119,7 @@ public class CardListActivity extends AppCompatActivity {
             String Card_List_Number = "BoxID." + cardList.get(position).getBoxId() + " CardID." + cardList.get(position).getId();
             String Card_List_Name = cardList.get(position).getName();
             ((TextView)view.findViewById(R.id.Card_Custom_List_Name)).setText(Card_List_Name);//이름
-            ImageUtil.showImageFileInImageView(CardListActivity.this, cardList.get(position), ((ImageView) view.findViewById(R.id.Card_Custom_List_Image)));
+            ImageUtil.loadCardImageIntoImageView(CardListActivity.this, cardList.get(position), ((ImageView) view.findViewById(R.id.Card_Custom_List_Image)));
             lastNumber = cardList.get(position).getId()+1;//임시 아이디,seq
 
             return view;
