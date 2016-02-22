@@ -3,25 +3,11 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
+
 <LinearLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center">
-
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/Custom_List_Create"
-        android:text="생성"
-        android:layout_gravity="center"
-        />
-
-
-</LinearLayout>
-
-
+    android:layout_weight="1">
     <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,9 +17,24 @@
         android:divider="#ffffff"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:columnWidth="100dp"
+        android:columnWidth="100dp" />
 
+</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_weight="0">
 
-        ></GridView>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/boxListAddButton"
+            android:text="@string/box_list_add_button_text"
+            android:layout_gravity="center"
+            />
+
+    </LinearLayout>
 
 </LinearLayout>

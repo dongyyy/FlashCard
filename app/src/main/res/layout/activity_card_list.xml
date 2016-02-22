@@ -8,10 +8,9 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="kr.co.bit.osf.flashcard.CardListActivity"
+    android:orientation="vertical"
     android:gravity="center"
     >
-
-
     <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,8 +21,5 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:columnWidth="100dp"
-
-
         ></GridView>
-
 </LinearLayout>

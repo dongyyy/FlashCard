@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">FlashCard</string>
     <!--activity title-->
-    <string name="title_activity_box_list">BoxList</string>
-    <string name="title_activity_card_list">CardList</string>
-    <string name="title_activity_card_view">CardView</string>
-    <string name="title_activity_card_edit">CardEdit</string>
+    <string name="title_activity_box_list">FlashCard</string>
+    <string name="title_activity_card_list">카드 박스</string>
+    <string name="title_activity_card_view">카드 보기</string>
+    <string name="title_activity_card_edit">카드 고치기</string>
     <!--box demo data-->
     <string name="box_demo_data_name1">동물</string>
     <string name="box_demo_data_name2">숫자</string>
@@ -13,9 +13,16 @@
     <string name="box1_card_demo_data_name1">pig</string>
     <string name="box1_card_demo_data_name2">chick</string>
     <string name="box1_card_demo_data_name3">rat</string>
+    <!--box list activity-->
+    <string name="box_list_add_button_text">카드 박스를 만들어 보자</string>
+    <string name="box_list_add_dialog_title">박스 이름은?</string>
+    <string name="box_list_add_dialog_yes_text">만들기</string>
+    <string name="box_list_add_dialog_no_text">다음에</string>
     <!--card edit activity-->
     <string name="card_edit_yes_button_text">좋아요</string>
     <string name="card_edit_no_button_text">아니요</string>
     <string name="card_edit_edit_text_hint">단어를 입력해주세요</string>
     <string name="card_edit_gallery_title">좋은 사진 고를래요</string>
+    <!--splash activity-->
+    <string name="splash_message">내가 만드는 플래시카드</string>
 </resources>
