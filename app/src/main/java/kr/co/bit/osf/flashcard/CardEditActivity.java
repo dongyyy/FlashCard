@@ -52,12 +52,15 @@ public class CardEditActivity extends AppCompatActivity {
         Dlog.i("intentRequestCode:" + intentRequestCode);
         switch (intentRequestCode) {
             case IntentRequestCode.CARD_EDIT:
+            case IntentRequestCode.CARD_DELETE:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
                 break;
-            case IntentRequestCode.CARD_DELETE:
+            /*case IntentRequestCode.CARD_DELETE_LIST:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
-                break;
+                List<CardDTO>[] cardList;
+                cardList = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
+                break;*/
         }
         if (card == null) {
             Dlog.i("getExtras:sendData:no data");
@@ -69,8 +72,20 @@ public class CardEditActivity extends AppCompatActivity {
         Dlog.i("getExtras:sendData:" + card);
         intentResultCode = RESULT_OK;
 
-        cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
+        if(intentRequestCode == IntentRequestCode.CARD_DELETE){
+            Dlog.i("delete data:" + card);
+
+            // delete card
+            FlashCardDB db = new FlashCardDB(CardEditActivity.this);
+            if (db.deleteCard(card.getId()) == false) {
+                intentResultCode = RESULT_CANCELED;
+                Dlog.i("delete error:" + card);
+            }
+            finish();
+        }
+
         imageView = (ImageView) findViewById(R.id.cardEditImageView);
+        cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
 
         //show card
         if(intentRequestCode == IntentRequestCode.CARD_EDIT) {
@@ -92,25 +107,7 @@ public class CardEditActivity extends AppCompatActivity {
                 textClicked();
             }
         });
-/*
-        //Delete Button
-        (findViewById(R.id.cardEditDeleteButton)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dlog.i("delete data:" + card);
 
-                // delete card
-                FlashCardDB db = new FlashCardDB(CardEditActivity.this);
-                if (db.deleteCard(card.getId()) == false) {
-                    Dlog.i("delete error:" + card);
-                }
-
-                Intent deleteIntent = new Intent();
-                deleteIntent.putExtra("delete", card);
-                finish();
-            }
-        });
-*/
         //yes, no Button
         (findViewById(R.id.cardEditYesButton)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,6 +219,7 @@ public class CardEditActivity extends AppCompatActivity {
                     card.setImagePath(photoFilePath);
                     card.setType(FlashCardDB.CardEntry.TYPE_USER);
                     ImageUtil.loadCardImageIntoImageView(this, card, imageView);
+                    Dlog.i("photoFilePath:" + card.getImagePath());
                     Dlog.i("photoFilePath:" + card.getImagePath());
                     break;
               }
