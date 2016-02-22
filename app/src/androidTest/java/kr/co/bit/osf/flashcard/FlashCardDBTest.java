@@ -70,6 +70,7 @@ public class FlashCardDBTest extends AndroidTestCase {
 
         assertEquals(true, boxDao.addBox(box));
         assertEquals(true, (box.getId() == 1));
+        assertEquals(true, (box.getSeq() == box.getId()));
         assertEquals(true, boxDataList[addIndex].equals(box));
     }
 
@@ -79,6 +80,7 @@ public class FlashCardDBTest extends AndroidTestCase {
 
         assertNotNull(addedBox);
         assertEquals(true, (addedBox.getId() == 1));
+        assertEquals(true, (addedBox.getSeq() == addedBox.getId()));
         assertEquals(true, name.equals(addedBox.getName()));
     }
 
@@ -131,6 +133,18 @@ public class FlashCardDBTest extends AndroidTestCase {
         assertEquals(true, (newValue.equals(updatedValue)));
         assertEquals(true, (newValue.getType() == updatedValue.getType()));
         assertEquals(true, (newValue.getSeq() == updatedValue.getSeq()));
+    }
+
+    public void testUpdateBoxSeq() throws Exception {
+        setupBoxData();
+        int updateId = 2;
+        int updateSeq = updateId + 11;
+
+        boxDao.updateBoxSeq(updateId, updateSeq);
+
+        BoxDTO updatedValue = boxDao.getBox(updateId);
+        assertNotNull(updatedValue);
+        assertEquals(true, (updateSeq == updatedValue.getSeq()));
     }
 
     // card

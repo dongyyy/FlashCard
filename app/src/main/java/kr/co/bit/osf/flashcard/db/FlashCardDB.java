@@ -171,16 +171,12 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
     // box
     @Override
     public BoxDTO addBox(String name){
-        ContentValues values = new ContentValues();
-        values.put(BoxEntry.COLUMN_NAME_NAME, name);
-        values.put(BoxEntry.COLUMN_NAME_TYPE, 0);
-        values.put(BoxEntry.COLUMN_NAME_SEQ, 0);
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.insert(BoxEntry.TABLE_NAME, null, values);
-        db.close();
-
-        return getBox(name);
+        BoxDTO box = new BoxDTO(name);
+        if (addBox(box)) {
+            return box;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -251,6 +247,10 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         box.setId(newRowId);
         db.close();
 
+        if (updateBoxSeq(newRowId, newRowId)) {
+            box.setSeq(newRowId);
+        }
+
         return (newRowId > 0);
     }
 
@@ -284,6 +284,37 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         // Which row to update, based on the ID
         String selection = BoxEntry.COLUMN_NAME_ENTRY_ID + " = ?";
         String[] selectionArgs = {String.valueOf(newValue.getId())};
+
+        int count = db.update(
+                BoxEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+        db.close();
+
+        return (count > 0);
+    }
+
+    @Override
+    public boolean updateBoxSeq(int id, int seq) {
+/*
+        SQLiteDatabase db = this.getWritableDatabase();
+        String sql = "update " + BoxEntry.TABLE_NAME
+                + " set " + BoxEntry.COLUMN_NAME_SEQ + " = " + seq
+                + " where " + BoxEntry.COLUMN_NAME_ENTRY_ID + " = " + id;
+        db.execSQL(sql);
+        db.close();
+*/
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // http://developer.android.com/intl/ko/training/basics/data-storage/databases.html#UpdateDbRow
+        // New value for one column
+        ContentValues values = new ContentValues();
+        values.put(BoxEntry.COLUMN_NAME_SEQ, seq);
+
+        // Which row to update, based on the ID
+        String selection = BoxEntry.COLUMN_NAME_ENTRY_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
 
         int count = db.update(
                 BoxEntry.TABLE_NAME,
