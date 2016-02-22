@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.List;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
@@ -34,6 +35,8 @@ public class CardEditActivity extends AppCompatActivity {
     // camera, gallery
     private File photoFile = null;
     private String photoFilePath = null;
+    // delete card
+    List<CardDTO>[] cardList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +59,12 @@ public class CardEditActivity extends AppCompatActivity {
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
                 break;
-            /*case IntentRequestCode.CARD_DELETE_LIST:
+       /*     case IntentRequestCode.CARD_DELETE_LIST:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
-                List<CardDTO>[] cardList;
                 cardList = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
                 break;*/
         }
-        if (card == null) {
+        if (card == null && cardList ==null) {
             Dlog.i("getExtras:sendData:no data");
             finish();
             return;
@@ -83,6 +85,19 @@ public class CardEditActivity extends AppCompatActivity {
             }
             finish();
         }
+
+      /*  if(intentRequestCode == IntentRequestCode.CARD_DELETE_LIST){
+            Dlog.i("delete data:" + cardList);
+
+            //delete cardList
+            FlashCardDB db = new FlashCardDB(CardEditActivity.this);
+            if(db.deleteCard(cardList)==false){
+                intentRequestCode(card.getId() == false){
+                    intentResultCode = RESULT_CANCELED;
+                    Dlog.i("delete error:" + card);
+                }
+            }
+        }*/
 
         imageView = (ImageView) findViewById(R.id.cardEditImageView);
         cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
