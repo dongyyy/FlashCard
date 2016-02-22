@@ -1,4 +1,4 @@
-package kr.co.bit.osf.flashcard.debug;
+package kr.co.bit.osf.flashcard;
 
 import android.app.Application;
 import android.content.Context;

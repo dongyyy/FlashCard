@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">FlashCard</string>
     <!--activity title-->
-    <string name="title_activity_box_list">박스 보기</string>
+    <string name="title_activity_box_list">FlashCard</string>
     <string name="title_activity_card_list">카드 박스</string>
     <string name="title_activity_card_view">카드 보기</string>
     <string name="title_activity_card_edit">카드 고치기</string>

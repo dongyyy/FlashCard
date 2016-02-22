@@ -2,6 +2,8 @@ package kr.co.bit.osf.flashcard.debug;
 
 import android.util.Log;
 
+import kr.co.bit.osf.flashcard.BaseApplication;
+
 // http://gun0912.tistory.com/12
 public class Dlog {
     static final String TAG = "FlashCard";
