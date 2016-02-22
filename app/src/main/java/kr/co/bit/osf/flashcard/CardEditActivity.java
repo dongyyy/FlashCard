@@ -74,7 +74,7 @@ public class CardEditActivity extends AppCompatActivity {
 
         //show card
         if(intentRequestCode == IntentRequestCode.CARD_EDIT) {
-            ImageUtil.showImageFileInImageView(this, card, imageView);
+            ImageUtil.loadCardImageIntoImageView(this, card, imageView);
         }
         cardEditTextView.setText(card.getName());
 
@@ -221,7 +221,7 @@ public class CardEditActivity extends AppCompatActivity {
                     }
                     card.setImagePath(photoFilePath);
                     card.setType(FlashCardDB.CardEntry.TYPE_USER);
-                    ImageUtil.showImageFileInImageView(this, card, imageView);
+                    ImageUtil.loadCardImageIntoImageView(this, card, imageView);
                     Dlog.i("photoFilePath:" + card.getImagePath());
                     break;
               }

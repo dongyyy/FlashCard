@@ -16,12 +16,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
 import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.db.CardDTO;
@@ -174,9 +173,9 @@ public class CardViewActivity extends AppCompatActivity {
         public Object instantiateItem(ViewGroup container, int position) {
             Dlog.i("position:" + position);
 
-            View view = inflater.inflate(R.layout.activity_card_view_pager_child, null);
-            ImageView imageView = (ImageView) view.findViewById(R.id.cardViewPagerChildImage);
-            TextView textView = (TextView) view.findViewById(R.id.cardViewPagerChildText);
+            View view = inflater.inflate(R.layout.activity_card_view_pager_item, null);
+            ImageView imageView = (ImageView) view.findViewById(R.id.cardViewPagerItemImage);
+            TextView textView = (TextView) view.findViewById(R.id.cardViewPagerItemText);
 
             ValueAnimator flipAnimator = ValueAnimator.ofFloat(0f, 1f);
             flipAnimator.addUpdateListener(new FlipListener(imageView, textView));
@@ -184,15 +183,7 @@ public class CardViewActivity extends AppCompatActivity {
             PagerHolder holder = new PagerHolder(list.get(position), position,
                     imageView, textView, flipAnimator);
             // image
-            String imagePath = holder.getCard().getImagePath();
-            if (holder.card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
-                // load image from sd card(glide)
-                Glide.with(context).load(imagePath).into(imageView);
-            } else {
-                // card demo data(glide)
-                Glide.with(context).fromResource()
-                        .load(Integer.parseInt(imagePath)).into(imageView);
-            }
+            ImageUtil.loadCardImageIntoImageView(CardViewActivity.this, holder.getCard(), imageView);
             // text
             textView.setText(holder.getCard().getName());
 

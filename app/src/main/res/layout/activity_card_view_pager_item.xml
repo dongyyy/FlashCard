@@ -3,13 +3,13 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/cardViewPagerChildImage"
+        android:id="@+id/cardViewPagerItemImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffffff" />
 
     <TextView
-        android:id="@+id/cardViewPagerChildText"
+        android:id="@+id/cardViewPagerItemText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffffff"
