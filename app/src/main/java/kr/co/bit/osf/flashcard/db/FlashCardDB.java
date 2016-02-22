@@ -385,6 +385,20 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
     }
 
     @Override
+    public boolean deleteCard(List<CardDTO> list) {
+        boolean isOk = true;
+
+        for (CardDTO card : list) {
+            if (!deleteCard(card.getId())) {
+                isOk = false;
+                break;
+            }
+        }
+
+        return isOk;
+    }
+
+    @Override
     public boolean updateCard(CardDTO newValue) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -561,7 +575,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
             card.setImagePath("");
             card.setImageId(R.drawable.animal_01 + i);
             card.setSeq(i + 1);
-            if (addCard(card) == false) {
+            if (!addCard(card)) {
                 return false;
             }
         }
@@ -584,7 +598,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
             card.setImagePath("");
             card.setImageId(R.drawable.number_01 + i);
             card.setSeq(i + 1);
-            if (addCard(card) == false) {
+            if (!addCard(card)) {
                 return false;
             }
         }
@@ -602,7 +616,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
             card.setImagePath("");
             card.setImageId(R.drawable.alphabet_a + i);
             card.setSeq(i + 1);
-            if (addCard(card) == false) {
+            if (!addCard(card)) {
                 return false;
             }
         }

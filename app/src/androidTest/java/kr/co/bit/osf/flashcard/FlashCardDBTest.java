@@ -4,6 +4,7 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,10 +114,9 @@ public class FlashCardDBTest extends AndroidTestCase {
     public void testDeleteBox() throws Exception {
         setupBoxData();
         int deleteId = 2;
-         int id = (int)deleteId;
 
-        assertEquals(true, (boxDao.deleteBox(id)));
-        assertNull(boxDao.getBox(id));
+        assertEquals(true, (boxDao.deleteBox(deleteId)));
+        assertNull(boxDao.getBox(deleteId));
     }
 
     public void testUpdateBox() throws Exception {
@@ -171,11 +171,30 @@ public class FlashCardDBTest extends AndroidTestCase {
         assertNull(cardDao.getCard(deleteId));
     }
 
+    public void testDeleteCardList() throws Exception {
+        setupCardData();
+
+        CardDTO card;
+        int[] deleteIdList = {1, 3};
+
+        List<CardDTO> deleteList = new ArrayList<>();
+        for (int cardId : deleteIdList) {
+            card = cardDao.getCard(cardId);
+            assertNotNull(card);
+            deleteList.add(card);
+        }
+
+        assertEquals(true, (cardDao.deleteCard(deleteList)));
+        for (int cardId : deleteIdList) {
+            assertNull(cardDao.getCard(cardId));
+        }
+    }
+
     public void testUpdateCard() throws Exception {
         setupCardData();
         int updateId = 1;
 
-        CardDTO newValue = new CardDTO(updateId, "new name", "new image path", 199, updateId+1, updateId+2);
+        CardDTO newValue = new CardDTO(updateId, "new name", "new image path", updateId+1, updateId+2, updateId+3);
         assertEquals(true, (cardDao.updateCard(newValue)));
 
         CardDTO updatedValue = cardDao.getCard(updateId);
