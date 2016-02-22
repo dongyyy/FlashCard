@@ -1,5 +1,7 @@
 package kr.co.bit.osf.flashcard;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 
@@ -27,7 +30,7 @@ public class CardEditActivity extends AppCompatActivity {
     private int intentResultCode = RESULT_CANCELED;
     // view
     private ImageView imageView = null;
-    private EditText editText = null;
+    private TextView cardEditTextView = null;
     // camera, gallery
     private File photoFile = null;
     private String photoFilePath = null;
@@ -49,7 +52,11 @@ public class CardEditActivity extends AppCompatActivity {
         Dlog.i("intentRequestCode:" + intentRequestCode);
         switch (intentRequestCode) {
             case IntentRequestCode.CARD_EDIT:
+                Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
+                break;
+            case IntentRequestCode.CARD_DELETE:
+                Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 break;
         }
         if (card == null) {
@@ -62,45 +69,30 @@ public class CardEditActivity extends AppCompatActivity {
         Dlog.i("getExtras:sendData:" + card);
         intentResultCode = RESULT_OK;
 
-        editText = (EditText) findViewById(R.id.cardEditText);
+        cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
         imageView = (ImageView) findViewById(R.id.cardEditImageView);
 
         //show card
         if(intentRequestCode == IntentRequestCode.CARD_EDIT) {
             ImageUtil.showImageFileInImageView(this, card, imageView);
         }
-        editText.setText(card.getName());
-        editText.setSelection(editText.length()); //커서를 맨 뒤로 이동
+        cardEditTextView.setText(card.getName());
 
-        //camera Button
-        (findViewById(R.id.cardEditCameraButton)).setOnClickListener(new View.OnClickListener() {
+        //image view
+        (findViewById(R.id.cardEditImageView)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                photoFile = ImageUtil.getOutputMediaFile(ImageUtil.MEDIA_TYPE_IMAGE);
-                photoFilePath = photoFile.getAbsolutePath();
-
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(intent, IntentRequestCode.CAPTURE_IMAGECAPTURE_IMAGE);
-                }
+                imageClicked();
             }
         });
 
-        //gallery Button
-        (findViewById(R.id.cardEditGalleryButton)).setOnClickListener(new View.OnClickListener() {
+        (findViewById(R.id.cardEditTextView)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dlog.i("cardViewGalleryButton clicked");
-                Intent intent = new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/*");
-                startActivityForResult(
-                        Intent.createChooser(intent, "Select Picture"),
-                        IntentRequestCode.SELECT_PICTURE);
+                textClicked();
             }
         });
-
+/*
         //Delete Button
         (findViewById(R.id.cardEditDeleteButton)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,13 +110,13 @@ public class CardEditActivity extends AppCompatActivity {
                 finish();
             }
         });
-
+*/
         //yes, no Button
         (findViewById(R.id.cardEditYesButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FlashCardDB db = new FlashCardDB(getApplicationContext());
-                card.setName(editText.getText().toString().trim());
+                card.setName(cardEditTextView.getText().toString().trim());
                 db.updateCard(card);
                 finish();
             }
@@ -139,7 +131,86 @@ public class CardEditActivity extends AppCompatActivity {
         });
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        private void imageClicked() {
+            Dlog.i("CardEditActivity: imageClicked");
+
+            // get user action from dialog
+            final CharSequence[] items = {
+                    getString(R.string.card_edit_image_dialog_camera_button_text),
+                    getString(R.string.card_edit_image_dialog_gallery_button_text),
+                    getString(R.string.card_edit_image_dialog_cancel_button_text)
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(CardEditActivity.this);
+            builder.setTitle(getString(R.string.card_edit_image_dialog_title));
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String itemName = items[which].toString();
+                    Dlog.i("dialog:which:" + which + ", itemName:" + itemName);
+
+                    if (itemName.equals(getString(R.string.card_edit_image_dialog_camera_button_text))) {
+
+                        Dlog.i("cardEdit:photoCaptureButton clicked");
+                        //capture card
+                        photoFile = ImageUtil.getOutputMediaFile(ImageUtil.MEDIA_TYPE_IMAGE);
+                        photoFilePath = photoFile.getAbsolutePath();
+
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivityForResult(intent, IntentRequestCode.CAPTURE_IMAGECAPTURE_IMAGE);
+                        }
+
+                    } else if (itemName.equals(getString(R.string.card_edit_image_dialog_gallery_button_text))) {
+                        Dlog.i("cardEdit:galleryButton clicked");
+                        // select card in gallery
+                        Intent intent = new Intent(Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select Picture"),
+                                IntentRequestCode.SELECT_PICTURE);
+
+                    } else if (itemName.equals(getString(R.string.card_edit_image_dialog_cancel_button_text))) {
+                        Dlog.i("dialog:cancelled");
+                        //dialog.dismiss();
+                    }
+                }
+            });
+            builder.show();
+        }
+
+        private void textClicked(){
+            Dlog.i("CardEditActivity: textClicked");
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+            alert.setTitle(R.string.card_edit_text_dialog_tilte_text);
+            alert.setMessage(R.string.card_edit_text_dialog_message_text);
+
+            // Set an EditText view to get user input
+            final EditText input = new EditText(this);
+            alert.setView(input);
+
+            alert.setPositiveButton(R.string.card_edit_text_dialog_ok_button_text, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    String value = input.getText().toString();
+                    value.toString();
+                    // Do something with value!
+                    cardEditTextView.setText(value.toString());
+                }
+            });
+
+            alert.setNegativeButton(R.string.card_edit_text_dialog_cancel_button_text, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // Canceled.
+                        }
+                    });
+
+            alert.show();
+        }
+
+        protected void onActivityResult(int requestCode, int resultCode, Intent data){
         Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
         if(resultCode == RESULT_OK){
             switch(requestCode) {
