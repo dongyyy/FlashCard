@@ -23,6 +23,11 @@
     <string name="card_edit_no_button_text">아니요</string>
     <string name="card_edit_edit_text_hint">단어를 입력해주세요</string>
     <string name="card_edit_gallery_title">좋은 사진 고를래요</string>
+    <!--card view activity-->
+    <string name="card_view_edit_dialog_title">카드 편집</string>
+    <string name="card_view_edit_dialog_edit_button_text">고칠래요</string>
+    <string name="card_view_edit_dialog_delete_button_text">지울래요</string>
+    <string name="card_view_edit_dialog_cancel_button_text">나갈래요</string>
     <!--splash activity-->
     <string name="splash_message">내가 만드는 플래시카드</string>
 </resources>
