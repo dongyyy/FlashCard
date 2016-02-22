@@ -34,9 +34,9 @@ public class FlashCardDBTest extends AndroidTestCase {
 
     // card test data list
     CardDTO[] cardDataList = {
-            new CardDTO("dog","dog", FlashCardDB.CardEntry.TYPE_DEMO, 1),
-            new CardDTO("cat", "cat", FlashCardDB.CardEntry.TYPE_DEMO, 1),
-            new CardDTO("rabbit", "rabbit", FlashCardDB.CardEntry.TYPE_DEMO, 1)
+            new CardDTO(1, "dog","dog", 1, FlashCardDB.CardEntry.TYPE_DEMO, 1, 1),
+            new CardDTO(2, "cat", "cat", 2, FlashCardDB.CardEntry.TYPE_DEMO, 2 , 1),
+            new CardDTO(3, "rabbit", "rabbit", 3, FlashCardDB.CardEntry.TYPE_DEMO, 3, 1)
     };
 
     @Override
@@ -175,7 +175,7 @@ public class FlashCardDBTest extends AndroidTestCase {
         setupCardData();
         int updateId = 1;
 
-        CardDTO newValue = new CardDTO(updateId, "new name", "new image path", updateId+1, updateId+2);
+        CardDTO newValue = new CardDTO(updateId, "new name", "new image path", 199, updateId+1, updateId+2);
         assertEquals(true, (cardDao.updateCard(newValue)));
 
         CardDTO updatedValue = cardDao.getCard(updateId);

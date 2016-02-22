@@ -1,7 +1,9 @@
 package kr.co.bit.osf.flashcard;
 
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -11,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,15 +30,18 @@ import kr.co.bit.osf.flashcard.db.StateDTO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class CardViewActivity extends AppCompatActivity {
+    // db
     FlashCardDB db = null;
     StateDTO cardState = null;
     List<CardDTO> cardList = null;
-    Button List_View_Mode;
+
+    // view pager
     ViewPager pager;
     CardViewPagerAdapter pagerAdapter;
 
     // view pager item map
     Map<Integer, View> itemViewMap = new HashMap<>();
+    int currentPosition = 0;
     int lastPosition = -1;
 
     // send card
@@ -74,24 +78,26 @@ public class CardViewActivity extends AppCompatActivity {
         pager.setAdapter(pagerAdapter);
         pager.setOffscreenPageLimit(1);
 
-        // set start position by state card id
-        int startPosition = 0;
+        // set current position by state card id
         int stateCardId = cardState.getCardId();
         for (int i = 0; i < cardList.size(); i++) {
             if (stateCardId == cardList.get(i).getId()) {
-                startPosition = i;
+                currentPosition = i;
                 break;
             }
         }
-        if (startPosition < cardList.size()) {
-            pager.setCurrentItem(startPosition);
+        if (currentPosition < cardList.size()) {
+            pager.setCurrentItem(currentPosition);
+            Dlog.i("setCurrentItem:currentPosition:" + currentPosition);
         }
 
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                Dlog.i("position:" + position + ", lastPosition=" + lastPosition);
+                // current position
+                currentPosition = position;
+                Dlog.i("currentPosition:" + position + ", lastPosition=" + lastPosition);
                 // view pager item map
                 View lastView = itemViewMap.get(lastPosition);
                 if (lastView != null) {
@@ -116,6 +122,24 @@ public class CardViewActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Dlog.i("");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Dlog.i("currentPosition:" + currentPosition);
+        // save current state
+        if (db != null) {
+            int cardId = cardList.get(currentPosition).getId();
+            Dlog.i("onSaveInstanceState:cardId:" + cardId);
+            db.updateState(cardState.getBoxId(), cardId);
+        }
     }
 
     // pager adapter
@@ -226,14 +250,43 @@ public class CardViewActivity extends AppCompatActivity {
     }
 
     private void childViewLongClicked(View view) {
+        Dlog.i("");
+        // get user action from dialog
+        final CharSequence[] items = {
+                getString(R.string.card_view_edit_dialog_edit_button_text),
+                getString(R.string.card_view_edit_dialog_delete_button_text),
+                getString(R.string.card_view_edit_dialog_cancel_button_text)
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(CardViewActivity.this);
+        builder.setTitle(getString(R.string.card_view_edit_dialog_title));
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String itemName = items[which].toString();
+                Dlog.i("dialog:which:" + which + ", itemName:" + itemName);
+
+                if (itemName.equals(getString(R.string.card_view_edit_dialog_edit_button_text))) {
+                    Dlog.i("dialog:edit card");
+                    // todo: edit card
+                } else if (itemName.equals(getString(R.string.card_view_edit_dialog_delete_button_text))) {
+                    Dlog.i("dialog:delete card");
+                    // todo: delete card
+                } else if (itemName.equals(getString(R.string.card_view_edit_dialog_cancel_button_text))) {
+                    Dlog.i("dialog:cancelled");
+                    //dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+
         // start card edit activity
-        CardDTO sendCard = ((PagerHolder) view.getTag()).getCard();
+        /*CardDTO sendCard = ((PagerHolder) view.getTag()).getCard();
         sendCardListIndex = ((PagerHolder) view.getTag()).getCardIndex();
         Intent intent = new Intent(this, CardEditActivity.class);
         intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
         intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
         startActivityForResult(intent, IntentRequestCode.CARD_EDIT);
-        Dlog.i("sendData:" + sendCard);
+        Dlog.i("sendData:" + sendCard);*/
     }
 
     @Override
@@ -313,7 +366,6 @@ public class CardViewActivity extends AppCompatActivity {
                     '}';
         }
     }
-
 
     // flip animation
     // http://stackoverflow.com/questions/7785649/creating-a-3d-flip-animation-in-android-using-xml

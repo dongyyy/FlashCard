@@ -7,6 +7,7 @@ public class CardDTO implements Parcelable {
     private int id;
     private String name;
     private String imagePath;   // image full path
+    private int imageId;        // image id (only demo data)
     private int type;           // 0:user card, 1:demo card
     int seq;
     int boxId;                  // Box id
@@ -16,6 +17,9 @@ public class CardDTO implements Parcelable {
     public CardDTO(String name, String imagePath, int boxId) {
         this.name = name;
         this.imagePath = imagePath;
+        this.imageId = 0;
+        this.type = FlashCardDB.CardEntry.TYPE_USER;
+        this.seq = 0;
         this.boxId = boxId;
     }
 
@@ -34,10 +38,16 @@ public class CardDTO implements Parcelable {
         this.seq = seq;
     }
 
+    public CardDTO(int id, String name, String imagePath, int imageId, int type, int seq, int boxId) {
+        this(id, name, imagePath, type, seq, boxId);
+        this.imageId = imageId;
+    }
+
     protected CardDTO(Parcel in) {
         id = in.readInt();
         name = in.readString();
         imagePath = in.readString();
+        imageId = in.readInt();
         type = in.readInt();
         seq = in.readInt();
         boxId = in.readInt();
@@ -48,6 +58,7 @@ public class CardDTO implements Parcelable {
         dest.writeInt(id);
         dest.writeString(name);
         dest.writeString(imagePath);
+        dest.writeInt(imageId);
         dest.writeInt(type);
         dest.writeInt(seq);
         dest.writeInt(boxId);
@@ -94,6 +105,14 @@ public class CardDTO implements Parcelable {
         this.imagePath = imagePath;
     }
 
+    public int getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
+    }
+
     public int getType() {
         return type;
     }
@@ -126,12 +145,12 @@ public class CardDTO implements Parcelable {
         CardDTO cardDTO = (CardDTO) o;
 
         if (id != cardDTO.id) return false;
+        if (imageId != cardDTO.imageId) return false;
         if (type != cardDTO.type) return false;
         if (seq != cardDTO.seq) return false;
         if (boxId != cardDTO.boxId) return false;
         if (!name.equals(cardDTO.name)) return false;
         return imagePath.equals(cardDTO.imagePath);
-
     }
 
     @Override
@@ -139,7 +158,9 @@ public class CardDTO implements Parcelable {
         int result = id;
         result = 31 * result + name.hashCode();
         result = 31 * result + imagePath.hashCode();
+        result = 31 * result + imageId;
         result = 31 * result + type;
+        result = 31 * result + seq;
         result = 31 * result + boxId;
         return result;
     }
@@ -150,6 +171,7 @@ public class CardDTO implements Parcelable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", imagePath='" + imagePath + '\'' +
+                ", imageId=" + imageId +
                 ", type=" + type +
                 ", seq=" + seq +
                 ", boxId=" + boxId +

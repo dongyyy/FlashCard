@@ -69,6 +69,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         public static final String COLUMN_NAME_ENTRY_ID = "id";
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_IMAGE_PATH = "image_path";
+        public static final String COLUMN_NAME_IMAGE_ID = "image_id";
         public static final String COLUMN_NAME_TYPE = "type";
         public static final String COLUMN_NAME_SEQ = "seq";
         public static final String COLUMN_NAME_BOX_ID = "box_id";
@@ -82,6 +83,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
                 + "(" + COLUMN_NAME_ENTRY_ID + " INTEGER PRIMARY KEY"
                 + "," + COLUMN_NAME_NAME + " TEXT"
                 + "," + COLUMN_NAME_IMAGE_PATH + " TEXT"
+                + "," + COLUMN_NAME_IMAGE_ID + " INTEGER"
                 + "," + COLUMN_NAME_TYPE + " INTEGER"
                 + "," + COLUMN_NAME_SEQ + " INTEGER"
                 + "," + COLUMN_NAME_BOX_ID + " INTEGER"
@@ -92,7 +94,8 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
 
         // field list
         public static final String FIELD_LIST =  COLUMN_NAME_ENTRY_ID
-                + "," + COLUMN_NAME_NAME + "," + COLUMN_NAME_IMAGE_PATH
+                + "," + COLUMN_NAME_NAME
+                + "," + COLUMN_NAME_IMAGE_PATH + "," + COLUMN_NAME_IMAGE_ID
                 + "," + COLUMN_NAME_TYPE + "," + COLUMN_NAME_SEQ
                 + "," + COLUMN_NAME_BOX_ID;
 
@@ -100,9 +103,10 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         public static final int COLUMN_ID_ENTRY_ID = 0;
         public static final int COLUMN_ID_NAME = 1;
         public static final int COLUMN_ID_IMAGE_PATH = 2;
-        public static final int COLUMN_ID_TYPE = 3;
-        public static final int COLUMN_ID_SEQ = 4;
-        public static final int COLUMN_ID_BOX_ID = 5;
+        public static final int COLUMN_ID_IMAGE_ID = 3;
+        public static final int COLUMN_ID_TYPE = 4;
+        public static final int COLUMN_ID_SEQ = 5;
+        public static final int COLUMN_ID_BOX_ID = 6;
     }
 
     public static abstract class StateEntry implements BaseColumns {
@@ -326,6 +330,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         ContentValues values = new ContentValues();
         values.put(CardEntry.COLUMN_NAME_NAME, card.getName());
         values.put(CardEntry.COLUMN_NAME_IMAGE_PATH, card.getImagePath());
+        values.put(CardEntry.COLUMN_NAME_IMAGE_ID, card.getImageId());
         values.put(CardEntry.COLUMN_NAME_TYPE, card.getType());
         values.put(CardEntry.COLUMN_NAME_SEQ, card.getSeq());
         values.put(CardEntry.COLUMN_NAME_BOX_ID, card.getBoxId());
@@ -355,6 +360,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
                 card.setId(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_ENTRY_ID)));
                 card.setName(cursor.getString(CardEntry.COLUMN_ID_NAME));
                 card.setImagePath(cursor.getString(CardEntry.COLUMN_ID_IMAGE_PATH));
+                card.setImageId(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_IMAGE_ID)));
                 card.setType(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_TYPE)));
                 card.setSeq(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_SEQ)));
                 card.setBoxId(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_BOX_ID)));
@@ -385,6 +391,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         ContentValues values = new ContentValues();
         values.put(CardEntry.COLUMN_NAME_NAME, newValue.getName());
         values.put(CardEntry.COLUMN_NAME_IMAGE_PATH, newValue.getImagePath());
+        values.put(CardEntry.COLUMN_NAME_IMAGE_ID, newValue.getImageId());
         values.put(CardEntry.COLUMN_NAME_TYPE, newValue.getType());
         values.put(CardEntry.COLUMN_NAME_SEQ, newValue.getSeq());
         values.put(CardEntry.COLUMN_NAME_BOX_ID, newValue.getBoxId());
@@ -420,6 +427,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
                 card.setId(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_ENTRY_ID)));
                 card.setName(cursor.getString(CardEntry.COLUMN_ID_NAME));
                 card.setImagePath(cursor.getString(CardEntry.COLUMN_ID_IMAGE_PATH));
+                card.setImageId(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_IMAGE_ID)));
                 card.setType(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_TYPE)));
                 card.setSeq(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_SEQ)));
                 card.setBoxId(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_BOX_ID)));
@@ -536,6 +544,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         };
         return (addBox(demoBox[0]) && addBox(demoBox[1]) && addBox(demoBox[2]));
     }
+
     public boolean createCardDemoData() {
         return (createCardDemoDataAnimal() && createCardDemoDataNumber() && createCardDemoDataAlphabet());
     }
@@ -550,6 +559,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         for (int i = 0; i < nameList.length; i++) {
             card.setName(nameList[i]);
             card.setImagePath("" + (R.drawable.animal_01 + i));
+            card.setImageId(R.drawable.animal_01 + i);
             card.setSeq(i + 1);
             if (addCard(card) == false) {
                 return false;
@@ -572,6 +582,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         for (int i = 0; i < nameList.length; i++) {
             card.setName(nameList[i]);
             card.setImagePath("" + (R.drawable.number_01 + i));
+            card.setImageId(R.drawable.number_01 + i);
             card.setSeq(i + 1);
             if (addCard(card) == false) {
                 return false;
@@ -589,6 +600,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         for (int i = 0; i < 20; i++) {
             card.setName(String.valueOf(Character.toChars('A' + i)));
             card.setImagePath("" + (R.drawable.alphabet_a + i));
+            card.setImageId(R.drawable.alphabet_a + i);
             card.setSeq(i + 1);
             if (addCard(card) == false) {
                 return false;
