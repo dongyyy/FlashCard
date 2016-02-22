@@ -310,8 +310,15 @@ public class CardViewActivity extends AppCompatActivity {
                     }
                     // refresh view pager
                     pagerAdapter.notifyDataSetChanged();
-                    if (lastPosition >= 0 && lastPosition < cardList.size()) {
-                        pager.setCurrentItem(lastPosition);
+                    if (cardList.size() > 0) {
+                        currentPosition = sendCardListIndex - 1;
+                        if (currentPosition < 0 || currentPosition >= cardList.size()) {
+                            currentPosition = 0;
+                        }
+                        pager.setCurrentItem(currentPosition);
+                        Dlog.i("currentPosition:" + currentPosition);
+                    } else {
+                        finish();
                     }
                     break;
             }
