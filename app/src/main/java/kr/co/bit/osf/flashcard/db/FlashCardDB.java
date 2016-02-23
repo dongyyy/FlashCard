@@ -14,8 +14,6 @@ import kr.co.bit.osf.flashcard.R;
 
 // http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
 public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, StateDAO {
-    private static final String TAG = "FlashCardDBLog";
-
     // context
     Context context = null;
 
@@ -193,10 +191,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 box = new BoxDTO();
-                box.setId(Integer.parseInt(cursor.getString(BoxEntry.COLUMN_ID_ENTRY_ID)));
-                box.setName(cursor.getString(BoxEntry.COLUMN_ID_NAME));
-                box.setType(Integer.parseInt(cursor.getString(BoxEntry.COLUMN_ID_TYPE)));
-                box.setSeq(Integer.parseInt(cursor.getString(BoxEntry.COLUMN_ID_SEQ)));
+                loadCursorIntoBox(cursor, box);
             }
             cursor.close();
         }
@@ -304,14 +299,6 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
 
     @Override
     public boolean updateBoxSeq(int id, int seq) {
-/*
-        SQLiteDatabase db = this.getWritableDatabase();
-        String sql = "update " + BoxEntry.TABLE_NAME
-                + " set " + BoxEntry.COLUMN_NAME_SEQ + " = " + seq
-                + " where " + BoxEntry.COLUMN_NAME_ENTRY_ID + " = " + id;
-        db.execSQL(sql);
-        db.close();
-*/
         SQLiteDatabase db = this.getWritableDatabase();
 
         // http://developer.android.com/intl/ko/training/basics/data-storage/databases.html#UpdateDbRow
@@ -331,6 +318,25 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         db.close();
 
         return (count > 0);
+    }
+
+    @Override
+    public boolean updateBoxSeq(List<BoxDTO> boxList) {
+        boolean isOk = true;
+        BoxDTO box;
+
+        if (boxList != null) {
+            for (int i = 0; i < boxList.size(); i++) {
+                box = boxList.get(i);
+                if (box.getId() > 0) {
+                    if (!updateBoxSeq(box.getId(), i)) {
+                        isOk = false;
+                    }
+                }
+            }
+        }
+
+        return isOk;
     }
 
     @Override
