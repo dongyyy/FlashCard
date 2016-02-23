@@ -447,6 +447,17 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
     }
 
     @Override
+    public boolean deleteCardByBoxId(int boxId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = CardEntry.COLUMN_NAME_BOX_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(boxId)};
+        int count = db.delete(CardEntry.TABLE_NAME, selection, selectionArgs);
+        db.close();
+
+        return (count > 0);
+    }
+
+    @Override
     public boolean updateCard(CardDTO newValue) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -524,14 +535,26 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
     }
 
     @Override
-    public boolean deleteCardByBoxId(int boxId) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String selection = CardEntry.COLUMN_NAME_BOX_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(boxId)};
-        int count = db.delete(CardEntry.TABLE_NAME, selection, selectionArgs);
+    public int getCardCountByBoxId(int boxId) {
+        int count = 0;
+
+        String query = "select count(*)"
+                + " from " + CardEntry.TABLE_NAME
+                + " where " + CardEntry.COLUMN_NAME_BOX_ID + " = " + boxId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+
         db.close();
 
-        return (count > 0);
+        return count;
     }
 
     // state

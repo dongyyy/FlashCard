@@ -283,6 +283,14 @@ public class FlashCardDBTest extends AndroidTestCase {
         assertEquals(true, (cardDao.getCardByBoxId(deleteBoxId).size() == 0));
     }
 
+    public void testGetCardCountByBoxId() throws Exception {
+        setupCardData();
+        int boxId = cardDataList[0].getBoxId();
+
+        assertEquals(true, (cardDao.getCardCountByBoxId(boxId) > 0));
+        assertEquals(true, (cardDao.getCardCountByBoxId(boxId) == cardDataList.length));
+    }
+
     // state
     private void setupStateData() {
         stateDao.addState(1, 1);
