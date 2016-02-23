@@ -23,7 +23,6 @@ import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.db.BoxDTO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
-import kr.co.bit.osf.flashcard.db.StateDAO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class BoxListActivity extends AppCompatActivity {
@@ -54,12 +53,10 @@ public class BoxListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Dlog.i("setOnItemClickListener:position:" + position);
-                Intent intent = new Intent(getApplicationContext(), CardListActivity.class);
-
-                StateDAO state = db;
-                if(!(state.updateState(boxList.get(position).getId(), 0))){
-                    Toast.makeText(getApplicationContext(),"state 전송 실패",Toast.LENGTH_SHORT).show();
+                if(!(db.updateState(boxList.get(position).getId(), 0))){
+                    Toast.makeText(getApplicationContext(), "state 전송 실패", Toast.LENGTH_SHORT).show();
                 }
+                Intent intent = new Intent(getApplicationContext(), CardListActivity.class);
                 startActivity(intent);
                 Dlog.i("box:" + boxList.get(position));
             }
