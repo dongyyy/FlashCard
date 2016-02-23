@@ -50,6 +50,10 @@ public class BoxListActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CardListActivity.class);
             startActivity(intent);
         }
+        if (cardState.getBoxId() == -1) {
+            Intent intent = new Intent(this, SplashActivity.class);
+            startActivity(intent);
+        }
 
         // read box list
         db = new FlashCardDB(this);
@@ -81,7 +85,6 @@ public class BoxListActivity extends AppCompatActivity {
                 final CharSequence[] items = {
                         getString(R.string.box_list_edit_dialog_edit_button_text),
                         getString(R.string.box_list_edit_dialog_delete_button_text),
-                        getString(R.string.box_list_edit_dialog_cancel_button_text)
                 };
                 AlertDialog.Builder builder = new AlertDialog.Builder(BoxListActivity.this);
                 builder.setTitle(getString(R.string.box_list_edit_dialog_title));
@@ -301,8 +304,11 @@ public class BoxListActivity extends AppCompatActivity {
                 imageView.setImageResource(R.drawable.default_no_image);
             }
             // text
-            TextView boxName = (TextView) view.findViewById(R.id.boxListViewItemText);
-            boxName.setText(list.get(position).getName());
+            TextView nameTextView = (TextView) view.findViewById(R.id.boxListViewItemText);
+            nameTextView.setText(list.get(position).getName());
+            // card count
+            TextView countTextView = (TextView) view.findViewById(R.id.boxListViewItemCount);
+            countTextView.setText("" + db.getCardCountByBoxId(list.get(position).getId()));
 
             return view;
         }
