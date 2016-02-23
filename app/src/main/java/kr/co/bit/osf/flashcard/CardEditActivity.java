@@ -196,7 +196,7 @@ public class CardEditActivity extends AppCompatActivity {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                         if (intent.resolveActivity(getPackageManager()) != null) {
-                            startActivityForResult(intent, IntentRequestCode.CAPTURE_IMAGECAPTURE_IMAGE);
+                            startActivityForResult(intent, IntentRequestCode.CAPTURE_IMAGE);
                         }
 
                     } else if (itemName.equals(getString(R.string.card_edit_image_dialog_gallery_button_text))) {
@@ -235,7 +235,6 @@ public class CardEditActivity extends AppCompatActivity {
             alert.setPositiveButton(R.string.card_edit_text_dialog_ok_button_text, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     String value = input.getText().toString();
-                    value.toString();
                     // Do something with value!
                     cardEditTextView.setText(value.toString());
                 }
@@ -254,7 +253,7 @@ public class CardEditActivity extends AppCompatActivity {
         Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
         if(resultCode == RESULT_OK){
             switch(requestCode) {
-                case IntentRequestCode.CAPTURE_IMAGECAPTURE_IMAGE:
+                case IntentRequestCode.CAPTURE_IMAGE:
                 case IntentRequestCode.SELECT_PICTURE:
                     if (requestCode== IntentRequestCode.SELECT_PICTURE) {
                         photoFilePath = ImageUtil.getImagePathFromIntentData(this, data);
