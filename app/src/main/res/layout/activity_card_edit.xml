@@ -39,7 +39,8 @@
             android:layout_height="60dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Large Text"
-            android:id="@+id/cardEditTextView"/>
+            android:id="@+id/cardEditTextView"
+            android:background="@drawable/textlines" />
 
 
     </LinearLayout>
