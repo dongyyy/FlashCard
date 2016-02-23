@@ -59,7 +59,7 @@ public class CardEditActivity extends AppCompatActivity {
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA); //받은 cardDTO에 boxId가 들어있음
                 card.setType(FlashCardDB.CardEntry.TYPE_DEMO);
-                card.setImagePath("" + R.drawable.alphabet_a);
+                card.setImageName(this.getResources().getResourceName(R.drawable.default_no_image));
                 card.setName("카드 이름을 입력해주세요");
             case IntentRequestCode.CARD_EDIT:
             case IntentRequestCode.CARD_DELETE:
