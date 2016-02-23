@@ -65,7 +65,7 @@ public class BoxListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Dlog.i("setOnItemClickListener:position:" + position);
-                if(!(db.updateState(boxList.get(position).getId(), 0))){
+                if (!(db.updateState(boxList.get(position).getId(), 0))) {
                     Toast.makeText(getApplicationContext(), "state 전송 실패", Toast.LENGTH_SHORT).show();
                 }
                 Intent intent = new Intent(getApplicationContext(), CardListActivity.class);
@@ -78,79 +78,80 @@ public class BoxListActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 // get user action from dialog
-                final CharSequence[] items = {
-                        getString(R.string.box_list_edit_dialog_edit_button_text),
-                        getString(R.string.box_list_edit_dialog_delete_button_text),
-                        getString(R.string.box_list_edit_dialog_cancel_button_text)
-                };
-                AlertDialog.Builder builder = new AlertDialog.Builder(BoxListActivity.this);
-                builder.setTitle(getString(R.string.box_list_edit_dialog_title));
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String itemName = items[which].toString();
-                        Dlog.i("dialog:which:" + which + ", itemName:" + itemName);
+                View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
 
-                        if (itemName.equals(getString(R.string.box_list_edit_dialog_edit_button_text))) {
-                            Dlog.i("dialog:edit box");
-                            // edit box dialog
-                            // set an EditText view to get user input
-                            final EditText inputText = new EditText(BoxListActivity.this);
-                            AlertDialog.Builder input = new AlertDialog.Builder(BoxListActivity.this);
-                            input.setTitle(R.string.box_list_edit_dialog_edit_dialog_title_text);
-                            input.setMessage(R.string.box_list_edit_dialog_edit_dialog_message_text);
-                            input.setView(inputText);
-                            input.setPositiveButton(R.string.box_list_edit_dialog_edit_dialog_ok_button_text,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            // set new box name
-                                            String newBoxName = inputText.getText().toString();
-                                            boxList.get(position).setName(newBoxName);
-                                            db.updateBox(boxList.get(position));
-                                            adapter.notifyDataSetChanged();
-                                            Dlog.i("new box name:" + newBoxName);
-                                        }
-                                    });
-                            input.setNegativeButton(R.string.box_list_edit_dialog_edit_dialog_cancel_button_text,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            // Canceled.
-                                        }
-                                    });
-                            input.show();
-                        } else if (itemName.equals(getString(R.string.box_list_edit_dialog_delete_button_text))) {
-                            Dlog.i("dialog:delete box");
-                            // delete box dialog
-                            AlertDialog.Builder delete = new AlertDialog.Builder(BoxListActivity.this);
-                            delete.setTitle(R.string.box_list_edit_dialog_delete_dialog_title_text);
-                            delete.setMessage(R.string.box_list_edit_dialog_delete_dialog_message_text);
-                            delete.setPositiveButton(R.string.box_list_edit_dialog_delete_dialog_ok_button_text,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            // delete box
-                                            int deleteBoxId = boxList.get(position).getId();
-                                            Dlog.i("delete box name:" + boxList.get(position).getName());
-                                            if (db.deleteBox(deleteBoxId)) {
-                                                db.deleteCardByBoxId(deleteBoxId);
-                                                boxList.remove(position);
-                                                Dlog.i("delete box id:" + deleteBoxId);
-                                                adapter.notifyDataSetChanged();
-                                            }
-                                        }
-                                    });
-                            delete.setNegativeButton(R.string.box_list_edit_dialog_delete_dialog_cancel_button_text,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int whichButton) {
-                                            // Canceled.
-                                        }
-                                    });
-                            delete.show();
-                        } else if (itemName.equals(getString(R.string.box_list_edit_dialog_cancel_button_text))) {
-                            Dlog.i("dialog:cancelled");
-                            //dialog.dismiss();
-                        }
+                AlertDialog.Builder builder = new AlertDialog.Builder(BoxListActivity.this);
+                TextView textView = (TextView) dlg.findViewById(R.id.dialogTitleTextView);
+                TextView textView1 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewOne);
+                TextView textView2 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewTwo);
+
+                textView1.setText("만들래요");
+                textView1.setVisibility(View.VISIBLE);
+                textView2.setText("지울래요");
+                textView2.setVisibility(View.VISIBLE);
+
+                textView1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Dlog.i("dialog:edit box");
+                        final EditText inputText = new EditText(BoxListActivity.this);
+                        inputText.setText(boxList.get(position).getName());
+                        AlertDialog.Builder input = new AlertDialog.Builder(BoxListActivity.this);
+                        input.setTitle(R.string.box_list_edit_dialog_edit_dialog_title_text);
+                        input.setMessage(R.string.box_list_edit_dialog_edit_dialog_message_text);
+                        input.setView(inputText);
+
+                        input.setPositiveButton(R.string.box_list_edit_dialog_edit_dialog_ok_button_text,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        // set new box name
+                                        String newBoxName = inputText.getText().toString();
+                                        boxList.get(position).setName(newBoxName);
+                                        db.updateBox(boxList.get(position));
+                                        adapter.notifyDataSetChanged();
+                                        Dlog.i("new box name:" + newBoxName);
+                                    }
+                                });
+                        input.show();
                     }
                 });
+
+                textView2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Dlog.i("dialog:delete box");
+                        // delete box dialog
+                        final AlertDialog.Builder delete = new AlertDialog.Builder(BoxListActivity.this);
+                        delete.setTitle(R.string.box_list_edit_dialog_delete_dialog_title_text);
+                        delete.setMessage(R.string.box_list_edit_dialog_delete_dialog_message_text);
+                        delete.setPositiveButton(R.string.box_list_edit_dialog_delete_dialog_ok_button_text,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        // delete box
+                                        int deleteBoxId = boxList.get(position).getId();
+                                        Dlog.i("delete box name:" + boxList.get(position).getName());
+                                        if (db.deleteBox(deleteBoxId)) {
+                                            db.deleteCardByBoxId(deleteBoxId);
+                                            boxList.remove(position);
+                                            Dlog.i("delete box id:" + deleteBoxId);
+                                            adapter.notifyDataSetChanged();
+                                            delete.setCancelable(true);
+                                        }
+                                    }
+                                });
+                        delete.setNegativeButton(R.string.box_list_edit_dialog_delete_dialog_cancel_button_text,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        // Canceled.
+                                    }
+                                });
+                        delete.show();
+
+                    }
+                });
+                builder.setView(dlg);
                 builder.show();
 
                 return true;
@@ -226,7 +227,7 @@ public class BoxListActivity extends AppCompatActivity {
         Dlog.i("");
         // save current state
         if (db != null) {
-            db.updateState(0 ,0);
+            db.updateState(0, 0);
         }
     }
 
@@ -252,7 +253,8 @@ public class BoxListActivity extends AppCompatActivity {
         private Context context;
         private List<BoxDTO> list;
 
-        public BoxListAdapter() {}
+        public BoxListAdapter() {
+        }
 
         public BoxListAdapter(Context c, List<BoxDTO> list) {
             context = c;

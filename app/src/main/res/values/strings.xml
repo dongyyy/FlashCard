@@ -56,4 +56,8 @@
     <string name="card_list_menu_complete">좋아요</string>
     <!--splash activity-->
     <string name="splash_message">내가 만드는 플래시카드</string>
+    <!--activity dialog title -->
+    <string name="activity_dialog_title_one">박스 편집</string>
+    <string name="activity_dialog_title_two">카드 편집</string>
+    <string name="activity_dialog_title_three"> 편집</string>
 </resources>
