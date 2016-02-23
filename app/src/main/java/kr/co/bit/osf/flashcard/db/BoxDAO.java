@@ -9,5 +9,7 @@ public interface BoxDAO {
     boolean addBox(BoxDTO box);
     boolean deleteBox(int id);
     boolean updateBox(BoxDTO newValue);
+    boolean updateBoxSeq(int id, int seq);
+    boolean updateBoxSeq(List<BoxDTO> boxList);
     List<BoxDTO> getBoxAll();
 }

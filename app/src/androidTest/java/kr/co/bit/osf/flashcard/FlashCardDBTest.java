@@ -4,6 +4,7 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,9 @@ public class FlashCardDBTest extends AndroidTestCase {
 
     // card test data list
     CardDTO[] cardDataList = {
-            new CardDTO(1, "dog","dog", 1, FlashCardDB.CardEntry.TYPE_DEMO, 1, 1),
-            new CardDTO(2, "cat", "cat", 2, FlashCardDB.CardEntry.TYPE_DEMO, 2 , 1),
-            new CardDTO(3, "rabbit", "rabbit", 3, FlashCardDB.CardEntry.TYPE_DEMO, 3, 1)
+            new CardDTO(1, "dog","dog", "dog", FlashCardDB.CardEntry.TYPE_DEMO, 1, 1),
+            new CardDTO(2, "cat", "cat", "cat", FlashCardDB.CardEntry.TYPE_DEMO, 2 , 1),
+            new CardDTO(3, "rabbit", "rabbit", "rabbit", FlashCardDB.CardEntry.TYPE_DEMO, 3, 1)
     };
 
     @Override
@@ -69,6 +70,7 @@ public class FlashCardDBTest extends AndroidTestCase {
 
         assertEquals(true, boxDao.addBox(box));
         assertEquals(true, (box.getId() == 1));
+        assertEquals(true, (box.getSeq() == box.getId()));
         assertEquals(true, boxDataList[addIndex].equals(box));
     }
 
@@ -78,6 +80,7 @@ public class FlashCardDBTest extends AndroidTestCase {
 
         assertNotNull(addedBox);
         assertEquals(true, (addedBox.getId() == 1));
+        assertEquals(true, (addedBox.getSeq() == addedBox.getId()));
         assertEquals(true, name.equals(addedBox.getName()));
     }
 
@@ -86,10 +89,10 @@ public class FlashCardDBTest extends AndroidTestCase {
         int findIndex = 1;
         String findName = boxDataList[findIndex].getName();
 
-        BoxDTO box = boxDao.getBox(findIndex+1);
+        BoxDTO box = boxDao.getBox(findIndex + 1);
 
         assertNotNull(box);
-        assertEquals(true, (box.getId() == findIndex+1));
+        assertEquals(true, (box.getId() == findIndex + 1));
         assertEquals(true, (box.getName().equals(findName)));
 
         box = boxDao.getBox(9999);
@@ -113,10 +116,9 @@ public class FlashCardDBTest extends AndroidTestCase {
     public void testDeleteBox() throws Exception {
         setupBoxData();
         int deleteId = 2;
-         int id = (int)deleteId;
 
-        assertEquals(true, (boxDao.deleteBox(id)));
-        assertNull(boxDao.getBox(id));
+        assertEquals(true, (boxDao.deleteBox(deleteId)));
+        assertNull(boxDao.getBox(deleteId));
     }
 
     public void testUpdateBox() throws Exception {
@@ -131,6 +133,41 @@ public class FlashCardDBTest extends AndroidTestCase {
         assertEquals(true, (newValue.equals(updatedValue)));
         assertEquals(true, (newValue.getType() == updatedValue.getType()));
         assertEquals(true, (newValue.getSeq() == updatedValue.getSeq()));
+    }
+
+    public void testUpdateBoxSeq() throws Exception {
+        setupBoxData();
+        int updateId = 2;
+        int updateSeq = updateId + 11;
+
+        assertEquals(true, boxDao.updateBoxSeq(updateId, updateSeq));
+
+        BoxDTO updatedValue = boxDao.getBox(updateId);
+        assertNotNull(updatedValue);
+        assertEquals(true, (updateSeq == updatedValue.getSeq()));
+    }
+
+    public void testUpdateBoxListSeq() throws Exception {
+        setupBoxData();
+
+        List<BoxDTO> boxListSeq = new ArrayList<>();
+        for (int i = 0; i < boxDataList.length; i++) {
+            int boxId = boxDataList.length - i;
+            BoxDTO box = boxDao.getBox(boxId);
+            assertEquals(true, (box.getId() == boxId));
+            assertEquals(true, (box.getSeq() == boxId));
+            boxListSeq.add(box);
+        }
+
+        assertEquals(true, boxDataList.length == boxListSeq.size());
+        assertEquals(true, boxDao.updateBoxSeq(boxListSeq));
+
+        for (int i = 0; i < boxListSeq.size(); i++) {
+            BoxDTO box = boxDao.getBox(boxListSeq.get(i).getId());
+            assertNotNull(box);
+            assertEquals(true, (box.getSeq() == i));
+            assertEquals(true, (box.getId() == (boxListSeq.size() - i)));
+        }
     }
 
     // card
@@ -171,11 +208,30 @@ public class FlashCardDBTest extends AndroidTestCase {
         assertNull(cardDao.getCard(deleteId));
     }
 
+    public void testDeleteCardList() throws Exception {
+        setupCardData();
+
+        CardDTO card;
+        int[] deleteIdList = {1, 3};
+
+        List<CardDTO> deleteList = new ArrayList<>();
+        for (int cardId : deleteIdList) {
+            card = cardDao.getCard(cardId);
+            assertNotNull(card);
+            deleteList.add(card);
+        }
+
+        assertEquals(true, (cardDao.deleteCard(deleteList)));
+        for (int cardId : deleteIdList) {
+            assertNull(cardDao.getCard(cardId));
+        }
+    }
+
     public void testUpdateCard() throws Exception {
         setupCardData();
         int updateId = 1;
 
-        CardDTO newValue = new CardDTO(updateId, "new name", "new image path", 199, updateId+1, updateId+2);
+        CardDTO newValue = new CardDTO(updateId, "new name", "new image path", "new image name", updateId+2, updateId+3, updateId+4);
         assertEquals(true, (cardDao.updateCard(newValue)));
 
         CardDTO updatedValue = cardDao.getCard(updateId);
@@ -207,6 +263,15 @@ public class FlashCardDBTest extends AndroidTestCase {
 
         list = cardDao.getCardByBoxId(9999);
         assertEquals(true, (list.size() == 0));
+    }
+
+    public void testGetTopCardById() {
+        setupCardData();
+        int findBoxId = 1;
+
+        CardDTO topCard = cardDao.getTopCardByBoxId(findBoxId);
+        assertNotNull(topCard);
+        assertEquals(true, topCard.equals(cardDataList[findBoxId-1]));
     }
 
     public void testDeleteCardByBoxId() throws Exception {
@@ -290,11 +355,12 @@ public class FlashCardDBTest extends AndroidTestCase {
         int findBoxId = 1;
         int findId = 2;
         String findName = "chick";
-        int findImageId = R.drawable.animal_02;
+        int findImageId = R.drawable.z_demo_animal_02;
+        String findImageName = context.getResources().getResourceName(findImageId);
 
         CardDTO card = cardDao.getCard(findId);
         assertEquals(true, findName.equals(card.getName()));
-        assertEquals(true, findImageId == card.getImageId());
+        assertEquals(true, findImageName.equals(card.getImageName()));
         assertEquals(true, (card.getType() == FlashCardDB.CardEntry.TYPE_DEMO));
         assertEquals(true, (card.getBoxId() == findBoxId));
 
@@ -302,11 +368,12 @@ public class FlashCardDBTest extends AndroidTestCase {
         findBoxId = 3;
         findId = 9+3+20;
         findName = "I";
-        findImageId = R.drawable.alphabet_i;
+        findImageId = R.drawable.z_demo_alphabet_i;
+        findImageName = context.getResources().getResourceName(findImageId);
 
         card = cardDao.getCard(findId);
         assertEquals(true, findName.equals(card.getName()));
-        assertEquals(true, findImageId == card.getImageId());
+        assertEquals(true, findImageName.equals(card.getImageName()));
         assertEquals(true, (card.getType() == FlashCardDB.CardEntry.TYPE_DEMO));
         assertEquals(true, (card.getBoxId() == findBoxId));
     }

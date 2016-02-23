@@ -242,6 +242,9 @@ public class CardViewActivity extends AppCompatActivity {
 
     private void childViewLongClicked(View view) {
         Dlog.i("");
+        // card id
+        final CardDTO sendCard = ((PagerHolder) view.getTag()).getCard();
+        sendCardListIndex = ((PagerHolder) view.getTag()).getCardIndex();
         // get user action from dialog
         final CharSequence[] items = {
                 getString(R.string.card_view_edit_dialog_edit_button_text),
@@ -256,28 +259,31 @@ public class CardViewActivity extends AppCompatActivity {
                 String itemName = items[which].toString();
                 Dlog.i("dialog:which:" + which + ", itemName:" + itemName);
 
+                int requestCode = 0;
                 if (itemName.equals(getString(R.string.card_view_edit_dialog_edit_button_text))) {
                     Dlog.i("dialog:edit card");
-                    // todo: edit card
+                    // edit card
+                    requestCode = IntentRequestCode.CARD_EDIT;
                 } else if (itemName.equals(getString(R.string.card_view_edit_dialog_delete_button_text))) {
                     Dlog.i("dialog:delete card");
-                    // todo: delete card
+                    // delete card
+                    requestCode = IntentRequestCode.CARD_DELETE;
                 } else if (itemName.equals(getString(R.string.card_view_edit_dialog_cancel_button_text))) {
                     Dlog.i("dialog:cancelled");
                     //dialog.dismiss();
                 }
+                if (requestCode != 0) {
+                    // start card edit activity
+                    Intent intent = new Intent(CardViewActivity.this, CardEditActivity.class);
+                    intent.putExtra(IntentExtrasName.REQUEST_CODE, requestCode);
+                    intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
+                    startActivityForResult(intent, requestCode);
+                    Dlog.i("sendData:" + sendCard);
+                    Dlog.i("sendCardListIndex:" + sendCardListIndex);
+                }
             }
         });
         builder.show();
-
-        // start card edit activity
-        /*CardDTO sendCard = ((PagerHolder) view.getTag()).getCard();
-        sendCardListIndex = ((PagerHolder) view.getTag()).getCardIndex();
-        Intent intent = new Intent(this, CardEditActivity.class);
-        intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
-        intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
-        startActivityForResult(intent, IntentRequestCode.CARD_EDIT);
-        Dlog.i("sendData:" + sendCard);*/
     }
 
     @Override
@@ -293,6 +299,27 @@ public class CardViewActivity extends AppCompatActivity {
                     cardList.set(sendCardListIndex, returnCard);
                     // refresh view pager
                     pagerAdapter.notifyDataSetChanged();
+                    break;
+                case IntentRequestCode.CARD_DELETE:
+                    // todo: delete card
+                    Dlog.i("sendCardListIndex:" + sendCardListIndex);
+                    // delete returned data
+                    itemViewMap.remove(sendCardListIndex);
+                    if (sendCardListIndex >= 0 && sendCardListIndex < cardList.size()) {
+                        cardList.remove(sendCardListIndex);
+                    }
+                    // refresh view pager
+                    pagerAdapter.notifyDataSetChanged();
+                    if (cardList.size() > 0) {
+                        currentPosition = sendCardListIndex - 1;
+                        if (currentPosition < 0 || currentPosition >= cardList.size()) {
+                            currentPosition = 0;
+                        }
+                        pager.setCurrentItem(currentPosition);
+                        Dlog.i("currentPosition:" + currentPosition);
+                    } else {
+                        finish();
+                    }
                     break;
             }
         }
