@@ -75,6 +75,7 @@ public class CardEditActivity extends AppCompatActivity {
            case IntentRequestCode.CARD_DELETE_LIST:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 cardList = intent.getParcelableArrayListExtra(IntentExtrasName.SEND_DATA);
+                Dlog.i("CARD_DELETE_LIST:cardList:size():" + cardList.size());
                 if(cardList == null){
                     Dlog.i("getParcelableArrayListExtra:sendData: no data");
                     finish();
@@ -112,11 +113,12 @@ public class CardEditActivity extends AppCompatActivity {
             //delete cardList
             if(cardList.size()>0){
                 FlashCardDB db = new FlashCardDB(CardEditActivity.this);
+                Dlog.i("delete data:size():" + cardList.size());
                 if(db.deleteCard(cardList)==false){
                     intentResultCode = RESULT_CANCELED;
                     Dlog.i("delete error:" + card);
-                    finish();
                 }
+                finish();
             }
         }
 
@@ -127,7 +129,9 @@ public class CardEditActivity extends AppCompatActivity {
         if(intentRequestCode == IntentRequestCode.CARD_ADD || intentRequestCode == IntentRequestCode.CARD_EDIT) {
             ImageUtil.loadCardImageIntoImageView(this, card, imageView);
         }
-        cardEditTextView.setText(card.getName());
+        if(card != null) {
+            cardEditTextView.setText(card.getName());
+        }
 
         //imageView - card Image
         (findViewById(R.id.frameLayout)).setOnClickListener(new View.OnClickListener() {
@@ -277,6 +281,8 @@ public class CardEditActivity extends AppCompatActivity {
                 case IntentRequestCode.CARD_EDIT:
                 case IntentRequestCode.CARD_DELETE:
                     data.putExtra(IntentExtrasName.RETURN_DATA, card);
+                case IntentRequestCode.CARD_DELETE_LIST:
+
             }
 
             setResult(intentResultCode, data);
