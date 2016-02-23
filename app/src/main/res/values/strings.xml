@@ -51,6 +51,9 @@
     <string name="card_view_edit_dialog_edit_button_text">고칠래요</string>
     <string name="card_view_edit_dialog_delete_button_text">지울래요</string>
     <string name="card_view_edit_dialog_cancel_button_text">나갈래요</string>
+    <!--card list menu-->
+    <string name="card_list_menu_delete">지우기</string>
+    <string name="card_list_menu_complete">좋아요</string>
     <!--splash activity-->
     <string name="splash_message">내가 만드는 플래시카드</string>
 </resources>

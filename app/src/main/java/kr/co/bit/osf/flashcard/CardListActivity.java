@@ -103,7 +103,7 @@ public class CardListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.custom_card_list_menu, menu);
+        getMenuInflater().inflate(R.menu.activity_card_list_menu, menu);
         showDeleteCompleteButton =menu.findItem(R.id.showDeleteCompleteButton);
         return true;
     }
