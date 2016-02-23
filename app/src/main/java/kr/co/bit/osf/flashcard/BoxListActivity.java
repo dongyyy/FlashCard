@@ -13,11 +13,14 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
+import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.db.BoxDTO;
+import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.debug.Dlog;
 
@@ -34,6 +37,7 @@ public class BoxListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_box_list);
+        Dlog.i("");
 
         // read box list
         db = new FlashCardDB(this);
@@ -89,6 +93,7 @@ public class BoxListActivity extends AppCompatActivity {
                                             // set new box name
                                             String newBoxName = inputText.getText().toString();
                                             boxList.get(position).setName(newBoxName);
+                                            db.updateBox(boxList.get(position));
                                             adapter.notifyDataSetChanged();
                                             Dlog.i("new box name:" + newBoxName);
                                         }
@@ -178,6 +183,54 @@ public class BoxListActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Dlog.i("");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Dlog.i("");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Dlog.i("");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Dlog.i("");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Dlog.i("");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Dlog.i("");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Dlog.i("");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Dlog.i("");
+    }
+
     public class BoxListAdapter extends BaseAdapter {
         private Context context;
         private List<BoxDTO> list;
@@ -216,11 +269,25 @@ public class BoxListActivity extends AppCompatActivity {
             View view = convertView;
 
             if (view == null) {
+                Dlog.i("view == null");
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.activity_box_list_item, null);
             }
+            Dlog.i("position:" + position + ", box:" + list.get(position));
+            // image
+            ImageView imageView = (ImageView) view.findViewById(R.id.boxListViewItemImage);
+            CardDTO topCard = db.getTopCardByBoxId(list.get(position).getId());
+            if (topCard != null) {
+                Dlog.i("topCard:" + topCard);
+                ImageUtil.loadCardImageIntoImageView(BoxListActivity.this, topCard, imageView);
+            } else {
+                Dlog.i("default_no_image");
+                imageView.setImageResource(R.drawable.default_no_image);
+            }
+            // text
             TextView boxName = (TextView) view.findViewById(R.id.boxListViewItemText);
             boxName.setText(list.get(position).getName());
+
             return view;
         }
     }

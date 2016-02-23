@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingBottom="5dp"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:paddingTop="5dp">
 
     <ImageView
@@ -13,7 +13,7 @@
         android:layout_width="100dp"
         android:layout_height="75dp"
         android:layout_gravity="center"
-        android:src="@drawable/animal_01" />
+        android:src="@drawable/default_no_image" />
 
     <TextView
         android:id="@+id/boxListViewItemText"
