@@ -31,6 +31,7 @@ public class CardListActivity extends AppCompatActivity {
 
     List<CardDTO> cardList;
     FlashCardDB db;
+    StateDTO cardState;
     CardDAO dao;
     CardDTO dto;
     Integer lastNumber = 0;
@@ -44,8 +45,18 @@ public class CardListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
 
-        cardList = new ArrayList<>();
+        // read state from db
         db = new FlashCardDB(this);
+        cardState = db.getState();
+        Dlog.i("read card state:" + cardState);
+
+        // state.cardId > 0 : start card view activity
+        if (cardState.getCardId() > 0) {
+            Intent intent = new Intent(this, CardViewActivity.class);
+            startActivity(intent);
+        }
+
+        cardList = new ArrayList<>();
         dao = db;
         dto = new CardDTO();//이미지셋팅용 테스트
         StateDAO state = db;//박스 리스트 가져오기
@@ -123,6 +134,16 @@ public class CardListActivity extends AppCompatActivity {
             lastNumber = cardList.get(position).getId()+1;//임시 아이디,seq
 
             return view;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Dlog.i("");
+        // save current state
+        if (db != null) {
+            db.updateState(cardState.getBoxId() ,0);
         }
     }
 

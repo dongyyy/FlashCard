@@ -23,6 +23,7 @@ import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.db.BoxDTO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
+import kr.co.bit.osf.flashcard.db.StateDTO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class BoxListActivity extends AppCompatActivity {
@@ -38,6 +39,17 @@ public class BoxListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_box_list);
         Dlog.i("");
+
+        // read state from db
+        db = new FlashCardDB(this);
+        StateDTO cardState = db.getState();
+        Dlog.i("read card state:" + cardState);
+
+        // state.cardId > 0 : start card view activity
+        if (cardState.getBoxId() > 0) {
+            Intent intent = new Intent(this, CardListActivity.class);
+            startActivity(intent);
+        }
 
         // read box list
         db = new FlashCardDB(this);
@@ -212,6 +224,10 @@ public class BoxListActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Dlog.i("");
+        // save current state
+        if (db != null) {
+            db.updateState(0 ,0);
+        }
     }
 
     @Override
