@@ -292,9 +292,7 @@ public class BoxListActivity extends AppCompatActivity {
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.activity_box_list_item, null);
             }
-            Dlog.i("position:" + position + ", box:" + list.get(position));
-
-
+            Dlog.i("box position:" + position + ", box:" + list.get(position));
             // image
             ImageView imageView = (ImageView) view.findViewById(R.id.boxListViewItemImage);
             CardDTO topCard = db.getTopCardByBoxId(list.get(position).getId());
