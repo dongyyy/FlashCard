@@ -3,7 +3,7 @@
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/cardListMenuDelete"
         android:title="삭제"/>
-    <item android:id="@+id/cardListMenuCompleted"
+    <item android:id="@+id/showDeleteCompleteButton"
         android:title="완료"
         android:visible="false"
         yourapp:showAsAction="always"/>

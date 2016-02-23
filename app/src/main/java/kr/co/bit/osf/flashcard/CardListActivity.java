@@ -41,11 +41,12 @@ public class CardListActivity extends AppCompatActivity {
     List<CardDTO> cardList;
     ArrayList<CardDTO> deleteCardList;
     // grid view
+    GridView cardCustomGridView;
     CardListAdapter adapter;
     // send card
     int sendCardListIndex = 0;
     // menu
-    MenuItem cardListMenuCompleted;
+    MenuItem showDeleteCompleteButton;
     boolean deleteMenuClicked=false;
 
     @Override
@@ -63,7 +64,7 @@ public class CardListActivity extends AppCompatActivity {
         // read card list
         cardList = dao.getCardByBoxId(state.getBoxId());
 
-        GridView cardCustomGridView = (GridView)findViewById(R.id.cardCustomGridView);
+        cardCustomGridView = (GridView)findViewById(R.id.cardCustomGridView);
         adapter = new CardListAdapter(this);
         cardCustomGridView.setAdapter(adapter);
 
@@ -86,7 +87,7 @@ public class CardListActivity extends AppCompatActivity {
                 // start card edit activity
                 sendCardListIndex = position;
                 CardDTO sendCard = cardList.get(sendCardListIndex);
-                Intent intent = new Intent(CardListActivity.this, CardEditActivity.class);
+                Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
                 intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
                 intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
                 final boolean DELETE_QUESTION = intent.getBooleanExtra("DELETE_OK", false);//삭제 요청이 오면 삭제
@@ -103,7 +104,7 @@ public class CardListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.custom_card_list_menu, menu);
-        cardListMenuCompleted=menu.findItem(R.id.cardListMenuCompleted);
+        showDeleteCompleteButton =menu.findItem(R.id.showDeleteCompleteButton);
         return true;
     }
 
@@ -113,24 +114,26 @@ public class CardListActivity extends AppCompatActivity {
 
         switch (id){
             case R.id.cardListMenuDelete:{
-                cardListMenuCompleted.setVisible(true);
+                showDeleteCompleteButton.setVisible(true);
                 deleteMenuClicked=true;
                 adapter.notifyDataSetChanged();
                 return true;
             }
-            case R.id.cardListMenuCompleted:{
-                Dlog.i("R.id.cardListMenuCompleted");
-                cardListMenuCompleted.setVisible(false);
+            case R.id.showDeleteCompleteButton:{
+                Dlog.i("R.id.showDeleteCompleteButton");
+                showDeleteCompleteButton.setVisible(false);
                 deleteMenuClicked=false;
                 adapter.notifyDataSetChanged();
 
-                Dlog.i("startActivityForResult");
-                Intent intent=new Intent(getApplicationContext(),CardEditActivity.class);
-                intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE_LIST);
-                intent.putParcelableArrayListExtra(IntentExtrasName.SEND_DATA, deleteCardList);
-                startActivityForResult(intent, IntentRequestCode.CARD_DELETE_LIST);
-                Dlog.i("startActivityForResult");
-                return true;
+                if(deleteCardList.size()!=0) {
+                    Dlog.i("startActivityForResult");
+                    Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
+                    intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE_LIST);
+                    intent.putParcelableArrayListExtra(IntentExtrasName.SEND_DATA, deleteCardList);
+                    startActivityForResult(intent, IntentRequestCode.CARD_DELETE_LIST);
+                    Dlog.i("startActivityForResult");
+                    return true;
+                }
             }
         }
         return super.onOptionsItemSelected(item);
@@ -150,7 +153,7 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public Object getItem(int position) {
-            return null;
+            return cardList.get(position);
         }
 
         @Override
@@ -182,25 +185,23 @@ public class CardListActivity extends AppCompatActivity {
                 Dlog.i("position:" + position + ", box:" + cardList.get(position).getName());
                 holder = (ViewHolder) view.getTag();
             }
-                if(deleteMenuClicked) { //삭제 메뉴 버튼 클릭 되었을 때
-                    holder.checkBox.setVisibility(View.VISIBLE);
-                    holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            if (isChecked) { //체크를 할 때
-                                deleteCardList.add(cardList.get(position));
-                                for (int i = 0; i < deleteCardList.size(); i++)
-                                    Log.d("isChecked", deleteCardList.get(i).getName());
-                            } else { //체크가 해제될 때
-                                deleteCardList.remove(cardList.get(position));
-                            }
+            if(deleteMenuClicked) { //삭제 메뉴 버튼 클릭 되었을 때
+                holder.checkBox.setVisibility(View.VISIBLE);
+                holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) { //체크를 할 때
+                            deleteCardList.add(cardList.get(position));
+                            for (int i = 0; i < deleteCardList.size(); i++)
+                                Log.d("isChecked", deleteCardList.get(i).getName());
+                        } else { //체크가 해제될 때
+                            deleteCardList.remove(cardList.get(position));
                         }
-                    });
-                } else { //삭제 완료 했을 때
-                    holder.checkBox.setVisibility(View.INVISIBLE);
-                }
-
-
+                    }
+                });
+            } else { //삭제 완료 했을 때
+                holder.checkBox.setVisibility(View.INVISIBLE);
+            }
             return view;
         }
     }
@@ -232,25 +233,12 @@ public class CardListActivity extends AppCompatActivity {
                     cardList.clear();
                     cardList = dao.getCardByBoxId(state.getBoxId());
                     for (int i = 0; i < cardList.size(); i++) {
-                        Dlog.i("cardList name" + cardList.get(i).getName());
+                        Dlog.i("cardList name" + cardList.get(i));
                     }
+                    cardCustomGridView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     break;
             }
         }
     }
 }
-
-
-/*
-// read state from db
-db = new FlashCardDB(this);
-        stateDao = db;
-        cardState = stateDao.getState();
-        Dlog.i("read card state:" + cardState);
-
-        // state.cardId > 0 : start card view activity
-        if (cardState.getCardId() > 0) {
-        Intent intent = new Intent(this, CardViewActivity.class);
-        startActivity(intent);
-        }*/
