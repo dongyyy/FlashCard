@@ -5,6 +5,7 @@ public interface IntentRequestCode {
     int CARD_DELETE = 1002;
     int CARD_EDIT = 1003;
     int CARD_DELETE_LIST = 1004;
+    int CARD_VIEW = 1005;
 
     int BOX_ADD = 1101;
     int BOX_DELETE = 1102;
