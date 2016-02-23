@@ -113,6 +113,23 @@ public class CardListActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id){
+            case R.id.cardListMenuAdd:{
+                /*sendCardListIndex = position;
+                CardDTO sendCard = cardList.get(sendCardListIndex);
+                Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
+                intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
+                intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);*/
+                CardDTO cardToAdd = new CardDTO();
+                cardToAdd.setBoxId(state.getBoxId());
+
+                Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
+                intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_ADD);
+                intent.putExtra(IntentExtrasName.SEND_DATA, cardToAdd);
+
+                startActivityForResult(intent, IntentRequestCode.CARD_ADD);
+                Dlog.i("ADD:startActivityForResult");
+                return true;
+            }
             case R.id.cardListMenuDelete:{
                 showDeleteCompleteButton.setVisible(true);
                 deleteMenuClicked=true;
@@ -131,7 +148,7 @@ public class CardListActivity extends AppCompatActivity {
                     intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE_LIST);
                     intent.putParcelableArrayListExtra(IntentExtrasName.SEND_DATA, deleteCardList);
                     startActivityForResult(intent, IntentRequestCode.CARD_DELETE_LIST);
-                    Dlog.i("startActivityForResult");
+                    Dlog.i("DELETE:startActivityForResult");
                     return true;
                 }
             }
@@ -217,6 +234,13 @@ public class CardListActivity extends AppCompatActivity {
         Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
+                case IntentRequestCode.CARD_ADD:
+                    CardDTO cardAdded = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
+                    Dlog.i("addData:" + cardAdded);
+                    cardList.add(cardAdded);
+                    cardCustomGridView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    break;
                 case IntentRequestCode.CARD_EDIT:
                     // get result data
                     CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
@@ -224,6 +248,7 @@ public class CardListActivity extends AppCompatActivity {
                     // refresh returned data
                     cardList.set(sendCardListIndex, returnCard);
                     // refresh view pager
+                    cardCustomGridView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     break;
                 case IntentRequestCode.CARD_DELETE_LIST:
