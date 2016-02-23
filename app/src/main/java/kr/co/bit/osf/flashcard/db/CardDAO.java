@@ -9,5 +9,6 @@ public interface CardDAO {
     boolean deleteCard(List<CardDTO> list);
     boolean updateCard(CardDTO newValue);
     List<CardDTO> getCardByBoxId(int boxId);
+    CardDTO getTopCardByBoxId(int boxId);
     boolean deleteCardByBoxId(int boxId);
 }

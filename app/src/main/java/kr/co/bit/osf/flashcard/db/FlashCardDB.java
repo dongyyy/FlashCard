@@ -488,6 +488,38 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
     }
 
     @Override
+    public CardDTO getTopCardByBoxId(int boxId) {
+        CardDTO card = null;
+
+        String query = "select " + CardEntry.FIELD_LIST
+                + " from " + CardEntry.TABLE_NAME
+                + " where " + CardEntry.COLUMN_NAME_BOX_ID + " = " + boxId
+                + " order by " + CardEntry.COLUMN_NAME_SEQ
+                + " limit 1";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                card = new CardDTO();
+                card.setId(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_ENTRY_ID)));
+                card.setName(cursor.getString(CardEntry.COLUMN_ID_NAME));
+                card.setImagePath(cursor.getString(CardEntry.COLUMN_ID_IMAGE_PATH));
+                card.setImageId(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_IMAGE_ID)));
+                card.setType(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_TYPE)));
+                card.setSeq(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_SEQ)));
+                card.setBoxId(Integer.parseInt(cursor.getString(CardEntry.COLUMN_ID_BOX_ID)));
+            }
+            cursor.close();
+        }
+
+        db.close();
+
+        return card;
+    }
+
+    @Override
     public boolean deleteCardByBoxId(int boxId) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = CardEntry.COLUMN_NAME_BOX_ID + " = ?";

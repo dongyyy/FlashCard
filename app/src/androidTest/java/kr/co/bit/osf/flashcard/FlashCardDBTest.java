@@ -89,10 +89,10 @@ public class FlashCardDBTest extends AndroidTestCase {
         int findIndex = 1;
         String findName = boxDataList[findIndex].getName();
 
-        BoxDTO box = boxDao.getBox(findIndex+1);
+        BoxDTO box = boxDao.getBox(findIndex + 1);
 
         assertNotNull(box);
-        assertEquals(true, (box.getId() == findIndex+1));
+        assertEquals(true, (box.getId() == findIndex + 1));
         assertEquals(true, (box.getName().equals(findName)));
 
         box = boxDao.getBox(9999);
@@ -240,6 +240,15 @@ public class FlashCardDBTest extends AndroidTestCase {
 
         list = cardDao.getCardByBoxId(9999);
         assertEquals(true, (list.size() == 0));
+    }
+
+    public void testGetTopCardById() {
+        setupCardData();
+        int findBoxId = 1;
+
+        CardDTO topCard = cardDao.getTopCardByBoxId(findBoxId);
+        assertNotNull(topCard);
+        assertEquals(true, topCard.equals(cardDataList[findBoxId-1]));
     }
 
     public void testDeleteCardByBoxId() throws Exception {
