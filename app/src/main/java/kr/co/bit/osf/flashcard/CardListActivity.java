@@ -23,6 +23,8 @@ import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.db.CardDAO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
+import kr.co.bit.osf.flashcard.db.StateDAO;
+import kr.co.bit.osf.flashcard.db.StateDTO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class CardListActivity extends AppCompatActivity {
@@ -46,11 +48,9 @@ public class CardListActivity extends AppCompatActivity {
         db = new FlashCardDB(this);
         dao = db;
         dto = new CardDTO();//이미지셋팅용 테스트
-        Intent getItem = getIntent();
-        Integer BoxId = getItem.getIntExtra("BoxId",0);
-
-        cardList = dao.getCardByBoxId(BoxId);
-
+        StateDAO state = db;//박스 리스트 가져오기
+        StateDTO stateDTO = state.getState();
+        cardList = dao.getCardByBoxId(stateDTO.getBoxId());
         GridView Card_Custom_Grid_View = (GridView)findViewById(R.id.Card_Custom_List_View);
         adapter = new CardListAdapter(this);
         Card_Custom_Grid_View.setAdapter(adapter);
@@ -113,7 +113,7 @@ public class CardListActivity extends AppCompatActivity {
 
             if(view == null){
                 LayoutInflater inflater =(LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.custom_card_list,null);
+                view = inflater.inflate(R.layout.activity_card_list_item,null);
             }
 
             String Card_List_Number = "BoxID." + cardList.get(position).getBoxId() + " CardID." + cardList.get(position).getId();
