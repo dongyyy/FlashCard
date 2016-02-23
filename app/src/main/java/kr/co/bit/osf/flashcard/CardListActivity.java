@@ -28,44 +28,50 @@ import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.db.CardDAO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
+import kr.co.bit.osf.flashcard.db.StateDTO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class CardListActivity extends AppCompatActivity {
-
-    List<CardDTO> cardList;
-    ArrayList<CardDTO> deleteCardList;
-    MenuItem cardListMenuCompleted;
+    // db
     FlashCardDB db;
     CardDAO dao;
     CardDTO dto;
-    Integer lastNumber = 0;
+    StateDTO state;
+    // list
+    List<CardDTO> cardList;
+    ArrayList<CardDTO> deleteCardList;
+    // grid view
     CardListAdapter adapter;
     // send card
     int sendCardListIndex = 0;
+    // menu
+    MenuItem cardListMenuCompleted;
     boolean deleteMenuClicked=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
 
-        cardList = new ArrayList<>();
         deleteCardList=new ArrayList<CardDTO>();
 
+        // db
         db = new FlashCardDB(this);
         dao = db;
         dto = new CardDTO();//이미지셋팅용 테스트
-        Intent getItem = getIntent();
-        Integer BoxId = getItem.getIntExtra("BoxId",0);
-
-        cardList = dao.getCardByBoxId(BoxId);
+        state = db.getState();
+        // read card list
+        cardList = dao.getCardByBoxId(state.getBoxId());
 
         GridView cardCustomGridView = (GridView)findViewById(R.id.cardCustomGridView);
         adapter = new CardListAdapter(this);
         cardCustomGridView.setAdapter(adapter);
+
         // activity change CardViewActivity
         cardCustomGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // card view
                 int boxId = cardList.get(position).getBoxId();
                 int cardId = cardList.get(position).getId();
                 db.updateState(boxId, cardId);
@@ -86,7 +92,7 @@ public class CardListActivity extends AppCompatActivity {
                 final boolean DELETE_QUESTION = intent.getBooleanExtra("DELETE_OK", false);//삭제 요청이 오면 삭제
                 if (DELETE_QUESTION == true) {
                     Toast.makeText(CardListActivity.this, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                    refreshCard(cardList);
+                    adapter.notifyDataSetChanged();
                 }
                 startActivityForResult(intent, IntentRequestCode.CARD_EDIT);
                 return true;
@@ -113,12 +119,17 @@ public class CardListActivity extends AppCompatActivity {
                 return true;
             }
             case R.id.cardListMenuCompleted:{
+                Dlog.i("R.id.cardListMenuCompleted");
                 cardListMenuCompleted.setVisible(false);
                 deleteMenuClicked=false;
                 adapter.notifyDataSetChanged();
+
+                Dlog.i("startActivityForResult");
                 Intent intent=new Intent(getApplicationContext(),CardEditActivity.class);
-                intent.putExtra(IntentExtrasName.REQUEST_CODE,IntentRequestCode.CARD_DELETE_LIST);
+                intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE_LIST);
                 intent.putParcelableArrayListExtra(IntentExtrasName.SEND_DATA, deleteCardList);
+                startActivityForResult(intent, IntentRequestCode.CARD_DELETE_LIST);
+                Dlog.i("startActivityForResult");
                 return true;
             }
         }
@@ -127,6 +138,7 @@ public class CardListActivity extends AppCompatActivity {
 
     public class CardListAdapter extends BaseAdapter{
         Context context;
+
         public CardListAdapter(Context c){
             context = c;
         }
@@ -151,24 +163,25 @@ public class CardListActivity extends AppCompatActivity {
             View view = convertView;
             ViewHolder holder = null;
 
-            if(view == null){
+            if(view == null) {
+                Dlog.i("view == null");
                 holder = new ViewHolder();
 
-                LayoutInflater inflater =(LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.custom_card_list,null);
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.activity_card_list_item, null);
                 holder.imageView=(ImageView)view.findViewById(R.id.cardCustomListImage);
                 holder.textView=(TextView)view.findViewById(R.id.cardCustomListName);
                 holder.checkBox=(CheckBox)view.findViewById(R.id.cardCustomCheckBox);
 
-                String Card_List_Number = "BoxID." + cardList.get(position).getBoxId() + " CardID." + cardList.get(position).getId();
                 String cardListName = cardList.get(position).getName();
 
                 holder.textView.setText(cardListName);//이름
                 ImageUtil.loadCardImageIntoImageView(CardListActivity.this, cardList.get(position), holder.imageView);
-                lastNumber = cardList.get(position).getId()+1;//임시 아이디,seq
                 view.setTag(holder);
-            } else{
-                holder=(ViewHolder)view.getTag();
+            } else {
+                Dlog.i("position:" + position + ", box:" + cardList.get(position).getName());
+                holder = (ViewHolder) view.getTag();
+            }
                 if(deleteMenuClicked) { //삭제 메뉴 버튼 클릭 되었을 때
                     holder.checkBox.setVisibility(View.VISIBLE);
                     holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -186,7 +199,7 @@ public class CardListActivity extends AppCompatActivity {
                 } else { //삭제 완료 했을 때
                     holder.checkBox.setVisibility(View.INVISIBLE);
                 }
-            }
+
 
             return view;
         }
@@ -212,12 +225,19 @@ public class CardListActivity extends AppCompatActivity {
                     // refresh view pager
                     adapter.notifyDataSetChanged();
                     break;
+                case IntentRequestCode.CARD_DELETE_LIST:
+                    Dlog.i("delete check");
+                    Dlog.i("Delete Box ID " + state.getBoxId());
+                    deleteCardList.clear();
+                    cardList.clear();
+                    cardList = dao.getCardByBoxId(state.getBoxId());
+                    for (int i = 0; i < cardList.size(); i++) {
+                        Dlog.i("cardList name" + cardList.get(i).getName());
+                    }
+                    adapter.notifyDataSetChanged();
+                    break;
             }
         }
-    }
-    public void refreshCard(List<CardDTO> list){//새로고침 함수
-        cardList = list;
-        adapter.notifyDataSetChanged();
     }
 }
 
