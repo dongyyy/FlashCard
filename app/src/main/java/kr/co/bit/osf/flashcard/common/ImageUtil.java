@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import kr.co.bit.osf.flashcard.R;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 
@@ -138,13 +139,24 @@ public class ImageUtil {
     }
 
     public static void loadCardImageIntoImageView(Context context, CardDTO card, ImageView imageView) {
-        if (card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
-            // load image from sd card(glide)
-            Glide.with(context).load(card.getImagePath()).into(imageView);
-        } else {
-            // card demo data(glide)
-            Glide.with(context).fromResource()
-                    .load(card.getImageId()).into(imageView);
+        if (card != null) {
+            if (card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
+                // load image from sd card(glide)
+                String imagePath = card.getImagePath();
+                if (imagePath.length() > 0) {
+                    Glide.with(context).load(card.getImagePath()).into(imageView);
+                } else {
+                    Glide.with(context).fromResource().load(R.drawable.default_no_image).into(imageView);
+                }
+            } else {
+                // card demo data(glide)
+                int imageId = context.getResources().getIdentifier(card.getImageName(),
+                        "drawable", context.getPackageName());
+                if (imageId == 0) {
+                    imageId = R.drawable.default_no_image;
+                }
+                Glide.with(context).fromResource().load(imageId).into(imageView);
+            }
         }
     }
 
