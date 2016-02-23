@@ -12,4 +12,6 @@ public interface CardDAO {
     CardDTO getTopCardByBoxId(int boxId);
     boolean deleteCardByBoxId(int boxId);
     int getCardCountByBoxId(int boxId);
+    boolean updateCardSeq(int id, int seq);
+    boolean updateCardSeq(List<CardDTO> cardList);
 }

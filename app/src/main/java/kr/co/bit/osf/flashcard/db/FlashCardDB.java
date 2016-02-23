@@ -381,6 +381,10 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         card.setId(newRowId);
         db.close();
 
+        if (updateCardSeq(newRowId, newRowId)) {
+            card.setSeq(newRowId);
+        }
+
         return (newRowId > 0);
     }
 
@@ -480,6 +484,48 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         db.close();
 
         return (count > 0);
+    }
+
+    @Override
+    public boolean updateCardSeq(int id, int seq) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // http://developer.android.com/intl/ko/training/basics/data-storage/databases.html#UpdateDbRow
+        // New value for one column
+        ContentValues values = new ContentValues();
+        values.put(CardEntry.COLUMN_NAME_SEQ, seq);
+
+        // Which row to update, based on the ID
+        String selection = CardEntry.COLUMN_NAME_ENTRY_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        int count = db.update(
+                CardEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+        db.close();
+
+        return (count > 0);
+    }
+
+    @Override
+    public boolean updateCardSeq(List<CardDTO> cardList) {
+        boolean isOk = true;
+        CardDTO card;
+
+        if (cardList != null) {
+            for (int i = 0; i < cardList.size(); i++) {
+                card = cardList.get(i);
+                if (card.getId() > 0) {
+                    if (!updateCardSeq(card.getId(), i)) {
+                        isOk = false;
+                    }
+                }
+            }
+        }
+
+        return isOk;
     }
 
     @Override

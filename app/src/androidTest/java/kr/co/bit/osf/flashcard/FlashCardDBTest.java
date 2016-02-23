@@ -265,6 +265,41 @@ public class FlashCardDBTest extends AndroidTestCase {
         assertEquals(true, (list.size() == 0));
     }
 
+    public void testUpdateCardSeq() throws Exception {
+        setupCardData();
+        int updateId = 2;
+        int updateSeq = updateId + 11;
+
+        assertEquals(true, cardDao.updateCardSeq(updateId, updateSeq));
+
+        CardDTO updatedValue = cardDao.getCard(updateId);
+        assertNotNull(updatedValue);
+        assertEquals(true, (updateSeq == updatedValue.getSeq()));
+    }
+
+    public void testUpdateCardListSeq() throws Exception {
+        setupCardData();
+
+        List<CardDTO> cardListSeq = new ArrayList<>();
+        for (int i = 0; i < cardDataList.length; i++) {
+            int cardId = cardDataList.length - i;
+            CardDTO card = cardDao.getCard(cardId);
+            assertEquals(true, (card.getId() == cardId));
+            assertEquals(true, (card.getSeq() == cardId));
+            cardListSeq.add(card);
+        }
+
+        assertEquals(true, cardDataList.length == cardListSeq.size());
+        assertEquals(true, cardDao.updateCardSeq(cardListSeq));
+
+        for (int i = 0; i < cardListSeq.size(); i++) {
+            CardDTO card = cardDao.getCard(cardListSeq.get(i).getId());
+            assertNotNull(card);
+            assertEquals(true, (card.getSeq() == i));
+            assertEquals(true, (card.getId() == (cardListSeq.size() - i)));
+        }
+    }
+
     public void testGetTopCardById() {
         setupCardData();
         int findBoxId = 1;
