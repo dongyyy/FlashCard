@@ -7,20 +7,22 @@
     android:layout_margin="20dp"
     tools:context="kr.co.bit.osf.flashcard.CardEditActivity">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical|center_horizontal"
         android:layout_above="@+id/linearLayout"
-        android:id="@+id/linearLayout2">
+        android:id="@+id/linearLayout2"
+        android:padding="20dp">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/cardEditImageView" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cardEditImageView"
+            android:src="@drawable/default_no_image"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -32,53 +34,21 @@
         android:layout_above="@+id/relativeLayout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:weightSum="1">
+        android:padding="10dp"
+        android:weightSum="1"
+        android:background="@drawable/textlines">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Large Text"
+            android:textSize="25dp"
+            android:gravity="center_vertical|center_horizontal"
             android:id="@+id/cardEditTextView" />
 
+
     </LinearLayout>
-    <!--
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/relativeLayout2"
-            android:layout_above="@+id/linearLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
-
-            <ImageButton
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/camera"
-                android:id="@+id/cardEditCameraButton"
-                android:gravity="left"
-                android:scaleType="centerCrop"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
-            <ImageButton
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/gallery"
-                android:id="@+id/cardEditGalleryButton"
-                android:gravity="right"
-                android:scaleType="centerCrop"
-                android:layout_centerHorizontal="true" />
-
-            <ImageButton
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:id="@+id/cardEditDeleteButton"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
-
-        </RelativeLayout>-->
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -86,7 +56,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/linearLayout"
         android:layout_alignStart="@+id/linearLayout"
-        android:id="@+id/relativeLayout">
+        android:id="@+id/relativeLayout"
+        android:padding="10dp">
 
         <Button
             android:layout_width="wrap_content"

@@ -42,7 +42,7 @@
     <string name="card_edit_image_dialog_gallery_button_text">갤러리에서 사진 고를래요</string>
     <string name="card_edit_image_dialog_cancel_button_text">나갈래요</string>
     <!--card edit activity text dialog -->
-    <string name="card_edit_text_dialog_tilte_text">카드 이름 바꾸기</string>
+    <string name="card_edit_text_dialog_title_text">카드 이름 바꾸기</string>
     <string name="card_edit_text_dialog_message_text">바꿀 카드 이름을 써주세요.</string>
     <string name="card_edit_text_dialog_ok_button_text">바꿀래요</string>
     <string name="card_edit_text_dialog_cancel_button_text">안 바꿀래요</string>

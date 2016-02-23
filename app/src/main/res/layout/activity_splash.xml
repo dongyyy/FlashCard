@@ -14,5 +14,6 @@
         android:layout_height="match_parent"
         android:text="@string/splash_message"
         android:gravity="center_vertical|center_horizontal"
-        android:textSize="50dp" />
-</RelativeLayout>
+        android:textSize="60dp"
+        android:background="@drawable/textlines" />
+    </RelativeLayout>

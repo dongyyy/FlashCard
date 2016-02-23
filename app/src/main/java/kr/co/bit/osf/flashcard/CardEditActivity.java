@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.List;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
@@ -34,6 +36,8 @@ public class CardEditActivity extends AppCompatActivity {
     // camera, gallery
     private File photoFile = null;
     private String photoFilePath = null;
+    // delete card
+    List<CardDTO> cardList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,34 +55,81 @@ public class CardEditActivity extends AppCompatActivity {
         intentRequestCode = intent.getIntExtra(IntentExtrasName.REQUEST_CODE, 0);
         Dlog.i("intentRequestCode:" + intentRequestCode);
         switch (intentRequestCode) {
-            case IntentRequestCode.CARD_EDIT:
+            case IntentRequestCode.CARD_ADD:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
-                card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
-                break;
+                card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA); //받은 cardDTO에 boxId가 들어있음
+                card.setType(FlashCardDB.CardEntry.TYPE_DEMO);
+                card.setImageName(this.getResources().getResourceName(R.drawable.default_no_image));
+                card.setName("카드 이름을 입력해주세요");
+            case IntentRequestCode.CARD_EDIT:
             case IntentRequestCode.CARD_DELETE:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
+                card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
+                if(card == null){
+                    Dlog.i("getParcelableExtra: sendData:no data");
+                    finish();
+                    return;
+                }
                 break;
-        }
-        if (card == null) {
-            Dlog.i("getExtras:sendData:no data");
-            finish();
-            return;
+            //delete cardList
+           case IntentRequestCode.CARD_DELETE_LIST:
+                Dlog.i("intentRequestCode in case:" + intentRequestCode);
+                cardList = intent.getParcelableArrayListExtra(IntentExtrasName.SEND_DATA);
+                if(cardList == null){
+                    Dlog.i("getParcelableArrayListExtra:sendData: no data");
+                    finish();
+                    return;
+                }
+                break;
         }
 
         // todo: process requested task
         Dlog.i("getExtras:sendData:" + card);
         intentResultCode = RESULT_OK;
 
-        cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
+        if(intentRequestCode == IntentRequestCode.CARD_ADD){
+            FlashCardDB db = new FlashCardDB(CardEditActivity.this);
+            if(db.addCard(card) == false){
+                intentResultCode = RESULT_CANCELED;
+                Dlog.i("add error:" + card);
+            }
+            finish();
+        }
+
+        if(intentRequestCode == IntentRequestCode.CARD_DELETE){
+            Dlog.i("delete data:" + card);
+            // delete card
+            FlashCardDB db = new FlashCardDB(CardEditActivity.this);
+            if (db.deleteCard(card.getId()) == false) {
+                intentResultCode = RESULT_CANCELED;
+                Dlog.i("delete error:" + card);
+            }
+            finish();
+        }
+        //delete cardList
+        if(intentRequestCode == IntentRequestCode.CARD_DELETE_LIST){
+            Dlog.i("delete data:" + cardList);
+            //delete cardList
+            if(cardList.size()>0){
+                FlashCardDB db = new FlashCardDB(CardEditActivity.this);
+                if(db.deleteCard(cardList)==false){
+                    intentResultCode = RESULT_CANCELED;
+                    Dlog.i("delete error:" + card);
+                    finish();
+                }
+            }
+        }
+
         imageView = (ImageView) findViewById(R.id.cardEditImageView);
+        cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
 
         //show card
-        if(intentRequestCode == IntentRequestCode.CARD_EDIT) {
+        if(intentRequestCode == IntentRequestCode.CARD_ADD || intentRequestCode == IntentRequestCode.CARD_EDIT) {
             ImageUtil.loadCardImageIntoImageView(this, card, imageView);
         }
         cardEditTextView.setText(card.getName());
 
-        //image view
+        //imageView - card Image
         (findViewById(R.id.cardEditImageView)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,31 +137,14 @@ public class CardEditActivity extends AppCompatActivity {
             }
         });
 
+        //textView - card Name
         (findViewById(R.id.cardEditTextView)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 textClicked();
             }
         });
-/*
-        //Delete Button
-        (findViewById(R.id.cardEditDeleteButton)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dlog.i("delete data:" + card);
 
-                // delete card
-                FlashCardDB db = new FlashCardDB(CardEditActivity.this);
-                if (db.deleteCard(card.getId()) == false) {
-                    Dlog.i("delete error:" + card);
-                }
-
-                Intent deleteIntent = new Intent();
-                deleteIntent.putExtra("delete", card);
-                finish();
-            }
-        });
-*/
         //yes, no Button
         (findViewById(R.id.cardEditYesButton)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,13 +219,15 @@ public class CardEditActivity extends AppCompatActivity {
 
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-            alert.setTitle(R.string.card_edit_text_dialog_tilte_text);
+            alert.setTitle(R.string.card_edit_text_dialog_title_text);
             alert.setMessage(R.string.card_edit_text_dialog_message_text);
 
             // Set an EditText view to get user input
             final EditText input = new EditText(this);
             alert.setView(input);
-
+            input.setText(card.getName());
+            input.setGravity(Gravity.CENTER);
+            input.setSelection(card.getName().length());//커서를 문자끝에 위치 시킴
             alert.setPositiveButton(R.string.card_edit_text_dialog_ok_button_text, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     String value = input.getText().toString();
@@ -223,6 +259,7 @@ public class CardEditActivity extends AppCompatActivity {
                     card.setType(FlashCardDB.CardEntry.TYPE_USER);
                     ImageUtil.loadCardImageIntoImageView(this, card, imageView);
                     Dlog.i("photoFilePath:" + card.getImagePath());
+                    Dlog.i("photoFilePath:" + card.getImagePath());
                     break;
               }
         }
@@ -233,7 +270,13 @@ public class CardEditActivity extends AppCompatActivity {
         // return data
         if (intentResultCode == RESULT_OK) {
             Intent data = new Intent();
-            data.putExtra(IntentExtrasName.RETURN_DATA, card);
+            switch (intentRequestCode) {
+                case IntentRequestCode.CARD_ADD:
+                case IntentRequestCode.CARD_EDIT:
+                case IntentRequestCode.CARD_DELETE:
+                    data.putExtra(IntentExtrasName.RETURN_DATA, card);
+            }
+
             setResult(intentResultCode, data);
         } else {
             setResult(intentResultCode);
