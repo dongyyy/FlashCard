@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDTO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
+import kr.co.bit.osf.flashcard.test.SetupInitialState;
 
 // http://gun0912.tistory.com/12
 public class BaseApplication extends Application {
@@ -29,6 +30,8 @@ public class BaseApplication extends Application {
         } else {
             Dlog.i("db already initialized");
         }
+        // setup test state
+        SetupInitialState.setupState(db);
     }
 
     /**

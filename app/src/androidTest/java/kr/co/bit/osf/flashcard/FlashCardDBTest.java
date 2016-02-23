@@ -140,11 +140,34 @@ public class FlashCardDBTest extends AndroidTestCase {
         int updateId = 2;
         int updateSeq = updateId + 11;
 
-        boxDao.updateBoxSeq(updateId, updateSeq);
+        assertEquals(true, boxDao.updateBoxSeq(updateId, updateSeq));
 
         BoxDTO updatedValue = boxDao.getBox(updateId);
         assertNotNull(updatedValue);
         assertEquals(true, (updateSeq == updatedValue.getSeq()));
+    }
+
+    public void testUpdateBoxListSeq() throws Exception {
+        setupBoxData();
+
+        List<BoxDTO> boxListSeq = new ArrayList<>();
+        for (int i = 0; i < boxDataList.length; i++) {
+            int boxId = boxDataList.length - i;
+            BoxDTO box = boxDao.getBox(boxId);
+            assertEquals(true, (box.getId() == boxId));
+            assertEquals(true, (box.getSeq() == boxId));
+            boxListSeq.add(box);
+        }
+
+        assertEquals(true, boxDataList.length == boxListSeq.size());
+        assertEquals(true, boxDao.updateBoxSeq(boxListSeq));
+
+        for (int i = 0; i < boxListSeq.size(); i++) {
+            BoxDTO box = boxDao.getBox(boxListSeq.get(i).getId());
+            assertNotNull(box);
+            assertEquals(true, (box.getSeq() == i));
+            assertEquals(true, (box.getId() == (boxListSeq.size() - i)));
+        }
     }
 
     // card

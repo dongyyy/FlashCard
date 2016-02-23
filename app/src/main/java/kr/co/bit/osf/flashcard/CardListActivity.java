@@ -23,12 +23,15 @@ import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.db.CardDAO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
+import kr.co.bit.osf.flashcard.db.StateDAO;
+import kr.co.bit.osf.flashcard.db.StateDTO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class CardListActivity extends AppCompatActivity {
 
     List<CardDTO> cardList;
     FlashCardDB db;
+    StateDTO cardState;
     CardDAO dao;
     CardDTO dto;
     Integer lastNumber = 0;
@@ -42,15 +45,23 @@ public class CardListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
 
-        cardList = new ArrayList<>();
+        // read state from db
         db = new FlashCardDB(this);
+        cardState = db.getState();
+        Dlog.i("read card state:" + cardState);
+
+        // state.cardId > 0 : start card view activity
+        if (cardState.getCardId() > 0) {
+            Intent intent = new Intent(this, CardViewActivity.class);
+            startActivity(intent);
+        }
+
+        cardList = new ArrayList<>();
         dao = db;
         dto = new CardDTO();//이미지셋팅용 테스트
-        Intent getItem = getIntent();
-        Integer BoxId = getItem.getIntExtra("BoxId",0);
-
-        cardList = dao.getCardByBoxId(BoxId);
-
+        StateDAO state = db;//박스 리스트 가져오기
+        StateDTO stateDTO = state.getState();
+        cardList = dao.getCardByBoxId(stateDTO.getBoxId());
         GridView Card_Custom_Grid_View = (GridView)findViewById(R.id.Card_Custom_List_View);
         adapter = new CardListAdapter(this);
         Card_Custom_Grid_View.setAdapter(adapter);
@@ -113,7 +124,7 @@ public class CardListActivity extends AppCompatActivity {
 
             if(view == null){
                 LayoutInflater inflater =(LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.custom_card_list,null);
+                view = inflater.inflate(R.layout.activity_card_list_item,null);
             }
 
             String Card_List_Number = "BoxID." + cardList.get(position).getBoxId() + " CardID." + cardList.get(position).getId();
@@ -123,6 +134,16 @@ public class CardListActivity extends AppCompatActivity {
             lastNumber = cardList.get(position).getId()+1;//임시 아이디,seq
 
             return view;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Dlog.i("");
+        // save current state
+        if (db != null) {
+            db.updateState(cardState.getBoxId() ,0);
         }
     }
 
