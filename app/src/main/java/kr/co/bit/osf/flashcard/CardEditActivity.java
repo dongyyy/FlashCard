@@ -58,9 +58,10 @@ public class CardEditActivity extends AppCompatActivity {
             case IntentRequestCode.CARD_ADD:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA); //받은 cardDTO에 boxId가 들어있음
-                card.setType(FlashCardDB.CardEntry.TYPE_DEMO);
-                card.setImageName(this.getResources().getResourceName(R.drawable.default_no_image));
-                card.setName("카드 이름을 입력해주세요");
+                card.setType(FlashCardDB.CardEntry.TYPE_USER);
+                cardEditTextView.setText("카드 이름을 입력해주세요");
+                //card.setImageName(this.getResources().getResourceName(R.drawable.default_no_image));
+                //card.setName("카드 이름을 입력해주세요");
             case IntentRequestCode.CARD_EDIT:
             case IntentRequestCode.CARD_DELETE:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
@@ -88,14 +89,14 @@ public class CardEditActivity extends AppCompatActivity {
         Dlog.i("getExtras:sendData:" + card);
         intentResultCode = RESULT_OK;
 
-        if(intentRequestCode == IntentRequestCode.CARD_ADD){
+/*        if(intentRequestCode == IntentRequestCode.CARD_ADD){
             FlashCardDB db = new FlashCardDB(CardEditActivity.this);
             if(db.addCard(card) == false){
                 intentResultCode = RESULT_CANCELED;
                 Dlog.i("add error:" + card);
             }
             finish();
-        }
+        }*/
 
         if(intentRequestCode == IntentRequestCode.CARD_DELETE){
             Dlog.i("delete data:" + card);
@@ -126,7 +127,7 @@ public class CardEditActivity extends AppCompatActivity {
         cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
 
         //show card
-        if(intentRequestCode == IntentRequestCode.CARD_ADD || intentRequestCode == IntentRequestCode.CARD_EDIT) {
+        if(intentRequestCode == IntentRequestCode.CARD_EDIT) {
             ImageUtil.loadCardImageIntoImageView(this, card, imageView);
         }
         if(card != null) {
@@ -153,10 +154,62 @@ public class CardEditActivity extends AppCompatActivity {
         (findViewById(R.id.cardEditYesButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 FlashCardDB db = new FlashCardDB(getApplicationContext());
                 card.setName(cardEditTextView.getText().toString().trim());
-                db.updateCard(card);
-                finish();
+                if(intentRequestCode == IntentRequestCode.CARD_ADD) {
+
+                    boolean isOk = true;
+                    // todo: image check
+                    if (card.getImageName() != null) {
+                        if (card.getImageName().length() != 0) {
+                        } else {
+                            isOk = false;
+                        }
+                    } else {
+                        isOk = false;
+                    }
+                    // todo: name check
+                    if(isOk) {
+                        if (card.getName() != null) {
+                            if (card.getName().length() != 0) {
+                            } else {
+                                isOk = false;
+                            }
+                        } else {
+                            isOk = false;
+                        }
+                    }
+
+                    if(isOk){
+                        if(db.addCard(card) != true){
+                            intentResultCode = RESULT_CANCELED;
+                            Dlog.i("add error:" + card);
+                        }
+                        finish();
+                    }else{
+                        final CharSequence[] items = {
+                                getString(R.string.card_edit_text_yes_button_confirm_button_text),
+                        };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(CardEditActivity.this);
+                        builder.setTitle(getString(R.string.card_edit_text_yes_button_title_text));
+                        builder.setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String itemName = items[which].toString();
+                                Dlog.i("dialog:which:" + which + ", itemName:" + itemName);
+                                if (itemName.equals(getString(R.string.card_edit_text_yes_button_confirm_button_text))) {
+                                    Dlog.i("cardEdit:confirmButton clicked");
+                                }
+                            }
+                        });
+                        builder.show();
+                    }
+                    
+                }else if(intentRequestCode == IntentRequestCode.CARD_EDIT){
+                    db.updateCard(card);
+                    finish();
+                }
             }
         });
 
@@ -282,9 +335,7 @@ public class CardEditActivity extends AppCompatActivity {
                 case IntentRequestCode.CARD_DELETE:
                     data.putExtra(IntentExtrasName.RETURN_DATA, card);
                 case IntentRequestCode.CARD_DELETE_LIST:
-
             }
-
             setResult(intentResultCode, data);
         } else {
             setResult(intentResultCode);
