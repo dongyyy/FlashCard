@@ -4,11 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,21 +33,24 @@ import kr.co.bit.osf.flashcard.debug.Dlog;
 public class CardListActivity extends AppCompatActivity {
 
     List<CardDTO> cardList;
+    ArrayList<CardDTO> deleteCardList;
+    MenuItem cardListMenuCompleted;
     FlashCardDB db;
     CardDAO dao;
     CardDTO dto;
     Integer lastNumber = 0;
     CardListAdapter adapter;
-
     // send card
     int sendCardListIndex = 0;
-
+    boolean deleteMenuClicked=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
 
         cardList = new ArrayList<>();
+        deleteCardList=new ArrayList<CardDTO>();
+
         db = new FlashCardDB(this);
         dao = db;
         dto = new CardDTO();//이미지셋팅용 테스트
@@ -51,22 +59,22 @@ public class CardListActivity extends AppCompatActivity {
 
         cardList = dao.getCardByBoxId(BoxId);
 
-        GridView Card_Custom_Grid_View = (GridView)findViewById(R.id.Card_Custom_List_View);
+        GridView cardCustomGridView = (GridView)findViewById(R.id.cardCustomGridView);
         adapter = new CardListAdapter(this);
-        Card_Custom_Grid_View.setAdapter(adapter);
+        cardCustomGridView.setAdapter(adapter);
         // activity change CardViewActivity
-        Card_Custom_Grid_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        cardCustomGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int boxId = cardList.get(position).getBoxId();
                 int cardId = cardList.get(position).getId();
                 db.updateState(boxId, cardId);
-                Intent intent = new Intent(getApplicationContext(),CardViewActivity.class);
+                Intent intent = new Intent(getApplicationContext(), CardViewActivity.class);
                 startActivity(intent);
             }
         });
         //편집
-        Card_Custom_Grid_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        cardCustomGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 // start card edit activity
@@ -75,8 +83,8 @@ public class CardListActivity extends AppCompatActivity {
                 Intent intent = new Intent(CardListActivity.this, CardEditActivity.class);
                 intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
                 intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
-               final boolean DELETE_QUESTION = intent.getBooleanExtra("DELETE_OK",false);//삭제 요청이 오면 삭제
-                if(DELETE_QUESTION == true){
+                final boolean DELETE_QUESTION = intent.getBooleanExtra("DELETE_OK", false);//삭제 요청이 오면 삭제
+                if (DELETE_QUESTION == true) {
                     Toast.makeText(CardListActivity.this, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                     refreshCard(cardList);
                 }
@@ -84,6 +92,37 @@ public class CardListActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.custom_card_list_menu, menu);
+        cardListMenuCompleted=menu.findItem(R.id.cardListMenuCompleted);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id){
+            case R.id.cardListMenuDelete:{
+                cardListMenuCompleted.setVisible(true);
+                deleteMenuClicked=true;
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+            case R.id.cardListMenuCompleted:{
+                cardListMenuCompleted.setVisible(false);
+                deleteMenuClicked=false;
+                adapter.notifyDataSetChanged();
+                Intent intent=new Intent(getApplicationContext(),CardEditActivity.class);
+                intent.putExtra(IntentExtrasName.REQUEST_CODE,IntentRequestCode.CARD_DELETE_LIST);
+                intent.putParcelableArrayListExtra(IntentExtrasName.SEND_DATA, deleteCardList);
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public class CardListAdapter extends BaseAdapter{
@@ -104,26 +143,59 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View view = convertView;
+            ViewHolder holder = null;
 
             if(view == null){
+                holder = new ViewHolder();
+
                 LayoutInflater inflater =(LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = inflater.inflate(R.layout.custom_card_list,null);
-            }
+                holder.imageView=(ImageView)view.findViewById(R.id.cardCustomListImage);
+                holder.textView=(TextView)view.findViewById(R.id.cardCustomListName);
+                holder.checkBox=(CheckBox)view.findViewById(R.id.cardCustomCheckBox);
 
-            String Card_List_Number = "BoxID." + cardList.get(position).getBoxId() + " CardID." + cardList.get(position).getId();
-            String Card_List_Name = cardList.get(position).getName();
-            ((TextView)view.findViewById(R.id.Card_Custom_List_Name)).setText(Card_List_Name);//이름
-            ImageUtil.loadCardImageIntoImageView(CardListActivity.this, cardList.get(position), ((ImageView) view.findViewById(R.id.Card_Custom_List_Image)));
-            lastNumber = cardList.get(position).getId()+1;//임시 아이디,seq
+                String Card_List_Number = "BoxID." + cardList.get(position).getBoxId() + " CardID." + cardList.get(position).getId();
+                String cardListName = cardList.get(position).getName();
+
+                holder.textView.setText(cardListName);//이름
+                ImageUtil.loadCardImageIntoImageView(CardListActivity.this, cardList.get(position), holder.imageView);
+                lastNumber = cardList.get(position).getId()+1;//임시 아이디,seq
+                view.setTag(holder);
+            } else{
+                holder=(ViewHolder)view.getTag();
+                if(deleteMenuClicked) { //삭제 메뉴 버튼 클릭 되었을 때
+                    holder.checkBox.setVisibility(View.VISIBLE);
+                    holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked) { //체크를 할 때
+                                deleteCardList.add(cardList.get(position));
+                                for (int i = 0; i < deleteCardList.size(); i++)
+                                    Log.d("isChecked", deleteCardList.get(i).getName());
+                            } else { //체크가 해제될 때
+                                deleteCardList.remove(cardList.get(position));
+                            }
+                        }
+                    });
+                } else { //삭제 완료 했을 때
+                    holder.checkBox.setVisibility(View.INVISIBLE);
+                }
+            }
 
             return view;
         }
+    }
+
+    private class ViewHolder{
+        public ImageView imageView;
+        public TextView textView;
+        public CheckBox checkBox;
     }
 
     @Override
@@ -147,7 +219,6 @@ public class CardListActivity extends AppCompatActivity {
         cardList = list;
         adapter.notifyDataSetChanged();
     }
-
 }
 
 

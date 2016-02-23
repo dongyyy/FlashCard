@@ -14,12 +14,13 @@
     <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/Card_Custom_List_View"
+        android:id="@+id/cardCustomGridView"
         android:listSelector="@drawable/selector"
         android:dividerHeight="0px"
         android:divider="#ffffff"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:columnWidth="100dp"
+        android:layout_weight="1"
         ></GridView>
 </LinearLayout>
