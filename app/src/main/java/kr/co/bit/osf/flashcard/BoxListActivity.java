@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -22,12 +23,12 @@ import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.db.BoxDTO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
+import kr.co.bit.osf.flashcard.db.StateDAO;
 import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class BoxListActivity extends AppCompatActivity {
     // db
     private FlashCardDB db = null;
-    private BoxDTO boxDTO;
     private List<BoxDTO> boxList;
     // grid view
     private GridView gridView;
@@ -54,8 +55,11 @@ public class BoxListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Dlog.i("setOnItemClickListener:position:" + position);
                 Intent intent = new Intent(getApplicationContext(), CardListActivity.class);
-                Integer BoxId = boxList.get(position).getId();
-                intent.putExtra("BoxId", BoxId);//박스번호를 카드리스트에 전송
+
+                StateDAO state = db;
+                if(!(state.updateState(boxList.get(position).getId(), 0))){
+                    Toast.makeText(getApplicationContext(),"state 전송 실패",Toast.LENGTH_SHORT).show();
+                }
                 startActivity(intent);
                 Dlog.i("box:" + boxList.get(position));
             }
@@ -260,7 +264,6 @@ public class BoxListActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int position) {
-            Dlog.i("position:" + position);
             return position;
         }
 
