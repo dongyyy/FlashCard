@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.List;
@@ -57,10 +58,8 @@ public class CardEditActivity extends AppCompatActivity {
         switch (intentRequestCode) {
             case IntentRequestCode.CARD_ADD:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
-                card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA); //받은 cardDTO에 boxId가 들어있음
-                card.setType(FlashCardDB.CardEntry.TYPE_DEMO);
-                card.setImageName(this.getResources().getResourceName(R.drawable.default_no_image));
-                card.setName("카드 이름을 입력해주세요");
+                card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
+                card.setType(FlashCardDB.CardEntry.TYPE_USER);
             case IntentRequestCode.CARD_EDIT:
             case IntentRequestCode.CARD_DELETE:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
@@ -87,15 +86,6 @@ public class CardEditActivity extends AppCompatActivity {
         // todo: process requested task
         Dlog.i("getExtras:sendData:" + card);
         intentResultCode = RESULT_OK;
-
-        if(intentRequestCode == IntentRequestCode.CARD_ADD){
-            FlashCardDB db = new FlashCardDB(CardEditActivity.this);
-            if(db.addCard(card) == false){
-                intentResultCode = RESULT_CANCELED;
-                Dlog.i("add error:" + card);
-            }
-            finish();
-        }
 
         if(intentRequestCode == IntentRequestCode.CARD_DELETE){
             Dlog.i("delete data:" + card);
@@ -126,10 +116,10 @@ public class CardEditActivity extends AppCompatActivity {
         cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
 
         //show card
-        if(intentRequestCode == IntentRequestCode.CARD_ADD || intentRequestCode == IntentRequestCode.CARD_EDIT) {
+        if(intentRequestCode == IntentRequestCode.CARD_EDIT) {
             ImageUtil.loadCardImageIntoImageView(this, card, imageView);
         }
-        if(card != null) {
+        if(card.getName() != null) {
             cardEditTextView.setText(card.getName());
         }
 
@@ -153,10 +143,31 @@ public class CardEditActivity extends AppCompatActivity {
         (findViewById(R.id.cardEditYesButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FlashCardDB db = new FlashCardDB(getApplicationContext());
-                card.setName(cardEditTextView.getText().toString().trim());
-                db.updateCard(card);
-                finish();
+                Dlog.i("yes button:check:card:" + card);
+                boolean isOk = false;
+                switch (intentRequestCode) {
+                    case IntentRequestCode.CARD_ADD:
+                    case IntentRequestCode.CARD_EDIT:
+                        Dlog.i("yes button:check:intentRequestCode" + intentRequestCode);
+                        isOk = updatedCardIsOk();
+                        break;
+                }
+
+                if (isOk) {
+                    Dlog.i("yes button:check:ok:" + card);
+                    FlashCardDB db = new FlashCardDB(getApplicationContext());
+                    card.setName(cardEditTextView.getText().toString().trim());
+                    if (intentRequestCode == IntentRequestCode.CARD_ADD) {
+                        Dlog.i("yes button:check:ok:add" + card);
+                        db.addCard(card);
+                    } else {
+                        Dlog.i("yes button:check:ok:update" + card);
+                        db.updateCard(card);
+                    }
+                    finish();
+                } else {
+                    Dlog.i("yes button:check:fail:" + card);
+                }
             }
         });
 
@@ -221,30 +232,39 @@ public class CardEditActivity extends AppCompatActivity {
         private void textClicked(){
             Dlog.i("CardEditActivity: textClicked");
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(CardEditActivity.this);
+            Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder");
 
             alert.setTitle(R.string.card_edit_text_dialog_title_text);
             alert.setMessage(R.string.card_edit_text_dialog_message_text);
+            Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setTitle");
 
             // Set an EditText view to get user input
             final EditText input = new EditText(this);
-            alert.setView(input);
-            input.setText(card.getName());
             input.setGravity(Gravity.CENTER);
-            input.setSelection(card.getName().length());//커서를 문자끝에 위치 시킴
+            alert.setView(input);
+            input.setGravity(Gravity.CENTER);
+            Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setView");
+            if (card.getName() != null) {
+                input.setText(card.getName());
+                input.setSelection(card.getName().length());
+            } else {
+                input.setText("");
+            }
+            Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setText");
             alert.setPositiveButton(R.string.card_edit_text_dialog_ok_button_text, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    String value = input.getText().toString();
-                    // Do something with value!
-                    cardEditTextView.setText(value.toString());
+                    String name = input.getText().toString();
+                    cardEditTextView.setText(name);
+                    card.setName(name);
                 }
             });
 
             alert.setNegativeButton(R.string.card_edit_text_dialog_cancel_button_text, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            // Canceled.
-                        }
-                    });
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // Canceled.
+                }
+            });
 
             alert.show();
         }
@@ -269,6 +289,16 @@ public class CardEditActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void finish() {
         // return data
         if (intentResultCode == RESULT_OK) {
@@ -289,4 +319,45 @@ public class CardEditActivity extends AppCompatActivity {
         Dlog.i("setResult:" + intentResultCode);
         super.finish();
     }
+
+    public boolean updatedCardIsOk() {
+        // check card content
+        boolean isOk = true;
+        String errorMessage = "";
+
+        // check image
+        if (isOk) {
+            try {
+                isOk = (card.getImagePath().length() > 0);
+                Dlog.i("getImagePath().length():check:" + card.getImagePath().length());
+            } catch (Exception e) {
+                isOk = false;
+                Dlog.i("getImagePath():error:");
+            }
+            if (isOk == false) {
+                errorMessage = getResources().getString(R.string.card_edit_error_message_no_image);
+            }
+        }
+
+        // check text
+        if (isOk) {
+            try {
+                isOk = (card.getName().length() > 0);
+                Dlog.i("getName().length():check:" + card.getName().length());
+            } catch (Exception e) {
+                isOk = false;
+                Dlog.i("getName():error:");
+            }
+            if (isOk == false) {
+                errorMessage = getResources().getString(R.string.card_edit_error_message_no_text);
+            }
+        }
+
+        if (isOk == false) {
+            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        }
+
+        return isOk;
+    }
+
 }
