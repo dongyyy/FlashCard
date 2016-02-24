@@ -1,6 +1,8 @@
 package kr.co.bit.osf.flashcard.common;
 
 public interface IntentRequestCode {
+    int NONE = 1000;
+
     int CARD_ADD = 1001;
     int CARD_DELETE = 1002;
     int CARD_EDIT = 1003;
