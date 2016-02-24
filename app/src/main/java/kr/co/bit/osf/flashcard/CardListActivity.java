@@ -279,6 +279,7 @@ public class CardListActivity extends AppCompatActivity {
                         case IntentReturnCode.CARD_LIST_REFRESH:{
                             cardList.clear();
                             cardList = dao.getCardByBoxId(state.getBoxId());
+                            isCardListUpdated=true;
                             refreshCardList();
                             break;
                         }
@@ -299,8 +300,9 @@ public class CardListActivity extends AppCompatActivity {
     @Override
     public void finish() {
         //is update?
-        int returnCode = (isCardListUpdated ? IntentReturnCode.CARD_LIST_REFRESH : IntentReturnCode.NONE);
+        int returnCode = (isCardListUpdated ? IntentReturnCode.BOX_LIST_REFRESH : IntentReturnCode.NONE);
         Dlog.i("isCardListUpdated:" + isCardListUpdated);
+        Dlog.i(returnCode+"");
         //return data
         int intentResultCode=RESULT_OK;
         Intent data = new Intent();
