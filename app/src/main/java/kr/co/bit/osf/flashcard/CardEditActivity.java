@@ -303,10 +303,6 @@ public class CardEditActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        if (updatedCardIsOk() == false) {
-            Dlog.i("updatedCardIsOk() == false");
-            intentResultCode = RESULT_CANCELED;
-        }
         // return data
         if (intentResultCode == RESULT_OK) {
             Intent data = new Intent();
@@ -314,8 +310,15 @@ public class CardEditActivity extends AppCompatActivity {
                 case IntentRequestCode.CARD_ADD:
                 case IntentRequestCode.CARD_EDIT:
                 case IntentRequestCode.CARD_DELETE:
-                    data.putExtra(IntentExtrasName.RETURN_DATA, card);
+                    if (updatedCardIsOk() == true) {
+                        data.putExtra(IntentExtrasName.RETURN_DATA, card);
+                    } else {
+                        Dlog.i("updatedCardIsOk() == false");
+                        intentResultCode = RESULT_CANCELED;
+                    }
+                    break;
                 case IntentRequestCode.CARD_DELETE_LIST:
+                    break;
             }
             setResult(intentResultCode, data);
         } else {
