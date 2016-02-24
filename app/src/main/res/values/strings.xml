@@ -67,5 +67,4 @@
     <!--activity dialog title -->
     <string name="dialog_box_update">박스를 바꾸어 보자!</string>
     <string name="dialog_box_create">박스를 만들어 볼래?</string>
-
 </resources>

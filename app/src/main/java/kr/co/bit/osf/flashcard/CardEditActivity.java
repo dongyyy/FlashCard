@@ -60,8 +60,8 @@ public class CardEditActivity extends AppCompatActivity {
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
                 card.setType(FlashCardDB.CardEntry.TYPE_USER);
-            case IntentRequestCode.CARD_EDIT:
-            case IntentRequestCode.CARD_DELETE:
+                case IntentRequestCode.CARD_EDIT:
+                case IntentRequestCode.CARD_DELETE:
                 Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
                 if(card == null){
@@ -86,7 +86,6 @@ public class CardEditActivity extends AppCompatActivity {
         // todo: process requested task
         Dlog.i("getExtras:sendData:" + card);
         intentResultCode = RESULT_OK;
-
         if(intentRequestCode == IntentRequestCode.CARD_DELETE){
             Dlog.i("delete data:" + card);
             // delete card
@@ -96,6 +95,7 @@ public class CardEditActivity extends AppCompatActivity {
                 Dlog.i("delete error:" + card);
             }
             finish();
+            return;
         }
         //delete cardList
         if(intentRequestCode == IntentRequestCode.CARD_DELETE_LIST){
@@ -109,6 +109,7 @@ public class CardEditActivity extends AppCompatActivity {
                     Dlog.i("delete error:" + card);
                 }
                 finish();
+                return;
             }
         }
 
@@ -124,7 +125,7 @@ public class CardEditActivity extends AppCompatActivity {
         }
 
         //imageView - card Image
-        (findViewById(R.id.cardEditImageView)).setOnClickListener(new View.OnClickListener() {
+        (findViewById(R.id.frameLayout)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageClicked();
@@ -187,7 +188,6 @@ public class CardEditActivity extends AppCompatActivity {
             final CharSequence[] items = {
                     getString(R.string.card_edit_image_dialog_camera_button_text),
                     getString(R.string.card_edit_image_dialog_gallery_button_text),
-                    getString(R.string.card_edit_image_dialog_cancel_button_text)
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(CardEditActivity.this);
             builder.setTitle(getString(R.string.card_edit_image_dialog_title));
@@ -202,6 +202,7 @@ public class CardEditActivity extends AppCompatActivity {
                         Dlog.i("cardEdit:photoCaptureButton clicked");
                         //capture card
                         photoFile = ImageUtil.getOutputMediaFile(ImageUtil.MEDIA_TYPE_IMAGE);
+                        Dlog.i("cardEdit:photoCaptureButton clicked");
                         photoFilePath = photoFile.getAbsolutePath();
 
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -220,9 +221,9 @@ public class CardEditActivity extends AppCompatActivity {
                                 Intent.createChooser(intent, "Select Picture"),
                                 IntentRequestCode.SELECT_PICTURE);
 
-                    } else if (itemName.equals(getString(R.string.card_edit_image_dialog_cancel_button_text))) {
+                  /*  } else if (itemName.equals(getString(R.string.card_edit_image_dialog_cancel_button_text))) {
                         Dlog.i("dialog:cancelled");
-                        //dialog.dismiss();
+                        //dialog.dismiss();*/
                     }
                 }
             });
@@ -280,6 +281,8 @@ public class CardEditActivity extends AppCompatActivity {
                     }
                     card.setImagePath(photoFilePath);
                     card.setType(FlashCardDB.CardEntry.TYPE_USER);
+                    Dlog.i("photoFilePath:" + photoFilePath);
+                    Dlog.i("photoFilePath:" + card);
                     ImageUtil.loadCardImageIntoImageView(this, card, imageView);
                     Dlog.i("photoFilePath:" + card.getImagePath());
                     Dlog.i("photoFilePath:" + card.getImagePath());
@@ -309,9 +312,7 @@ public class CardEditActivity extends AppCompatActivity {
                 case IntentRequestCode.CARD_DELETE:
                     data.putExtra(IntentExtrasName.RETURN_DATA, card);
                 case IntentRequestCode.CARD_DELETE_LIST:
-
             }
-
             setResult(intentResultCode, data);
         } else {
             setResult(intentResultCode);
@@ -328,8 +329,13 @@ public class CardEditActivity extends AppCompatActivity {
         // check image
         if (isOk) {
             try {
-                isOk = (card.getImagePath().length() > 0);
-                Dlog.i("getImagePath().length():check:" + card.getImagePath().length());
+                if(card.getType() == FlashCardDB.CardEntry.TYPE_DEMO){
+                    isOk = (card.getImageName().length() > 0);
+                    Dlog.i("getImageName().length():check:" + card.getImageName().length());
+                }else {
+                    isOk = (card.getImagePath().length() > 0);
+                    Dlog.i("getImagePath().length():check:" + card.getImagePath().length());
+                }
             } catch (Exception e) {
                 isOk = false;
                 Dlog.i("getImagePath():error:");
