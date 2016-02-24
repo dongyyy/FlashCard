@@ -256,8 +256,6 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("asc sort start");
                 Collections.sort(boxList, new NameAscCompare());
                 Dlog.i("asc sort - collections sort call");
-                for (BoxDTO dto : boxList) {
-                }
                 db.updateBoxSeq(boxList);
                 adapter.notifyDataSetChanged();
                 Dlog.i("asc sort end");
@@ -267,8 +265,6 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("desc sort start");
                 Collections.sort(boxList, new NameDescCompare());
                 Dlog.i("desc sort - collections sort call");
-                for (BoxDTO dto : boxList) {
-                }
                 db.updateBoxSeq(boxList);
                 adapter.notifyDataSetChanged();
                 Dlog.i("desc sort end");
@@ -278,7 +274,6 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("shuffle start");
                 Collections.shuffle(boxList);
                 Dlog.i("Shuffle - collections sort call");
-                for (BoxDTO dto : boxList) ;
                 db.updateBoxSeq(boxList);
                 adapter.notifyDataSetChanged();
                 Dlog.i("shuffle end");
@@ -287,7 +282,6 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("Id Asc start");
                 Collections.sort(boxList,new NoAscCompare());
                 Dlog.i("Id Asc - collections sort call");
-                for (BoxDTO dto : boxList) ;
                 db.updateBoxSeq(boxList);
                 adapter.notifyDataSetChanged();
                 Dlog.i("Id Asc end");
