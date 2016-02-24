@@ -1,11 +1,13 @@
 package kr.co.bit.osf.flashcard;
 
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
@@ -34,6 +37,9 @@ public class CardViewActivity extends AppCompatActivity {
     FlashCardDB db = null;
     StateDTO cardState = null;
     List<CardDTO> cardList = null;
+
+    // tts -- urstory@gmail.com
+    TextToSpeech tts;
 
     // view pager
     ViewPager pager;
@@ -54,6 +60,16 @@ public class CardViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_view);
+
+        // tts
+        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.US);
+                }
+            }
+        });
 
         // todo: full screen
         ActionBar actionBar = getSupportActionBar();
@@ -246,44 +262,73 @@ public class CardViewActivity extends AppCompatActivity {
 
     private void childViewLongClicked(View view) {
         Dlog.i("");
-        // card id
-        final CardDTO sendCard = ((PagerHolder) view.getTag()).getCard();
+        // edit card list index
         sendCardListIndex = ((PagerHolder) view.getTag()).getCardIndex();
+        Dlog.i("sendCardListIndex:" + sendCardListIndex);
         // get user action from dialog
-        final CharSequence[] items = {
-                getString(R.string.card_view_edit_dialog_edit_button_text),
-                getString(R.string.card_view_edit_dialog_delete_button_text),
-        };
-        AlertDialog.Builder builder = new AlertDialog.Builder(CardViewActivity.this);
-        builder.setTitle(getString(R.string.card_view_edit_dialog_title));
-        builder.setItems(items, new DialogInterface.OnClickListener() {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_title, null);
+        final AlertDialog dialog = dialogBuilder.setView(dialogView).create();
+        // dialog title
+        TextView titleTextView = (TextView) dialogView.findViewById(R.id.dialogTitleTextView);
+        titleTextView.setText(getString(R.string.card_view_edit_dialog_title));
+        // edit dialog button
+        TextView dialogEditTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewOne);
+        dialogEditTextView.setText(getString(R.string.card_view_edit_dialog_edit_button_text));
+        dialogEditTextView.setVisibility(View.VISIBLE);
+        dialogEditTextView.setTag(dialog);
+        dialogEditTextView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String itemName = items[which].toString();
-                Dlog.i("dialog:which:" + which + ", itemName:" + itemName);
+            public void onClick(View v) {
+                dialogClicked(IntentRequestCode.CARD_EDIT);
+                // http://stackoverflow.com/questions/5713312/closing-a-custom-alert-dialog-on-button-click
+                ((AlertDialog) v.getTag()).cancel();
+                Dlog.i("dialog:edit card:click button");
+            }
+        });
+        // dialog delete button
+        TextView dialogDeleteTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewTwo);
+        dialogDeleteTextView.setText(getString(R.string.card_view_edit_dialog_delete_button_text));
+        dialogDeleteTextView.setVisibility(View.VISIBLE);
+        dialogDeleteTextView.setTag(dialog);
+        dialogDeleteTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogClicked(IntentRequestCode.CARD_DELETE);
+                // http://stackoverflow.com/questions/5713312/closing-a-custom-alert-dialog-on-button-click
+                ((AlertDialog) v.getTag()).cancel();
+                Dlog.i("dialog:delete card:click button");
+            }
+        });
+        dialog.show();
+    }
 
-                int requestCode = 0;
-                if (itemName.equals(getString(R.string.card_view_edit_dialog_edit_button_text))) {
-                    Dlog.i("dialog:edit card");
-                    // edit card
-                    requestCode = IntentRequestCode.CARD_EDIT;
-                } else if (itemName.equals(getString(R.string.card_view_edit_dialog_delete_button_text))) {
-                    Dlog.i("dialog:delete card");
-                    // delete card
-                    requestCode = IntentRequestCode.CARD_DELETE;
-                }
-                if (requestCode != 0) {
-                    // start card edit activity
+    private void dialogClicked(int requestCode) {
+        Dlog.i("requestCode:" + requestCode);
+
+        // todo: confirm delete card
+        if (requestCode == IntentRequestCode.CARD_DELETE) {
+            requestCode = IntentRequestCode.NONE;
+        }
+
+        // edit card, delete card
+        switch (requestCode) {
+            case IntentRequestCode.CARD_EDIT:
+            case IntentRequestCode.CARD_DELETE:
+                // card
+                CardDTO sendCard = cardList.get(sendCardListIndex);
+                Dlog.i("sendCard:" + sendCard);
+                // start card edit activity
+                if (sendCard != null) {
                     Intent intent = new Intent(CardViewActivity.this, CardEditActivity.class);
                     intent.putExtra(IntentExtrasName.REQUEST_CODE, requestCode);
                     intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
                     startActivityForResult(intent, requestCode);
                     Dlog.i("sendData:" + sendCard);
-                    Dlog.i("sendCardListIndex:" + sendCardListIndex);
                 }
-            }
-        });
-        builder.show();
+                Dlog.i("sendCardListIndex:" + sendCardListIndex);
+                break;
+        }
     }
 
     @Override
@@ -298,16 +343,17 @@ public class CardViewActivity extends AppCompatActivity {
                     CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
                     Dlog.i("returnData:" + returnCard);
                     // refresh returned data
-                    cardList.set(sendCardListIndex, returnCard);
-                    // refresh view pager
-                    pagerAdapter.notifyDataSetChanged();
+                    if (returnCard != null) {
+                        cardList.set(sendCardListIndex, returnCard);
+                        // refresh view pager
+                        pagerAdapter.notifyDataSetChanged();
+                    }
                     break;
                 case IntentRequestCode.CARD_DELETE:
                     // card is updated
                     isCardUpdated = true;
-                    // delete card
-                    Dlog.i("sendCardListIndex:" + sendCardListIndex);
                     // delete returned data
+                    Dlog.i("sendCardListIndex:" + sendCardListIndex);
                     itemViewMap.remove(sendCardListIndex);
                     if (sendCardListIndex >= 0 && sendCardListIndex < cardList.size()) {
                         cardList.remove(sendCardListIndex);
@@ -323,6 +369,7 @@ public class CardViewActivity extends AppCompatActivity {
                         Dlog.i("currentPosition:" + currentPosition);
                     } else {
                         finish();
+                        return ;
                     }
                     break;
             }
@@ -331,6 +378,7 @@ public class CardViewActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
+        super.finish();
         // is updated?
         int returnCode = (isCardUpdated ? IntentReturnCode.CARD_LIST_REFRESH : IntentReturnCode.NONE);
         Dlog.i("isCardUpdated:" + isCardUpdated);
@@ -340,7 +388,6 @@ public class CardViewActivity extends AppCompatActivity {
         data.putExtra(IntentExtrasName.RETURN_CODE, returnCode);
         setResult(intentResultCode, data);
         Dlog.i("setResult:" + intentResultCode + ", returnCode:" + returnCode);
-        super.finish();
     }
 
     // inner class for pager adapter item and flip animation
@@ -432,8 +479,19 @@ public class CardViewActivity extends AppCompatActivity {
                 this.mBackView.setRotationY(-180 * (1f- value));
                 this.mBackView.setScaleX(scaleValue);
                 this.mBackView.setScaleY(scaleValue);
+
                 if(!mFlipped){
                     setStateFlipped(true);
+                }
+
+                // tts
+                TextView tv = (TextView) (this.mBackView);
+                String word = tv.getText().toString();
+                // http://stackoverflow.com/a/29777304
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ttsGreater21(word);
+                } else {
+                    ttsUnder20(word);
                 }
             }
         }
@@ -443,5 +501,29 @@ public class CardViewActivity extends AppCompatActivity {
             this.mFrontView.setVisibility(flipped ? View.GONE : View.VISIBLE);
             this.mBackView.setVisibility(flipped ? View.VISIBLE : View.GONE);
         }
+    }
+
+    // tts
+    @SuppressWarnings("deprecation")
+    private void ttsUnder20(String text) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+    }
+
+    // tts
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void ttsGreater21(String text) {
+        String utteranceId=this.hashCode() + "";
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+    }
+
+    // tts
+    public void onPause(){
+        if(tts !=null){
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onPause();
     }
 }
