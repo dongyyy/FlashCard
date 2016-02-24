@@ -19,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
@@ -81,21 +84,24 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("box:" + boxList.get(position));
             }
         });
-
+        //long click dialog
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 // get user action from dialog
-
+                Dlog.i("Item long click dialog: start");
                 View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                Dlog.i("Item long click dialog - add View");
                 AlertDialog.Builder builder = new AlertDialog.Builder(BoxListActivity.this);
+                Dlog.i("Item long click dialog - add AlertDialog.Builder");
                 TextView textView1 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewOne);
                 TextView textView2 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewTwo);
-
+                Dlog.i("Item long click dialog - add item");
                 textView1.setText("바꿀래요?");
                 textView1.setVisibility(View.VISIBLE);
                 textView2.setText("지울래요");
                 textView2.setVisibility(View.VISIBLE);
+                Dlog.i("Item long click dialog - update Text,VISIBLE");
                 //update box dialog
                 textView1.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -103,9 +109,9 @@ public class BoxListActivity extends AppCompatActivity {
 
                         Dlog.i("dialog:edit box");
                         View dlg2 = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
-                        final EditText inputText = (EditText)dlg2.findViewById(R.id.dialogMenuEditTextOne);
-                        TextView textView = (TextView)dlg2.findViewById(R.id.dialogTitleTextView);
-                        TextView textView2 = (TextView)dlg2.findViewById(R.id.dialogMenuTextViewOne);
+                        final EditText inputText = (EditText) dlg2.findViewById(R.id.dialogMenuEditTextOne);
+                        TextView textView = (TextView) dlg2.findViewById(R.id.dialogTitleTextView);
+                        TextView textView2 = (TextView) dlg2.findViewById(R.id.dialogMenuTextViewOne);
                         Dlog.i("dialog:edit box - add dialog item");
                         inputText.setVisibility(View.VISIBLE);
                         textView.setVisibility(View.VISIBLE);
@@ -140,8 +146,8 @@ public class BoxListActivity extends AppCompatActivity {
                         Dlog.i("dialog:delete box");
                         View dlg2 = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
                         Dlog.i("dialog:delete box - create View");
-                        TextView deleteTitle = (TextView)dlg2.findViewById(R.id.dialogTitleTextView);
-                        TextView deleteMessage = (TextView)dlg2.findViewById(R.id.dialogMenuTextViewOne);
+                        TextView deleteTitle = (TextView) dlg2.findViewById(R.id.dialogTitleTextView);
+                        TextView deleteMessage = (TextView) dlg2.findViewById(R.id.dialogMenuTextViewOne);
                         Dlog.i("dialog:delete box - add dialog item");
                         deleteTitle.setVisibility(View.VISIBLE);
                         deleteMessage.setVisibility(View.VISIBLE);
@@ -163,7 +169,7 @@ public class BoxListActivity extends AppCompatActivity {
                                             adapter.notifyDataSetChanged();
                                             //임시 에러 방지
                                             finish();
-                                            Intent intent = new Intent(getApplicationContext(),BoxListActivity.class);
+                                            Intent intent = new Intent(getApplicationContext(), BoxListActivity.class);
                                             startActivity(intent);
                                             return;
                                         }
@@ -188,6 +194,7 @@ public class BoxListActivity extends AppCompatActivity {
 
     }
 
+    //menu option
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Dlog.i("onCreateOptionMenu : " + "OK");
@@ -200,15 +207,16 @@ public class BoxListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Integer id = item.getItemId();
 
-        switch (id){
+        switch (id) {
+            // add box
+            // set an EditText view to get user input
             case R.id.box_list_box_create:
+
                 Dlog.i("dialog:add box");
-                // add box
-                // set an EditText view to get user input
                 View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
-                final EditText inputText = (EditText)dlg.findViewById(R.id.dialogMenuEditTextOne);
-                TextView titleTextView = (TextView)dlg.findViewById(R.id.dialogTitleTextView);
-                TextView textView = (TextView)dlg.findViewById(R.id.dialogMenuTextViewOne);
+                final EditText inputText = (EditText) dlg.findViewById(R.id.dialogMenuEditTextOne);
+                TextView titleTextView = (TextView) dlg.findViewById(R.id.dialogTitleTextView);
+                TextView textView = (TextView) dlg.findViewById(R.id.dialogMenuTextViewOne);
                 Dlog.i("add R.id.dialog Item");
                 titleTextView.setText(R.string.dialog_box_create);
                 textView.setText(R.string.box_list_add_dialog_message_text);
@@ -242,9 +250,44 @@ public class BoxListActivity extends AppCompatActivity {
                             }
                         });
                 input.show();
+
                 break;
-//            case R.id.box_list_menu_list_One:
-//                break;
+            //정렬하기
+            case R.id.box_list_menu_list_Asc:
+                List <BoxDTO>ascList = new ArrayList<>();
+                Dlog.i("asc sort");
+                Collections.sort(boxList, new NameAscCompare());
+                Dlog.i("asc sort - collections sort call");
+                for (BoxDTO dto : ascList) {
+                   Dlog.i(dto.toString());
+                    ascList.add(dto);
+                }
+                Dlog.i("asc sort - for end");
+                boxList = ascList;
+                Dlog.i("asc sort - boxList = sortList");
+                adapter.notifyDataSetChanged();
+                ascList.clear();
+                break;
+            case R.id.box_list_menu_list_Desc:
+                List <BoxDTO>descList = new ArrayList<>();
+                Dlog.i("desc sort start");
+                Collections.sort(boxList, new NameDescCompare());
+                Dlog.i("desc sort call");
+                for (BoxDTO dto2 : descList) {
+                    Dlog.i(dto2.toString());
+                    descList.add(dto2);
+                }
+                Dlog.i("desc sort for end");
+                boxList = descList;
+                Dlog.i("desc sort boxList = sortList");
+
+                descList.clear();
+                Dlog.i("soltList Clear");
+                adapter.notifyDataSetChanged();
+                Dlog.i("desc sort checkSort = true, adapter refresh");
+                break;
+            case R.id.box_list_menu_list_Shuffle:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -253,25 +296,25 @@ public class BoxListActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Dlog.i("");
+        Dlog.i("onStart");
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Dlog.i("");
+        Dlog.i("onRestoreInstanceState");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Dlog.i("");
+        Dlog.i("onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Dlog.i("");
+        Dlog.i("onPause");
     }
 
     @Override
@@ -287,19 +330,19 @@ public class BoxListActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Dlog.i("");
+        Dlog.i("onStop");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Dlog.i("");
+        Dlog.i("onRestart");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Dlog.i("");
+        Dlog.i("onDestroy");
     }
 
     public class BoxListAdapter extends BaseAdapter {
@@ -379,5 +422,42 @@ public class BoxListActivity extends AppCompatActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    /**
+     * 이름 오름차순
+     *
+     * @author falbb
+     */
+    static class NameAscCompare implements Comparator<BoxDTO> {
+
+        /**
+         * 오름차순(ASC)
+         */
+        @Override
+        public int compare(BoxDTO arg0, BoxDTO arg1) {
+            // TODO Auto-generated method stub
+            return arg0.getName().compareTo(arg1.getName());
+        }
+
+    }
+
+    /**
+     * 이름 내림차순
+     *
+     * @author falbb
+     */
+    static class NameDescCompare implements Comparator<BoxDTO> {
+
+        /**
+         * 내림차순(DESC)
+         */
+        @Override
+        public int compare(BoxDTO arg0, BoxDTO arg1) {
+            // TODO Auto-generated method stub
+            return arg1.getName().compareTo(arg0.getName());
+        }
+
     }
 }

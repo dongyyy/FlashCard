@@ -59,7 +59,9 @@
     <string name="card_list_menu_complete">좋아요</string>
     <!--box list menu-->
     <string name="box_list_menu_list_create">박스를 만들어 보자</string>
-    <string name="box_list_menu_list_DESC">정렬</string>
+    <string name="box_list_menu_list_ASC">가나다순</string>
+    <string name="box_list_menu_list_DESC">하파타순</string>
+    <string name="box_list_menu_list_Shuffle">박스 섞어보기</string>
     <!--splash activity-->
     <string name="splash_message">내가 만드는 플래시카드</string>
     <!--activity dialog title -->
