@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/cardListMenuAdd"
-        android:title="@string/card_list_menu_add"/>
-    <item android:id="@+id/cardListMenuDelete"
-        android:title="@string/card_list_menu_delete"/>
+    <group android:id="@+id/optionMenuGroup">
+        <item android:id="@+id/cardListMenuAdd"
+            android:title="@string/card_list_menu_add"/>
+        <item android:id="@+id/cardListMenuDelete"
+            android:title="@string/card_list_menu_delete"/>
+        <item android:id="@+id/cardListMenuShuffle"
+            android:title="카드 섞어보기"/>
+        <item android:id="@+id/cardListMenuAscSort"
+            android:title="가나다순"/>
+        <item android:id="@+id/cardListMenuDescSort"
+            android:title="하파타순"/>
+        <item android:id="@+id/cardListMenuInitial"
+            android:title="처음으로"/>
+    </group>
     <item android:id="@+id/showDeleteCompleteButton"
         android:title="@string/card_list_menu_complete"
         android:visible="false"
