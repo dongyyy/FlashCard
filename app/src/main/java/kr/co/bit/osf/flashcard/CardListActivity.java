@@ -151,6 +151,7 @@ public class CardListActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -161,6 +162,7 @@ public class CardListActivity extends AppCompatActivity {
             db.updateState(state.getBoxId(), 0);
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_card_list_menu, menu);
@@ -331,9 +333,15 @@ public class CardListActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case IntentRequestCode.CARD_ADD:
+
                     CardDTO cardAdded = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
-                    Dlog.i("addData:" + cardAdded);
-                    cardList.add(cardAdded);
+                    if(cardAdded.getName() == null && cardAdded.getImagePath() == null && cardAdded.getImageName() == null) {
+                        Dlog.i("name,imagePath,imageName = null" + cardAdded.getImageName() + cardAdded.getImagePath() + cardAdded.getName());
+                        return;
+                    }else {
+                        Dlog.i("addData:" + cardAdded);
+                        cardList.add(cardAdded);
+                    }
                     refreshCardList();
                     break;
                 case IntentRequestCode.CARD_EDIT:

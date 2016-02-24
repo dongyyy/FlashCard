@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,12 +35,12 @@ import kr.co.bit.osf.flashcard.debug.Dlog;
 public class BoxListActivity extends AppCompatActivity {
     // db
     private FlashCardDB db = null;
-    private List<BoxDTO> boxList;
+    private List<BoxDTO> boxList = null;
     // grid view
-    private GridView gridView;
-    private BoxListAdapter adapter;
+    private GridView gridView = null;
+    private BoxListAdapter adapter = null;
     //dialog
-    private DialogInterface dialogInterface;
+    private DialogInterface dialogInterface = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,6 @@ public class BoxListActivity extends AppCompatActivity {
 
 
         // read box list
-        db = new FlashCardDB(this);
         boxList = db.getBoxAll();
         Dlog.i("getBoxAll:size():" + boxList.size());
 
@@ -80,7 +78,7 @@ public class BoxListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Dlog.i("setOnItemClickListener:position:" + position);
                 if (!(db.updateState(boxList.get(position).getId(), 0))) {
-                    Toast.makeText(getApplicationContext(), "state 전송 실패", Toast.LENGTH_SHORT).show();
+                    Dlog.i("state 전송 실패 : " + db.updateState(boxList.get(position).getId(),0));
                 }
                 Intent intent = new Intent(getApplicationContext(), CardListActivity.class);
                 startActivityForResult(intent, IntentRequestCode.CARD_LIST_VIEW);
@@ -196,6 +194,10 @@ public class BoxListActivity extends AppCompatActivity {
     //menu option
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if(menu == null){
+            Dlog.i("menu is null : " + menu );
+            finish();
+        }
         Dlog.i("onCreateOptionMenu : " + "OK");
         getMenuInflater().inflate(R.menu.activity_box_list_menu, menu);
         MenuItem showDeleteCompleteButton = menu.findItem(R.id.showDeleteCompleteButton);
@@ -204,8 +206,11 @@ public class BoxListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if(item == null && boxList == null){
+            Dlog.i("item : " + item + " boxList : " + boxList.toString());
+            finish();
+        }
         Integer id = item.getItemId();
-
         switch (id) {
             // add box
             // set an EditText view to get user input
@@ -347,8 +352,7 @@ public class BoxListActivity extends AppCompatActivity {
         private Context context;
         private List<BoxDTO> list;
 
-        public BoxListAdapter() {
-        }
+        public BoxListAdapter() {}
 
         public BoxListAdapter(Context c, List<BoxDTO> list) {
             context = c;
@@ -421,10 +425,12 @@ public class BoxListActivity extends AppCompatActivity {
             Dlog.i("returnCode=");
             switch (returnCode) {
                 case IntentReturnCode.BOX_LIST_REFRESH:
-                    Dlog.i("returnCode=");
+                    Dlog.i("Box_List_REFRESH : " + IntentReturnCode.BOX_LIST_REFRESH );
                     adapter.notifyDataSetChanged();
-                    gridView.setAdapter(adapter);
                     break;
+                default:
+                    Dlog.i("BoxListREFRESH error : " + IntentReturnCode.BOX_LIST_REFRESH );
+                    return;
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
