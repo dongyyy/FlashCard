@@ -418,6 +418,9 @@ public class BoxListActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
+        if(data == null){
+            return;
+        }
         int returnCode = data.getIntExtra(IntentExtrasName.RETURN_CODE, 0);
         if (resultCode == RESULT_OK) {
             Dlog.i("returnCode=");
