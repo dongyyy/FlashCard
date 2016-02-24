@@ -252,6 +252,21 @@ public class CardViewActivity extends AppCompatActivity {
         // read holder
         PagerHolder holder = (PagerHolder)view.getTag();
 
+        // tts
+        if (!holder.isFlipped()) {
+            try {
+                String word = holder.getTextView().getText().toString();
+                // http://stackoverflow.com/a/29777304
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ttsGreater21(word);
+                } else {
+                    ttsUnder20(word);
+                }
+            } catch (Exception e) {
+                Dlog.i(e.toString());
+            }
+        }
+
         // flip animation
         holder.flip();
 
@@ -393,7 +408,6 @@ public class CardViewActivity extends AppCompatActivity {
     // inner class for pager adapter item and flip animation
     private class PagerHolder {
         private CardDTO card;
-        private boolean isFront;
         private ImageView imageView;
         private TextView textView;
         private int cardIndex;
@@ -443,8 +457,7 @@ public class CardViewActivity extends AppCompatActivity {
         @Override
         public String toString() {
             return "pagerHolder{" +
-                    "isFront=" + isFront +
-                    ", card=" + card +
+                    "card=" + card +
                     ", cardIndex=" + cardIndex +
                     '}';
         }
@@ -482,16 +495,6 @@ public class CardViewActivity extends AppCompatActivity {
 
                 if(!mFlipped){
                     setStateFlipped(true);
-                }
-
-                // tts
-                TextView tv = (TextView) (this.mBackView);
-                String word = tv.getText().toString();
-                // http://stackoverflow.com/a/29777304
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ttsGreater21(word);
-                } else {
-                    ttsUnder20(word);
                 }
             }
         }
