@@ -419,10 +419,11 @@ public class BoxListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
         if(data == null){
+            finish();
             return;
         }
-        int returnCode = data.getIntExtra(IntentExtrasName.RETURN_CODE, 0);
         if (resultCode == RESULT_OK) {
+            int returnCode = data.getIntExtra(IntentExtrasName.RETURN_CODE, 0);
             Dlog.i("returnCode=");
             switch (returnCode) {
                 case IntentReturnCode.BOX_LIST_REFRESH:
