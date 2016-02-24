@@ -23,6 +23,7 @@ import java.util.Map;
 import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
 import kr.co.bit.osf.flashcard.common.IntentRequestCode;
+import kr.co.bit.osf.flashcard.common.IntentReturnCode;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
 import kr.co.bit.osf.flashcard.db.StateDTO;
@@ -45,6 +46,9 @@ public class CardViewActivity extends AppCompatActivity {
 
     // send card
     int sendCardListIndex = 0;
+
+    // card updated
+    boolean isCardUpdated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,7 +253,6 @@ public class CardViewActivity extends AppCompatActivity {
         final CharSequence[] items = {
                 getString(R.string.card_view_edit_dialog_edit_button_text),
                 getString(R.string.card_view_edit_dialog_delete_button_text),
-                getString(R.string.card_view_edit_dialog_cancel_button_text)
         };
         AlertDialog.Builder builder = new AlertDialog.Builder(CardViewActivity.this);
         builder.setTitle(getString(R.string.card_view_edit_dialog_title));
@@ -268,9 +271,6 @@ public class CardViewActivity extends AppCompatActivity {
                     Dlog.i("dialog:delete card");
                     // delete card
                     requestCode = IntentRequestCode.CARD_DELETE;
-                } else if (itemName.equals(getString(R.string.card_view_edit_dialog_cancel_button_text))) {
-                    Dlog.i("dialog:cancelled");
-                    //dialog.dismiss();
                 }
                 if (requestCode != 0) {
                     // start card edit activity
@@ -292,6 +292,8 @@ public class CardViewActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case IntentRequestCode.CARD_EDIT:
+                    // card is updated
+                    isCardUpdated = true;
                     // get result data
                     CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
                     Dlog.i("returnData:" + returnCard);
@@ -301,7 +303,9 @@ public class CardViewActivity extends AppCompatActivity {
                     pagerAdapter.notifyDataSetChanged();
                     break;
                 case IntentRequestCode.CARD_DELETE:
-                    // todo: delete card
+                    // card is updated
+                    isCardUpdated = true;
+                    // delete card
                     Dlog.i("sendCardListIndex:" + sendCardListIndex);
                     // delete returned data
                     itemViewMap.remove(sendCardListIndex);
@@ -323,6 +327,20 @@ public class CardViewActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    @Override
+    public void finish() {
+        // is updated?
+        int returnCode = (isCardUpdated ? IntentReturnCode.CARD_LIST_REFRESH : IntentReturnCode.NONE);
+        Dlog.i("isCardUpdated:" + isCardUpdated);
+        // return data
+        int intentResultCode = RESULT_OK;
+        Intent data = new Intent();
+        data.putExtra(IntentExtrasName.RETURN_CODE, returnCode);
+        setResult(intentResultCode, data);
+        Dlog.i("setResult:" + intentResultCode + ", returnCode:" + returnCode);
+        super.finish();
     }
 
     // inner class for pager adapter item and flip animation
