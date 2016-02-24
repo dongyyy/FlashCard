@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
@@ -159,6 +161,30 @@ public class CardListActivity extends AppCompatActivity {
                     Dlog.i("DELETE:startActivityForResult");
                     return true;
                 }
+                break;
+            }
+            case R.id.cardListMenuShuffle:{
+                Collections.shuffle(cardList);
+                for(CardDTO dto : cardList){
+
+                }
+                refreshCardList();
+
+                break;
+            }
+            case R.id.cardListMenuAscSort:{
+                Collections.sort(cardList, new NameAscCompare());
+                for(CardDTO dto : cardList){
+                }
+                refreshCardList();
+                break;
+            }
+            case R.id.cardListMenuDescSort:{
+                Collections.sort(cardList, new NameDescCompare());
+                for(CardDTO dto : cardList){
+                }
+                refreshCardList();
+                break;
             }
         }
         return super.onOptionsItemSelected(item);
@@ -245,7 +271,6 @@ public class CardListActivity extends AppCompatActivity {
                     Dlog.i("addData:" + cardAdded);
                     cardList.add(cardAdded);
                     refreshCardList();
-                    isCardListUpdated=true;
                     break;
                 case IntentRequestCode.CARD_EDIT:
                     // get result data
@@ -255,7 +280,6 @@ public class CardListActivity extends AppCompatActivity {
                     cardList.set(sendCardListIndex, returnCard);
                     // refresh view pager
                     refreshCardList();
-                    isCardListUpdated=true;
                     break;
                 case IntentRequestCode.CARD_DELETE_LIST:
                     Dlog.i("delete check");
@@ -267,7 +291,6 @@ public class CardListActivity extends AppCompatActivity {
                         Dlog.i("cardList name" + cardList.get(i));
                     }
                     refreshCardList();
-                    isCardListUpdated=true;
                     break;
                 case IntentRequestCode.CARD_VIEW:
                     int returnCode=data.getIntExtra(IntentExtrasName.RETURN_CODE,0);
@@ -279,7 +302,6 @@ public class CardListActivity extends AppCompatActivity {
                         case IntentReturnCode.CARD_LIST_REFRESH:{
                             cardList.clear();
                             cardList = dao.getCardByBoxId(state.getBoxId());
-                            isCardListUpdated=true;
                             refreshCardList();
                             break;
                         }
@@ -293,6 +315,7 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     public void refreshCardList(){
+        isCardListUpdated=true;
         cardCustomGridView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -310,4 +333,41 @@ public class CardListActivity extends AppCompatActivity {
         setResult(intentResultCode, data);
         super.finish();
     }
+
+    /**
+     * 이름 오름차순
+     * @author falbb
+     *
+     */
+    static class NameAscCompare implements Comparator<CardDTO> {
+
+        /**
+         * 오름차순(ASC)
+         */
+        @Override
+        public int compare(CardDTO arg0, CardDTO arg1) {
+            // TODO Auto-generated method stub
+            return arg0.getName().compareTo(arg1.getName());
+        }
+
+    }
+
+    /**
+     * 이름 내림차순
+     * @author falbb
+     *
+     */
+    static class NameDescCompare implements Comparator<CardDTO> {
+
+        /**
+         * 내림차순(DESC)
+         */
+        @Override
+        public int compare(CardDTO arg0, CardDTO arg1) {
+            // TODO Auto-generated method stub
+            return arg1.getName().compareTo(arg0.getName());
+        }
+
+    }
+
 }
