@@ -6,6 +6,12 @@
             android:title="@string/card_list_menu_add"/>
         <item android:id="@+id/cardListMenuDelete"
             android:title="@string/card_list_menu_delete"/>
+        <item android:id="@+id/cardListMenuShuffle"
+            android:title="카드 섞어보기"/>
+        <item android:id="@+id/cardListMenuAscSort"
+            android:title="가나다순"/>
+        <item android:id="@+id/cardListMenuDescSort"
+            android:title="하파타순"/>
     </group>
     <item android:id="@+id/showDeleteCompleteButton"
         android:title="@string/card_list_menu_complete"
