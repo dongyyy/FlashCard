@@ -3,8 +3,17 @@
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/box_list_box_create"
         android:title="@string/box_list_menu_list_create"
-        yourapp:showAsAction="always"/>/>
-<!--    <item android:id="@+id/box_list_menu_list_One"
+        yourapp:showAsAction="always"/>
+    <item android:id="@+id/box_list_menu_list_Asc"
+        android:title="@string/box_list_menu_list_ASC"
+        />
+    <item android:id="@+id/box_list_menu_list_Desc"
         android:title="@string/box_list_menu_list_DESC"
-        yourapp:showAsAction="always"/>-->
+        />
+    <item android:id="@+id/box_list_menu_list_Shuffle"
+        android:title="@string/box_list_menu_list_Shuffle"
+        />
+    <item android:id="@+id/box_list_menu_list_id_Asc"
+        android:title="@string/box_list_menu_list_id_Asc"
+        />
 </menu>

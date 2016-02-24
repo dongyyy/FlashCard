@@ -31,7 +31,7 @@ public class BaseApplication extends Application {
             Dlog.i("db already initialized");
         }
         // setup test state
-        SetupInitialState.setupState(db);
+        //SetupInitialState.setupState(db);
     }
 
     /**
