@@ -183,25 +183,23 @@ public class CardListActivity extends AppCompatActivity {
             View view = convertView;
             ViewHolder holder = null;
 
-            if(view == null) {
-                Dlog.i("view == null");
-                holder = new ViewHolder();
+            holder = new ViewHolder();
 
-                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.activity_card_list_item, null);
-                holder.imageView=(ImageView)view.findViewById(R.id.cardCustomListImage);
-                holder.textView=(TextView)view.findViewById(R.id.cardCustomListName);
-                holder.checkBox=(CheckBox)view.findViewById(R.id.cardCustomCheckBox);
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.activity_card_list_item, null);
+            holder.imageView=(ImageView)view.findViewById(R.id.cardCustomListImage);
+            holder.textView=(TextView)view.findViewById(R.id.cardCustomListName);
+            holder.checkBox=(CheckBox)view.findViewById(R.id.cardCustomCheckBox);
 
-                String cardListName = cardList.get(position).getName();
+            String cardListName = cardList.get(position).getName();
 
-                holder.textView.setText(cardListName);//이름
-                ImageUtil.loadCardImageIntoImageView(CardListActivity.this, cardList.get(position), holder.imageView);
-                view.setTag(holder);
-            } else {
-                Dlog.i("position:" + position + ", box:" + cardList.get(position).getName());
-                holder = (ViewHolder) view.getTag();
-            }
+            holder.textView.setText(cardListName);//이름
+            ImageUtil.loadCardImageIntoImageView(CardListActivity.this, cardList.get(position), holder.imageView);
+            view.setTag(holder);
+
+            Dlog.i("position:" + position + ", box:" + cardList.get(position).getName());
+            holder = (ViewHolder) view.getTag();
+
             if(deleteMenuClicked) { //삭제 메뉴 버튼 클릭 되었을 때
                 holder.checkBox.setVisibility(View.VISIBLE);
                 holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
