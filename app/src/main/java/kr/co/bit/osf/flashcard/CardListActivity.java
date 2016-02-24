@@ -25,6 +25,7 @@ import java.util.List;
 import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
 import kr.co.bit.osf.flashcard.common.IntentRequestCode;
+import kr.co.bit.osf.flashcard.common.IntentReturnCode;
 import kr.co.bit.osf.flashcard.db.CardDAO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
@@ -47,6 +48,7 @@ public class CardListActivity extends AppCompatActivity {
     int sendCardListIndex = 0;
     // menu
     MenuItem showDeleteCompleteButton;
+    Menu optionMenuGroup;
     boolean deleteMenuClicked=false;
 
     @Override
@@ -77,7 +79,8 @@ public class CardListActivity extends AppCompatActivity {
                 int cardId = cardList.get(position).getId();
                 db.updateState(boxId, cardId);
                 Intent intent = new Intent(getApplicationContext(), CardViewActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, IntentRequestCode.CARD_VIEW);
+                Dlog.i("startActivityForResult");
             }
         });
         //편집
@@ -93,7 +96,7 @@ public class CardListActivity extends AppCompatActivity {
                 final boolean DELETE_QUESTION = intent.getBooleanExtra("DELETE_OK", false);//삭제 요청이 오면 삭제
                 if (DELETE_QUESTION == true) {
                     Toast.makeText(CardListActivity.this, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                    adapter.notifyDataSetChanged();
+                    refreshCardList();
                 }
                 startActivityForResult(intent, IntentRequestCode.CARD_EDIT);
                 return true;
@@ -104,7 +107,8 @@ public class CardListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_card_list_menu, menu);
-        showDeleteCompleteButton =menu.findItem(R.id.showDeleteCompleteButton);
+        showDeleteCompleteButton = menu.findItem(R.id.showDeleteCompleteButton);
+        optionMenuGroup=menu;
         return true;
     }
 
@@ -133,6 +137,7 @@ public class CardListActivity extends AppCompatActivity {
             case R.id.cardListMenuDelete:{
                 showDeleteCompleteButton.setVisible(true);
                 deleteMenuClicked=true;
+                optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup,false); //option menu 비활성화
                 adapter.notifyDataSetChanged();
                 return true;
             }
@@ -140,6 +145,7 @@ public class CardListActivity extends AppCompatActivity {
                 Dlog.i("R.id.showDeleteCompleteButton");
                 showDeleteCompleteButton.setVisible(false);
                 deleteMenuClicked=false;
+                optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, true); //option menu 활성화
                 adapter.notifyDataSetChanged();
 
                 if(deleteCardList.size()!=0) {
@@ -236,8 +242,7 @@ public class CardListActivity extends AppCompatActivity {
                     CardDTO cardAdded = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
                     Dlog.i("addData:" + cardAdded);
                     cardList.add(cardAdded);
-                    cardCustomGridView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+                    refreshCardList();
                     break;
                 case IntentRequestCode.CARD_EDIT:
                     // get result data
@@ -246,8 +251,7 @@ public class CardListActivity extends AppCompatActivity {
                     // refresh returned data
                     cardList.set(sendCardListIndex, returnCard);
                     // refresh view pager
-                    cardCustomGridView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+                    refreshCardList();
                     break;
                 case IntentRequestCode.CARD_DELETE_LIST:
                     Dlog.i("delete check");
@@ -258,10 +262,31 @@ public class CardListActivity extends AppCompatActivity {
                     for (int i = 0; i < cardList.size(); i++) {
                         Dlog.i("cardList name" + cardList.get(i));
                     }
-                    cardCustomGridView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+                    refreshCardList();
+                    break;
+                case IntentRequestCode.CARD_VIEW:
+                    int returnCode=data.getIntExtra(IntentExtrasName.RETURN_CODE,0);
+                    Dlog.i(""+returnCode);
+                    switch (returnCode){
+                        case IntentReturnCode.NONE:{
+                            break;
+                        }
+                        case IntentReturnCode.CARD_LIST_REFRESH:{
+                            cardList.clear();
+                            cardList = dao.getCardByBoxId(state.getBoxId());
+                            refreshCardList();
+                            break;
+                        }
+                        case IntentReturnCode.BOX_LIST_REFRESH:{
+                            break;
+                        }
+                    }
                     break;
             }
         }
+    }
+    public void refreshCardList(){
+        cardCustomGridView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 }
