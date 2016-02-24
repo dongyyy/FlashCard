@@ -95,6 +95,7 @@ public class CardEditActivity extends AppCompatActivity {
                 Dlog.i("delete error:" + card);
             }
             finish();
+            return;
         }
         //delete cardList
         if(intentRequestCode == IntentRequestCode.CARD_DELETE_LIST){
@@ -108,6 +109,7 @@ public class CardEditActivity extends AppCompatActivity {
                     Dlog.i("delete error:" + card);
                 }
                 finish();
+                return;
             }
         }
 
