@@ -1,10 +1,13 @@
 package kr.co.bit.osf.flashcard;
 
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
@@ -33,6 +37,9 @@ public class CardViewActivity extends AppCompatActivity {
     FlashCardDB db = null;
     StateDTO cardState = null;
     List<CardDTO> cardList = null;
+
+    // tts -- urstory@gmail.com
+    TextToSpeech tts;
 
     // view pager
     ViewPager pager;
@@ -53,6 +60,16 @@ public class CardViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_view);
+
+        // tts
+        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.US);
+                }
+            }
+        });
 
         // todo: full screen
         ActionBar actionBar = getSupportActionBar();
@@ -326,9 +343,11 @@ public class CardViewActivity extends AppCompatActivity {
                     CardDTO returnCard = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
                     Dlog.i("returnData:" + returnCard);
                     // refresh returned data
-                    cardList.set(sendCardListIndex, returnCard);
-                    // refresh view pager
-                    pagerAdapter.notifyDataSetChanged();
+                    if (returnCard != null) {
+                        cardList.set(sendCardListIndex, returnCard);
+                        // refresh view pager
+                        pagerAdapter.notifyDataSetChanged();
+                    }
                     break;
                 case IntentRequestCode.CARD_DELETE:
                     // card is updated
@@ -464,6 +483,16 @@ public class CardViewActivity extends AppCompatActivity {
                 if(!mFlipped){
                     setStateFlipped(true);
                 }
+
+                // tts
+                TextView tv = (TextView) (this.mBackView);
+                String word = tv.getText().toString();
+                // http://stackoverflow.com/a/29777304
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ttsGreater21(word);
+                } else {
+                    ttsUnder20(word);
+                }
             }
         }
 
@@ -472,5 +501,29 @@ public class CardViewActivity extends AppCompatActivity {
             this.mFrontView.setVisibility(flipped ? View.GONE : View.VISIBLE);
             this.mBackView.setVisibility(flipped ? View.VISIBLE : View.GONE);
         }
+    }
+
+    // tts
+    @SuppressWarnings("deprecation")
+    private void ttsUnder20(String text) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+    }
+
+    // tts
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void ttsGreater21(String text) {
+        String utteranceId=this.hashCode() + "";
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+    }
+
+    // tts
+    public void onPause(){
+        if(tts !=null){
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onPause();
     }
 }
