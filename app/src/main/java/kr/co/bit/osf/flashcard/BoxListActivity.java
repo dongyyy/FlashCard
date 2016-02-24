@@ -88,15 +88,14 @@ public class BoxListActivity extends AppCompatActivity {
 
                 View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(BoxListActivity.this);
-                TextView textView = (TextView) dlg.findViewById(R.id.dialogTitleTextView);
                 TextView textView1 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewOne);
                 TextView textView2 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewTwo);
 
-                textView1.setText("만들래요");
+                textView1.setText("바꿀래요?");
                 textView1.setVisibility(View.VISIBLE);
                 textView2.setText("지울래요");
                 textView2.setVisibility(View.VISIBLE);
-
+                //update box dialog
                 textView1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -123,13 +122,12 @@ public class BoxListActivity extends AppCompatActivity {
                         input.show();
                     }
                 });
-
+                // delete box dialog
                 textView2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
                         Dlog.i("dialog:delete box");
-                        // delete box dialog
                         final AlertDialog.Builder delete = new AlertDialog.Builder(BoxListActivity.this);
                         delete.setTitle(R.string.box_list_edit_dialog_delete_dialog_title_text);
                         delete.setMessage(R.string.box_list_edit_dialog_delete_dialog_message_text);
@@ -144,7 +142,10 @@ public class BoxListActivity extends AppCompatActivity {
                                             boxList.remove(position);
                                             Dlog.i("delete box id:" + deleteBoxId);
                                             adapter.notifyDataSetChanged();
-                                            delete.setCancelable(true);
+                                            //임시 에러 방지
+                                            finish();
+                                            Intent intent = new Intent(getApplicationContext(),BoxListActivity.class);
+                                            startActivity(intent);
                                         }
                                     }
                                 });

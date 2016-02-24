@@ -58,12 +58,12 @@
     <string name="card_list_menu_delete">지우기</string>
     <string name="card_list_menu_complete">좋아요</string>
     <!--box list menu-->
-    <string name="box_list_menu_list_create">만들어 보자</string>
+    <string name="box_list_menu_list_create">박스를 만들어 보자</string>
     <string name="box_list_menu_list_DESC">정렬</string>
     <!--splash activity-->
     <string name="splash_message">내가 만드는 플래시카드</string>
     <!--activity dialog title -->
-    <string name="dialog_box_update">박스 바꾸어 보자!</string>
+    <string name="dialog_box_update">박스를 바꾸어 보자!</string>
     <string name="dialog_box_create">박스를 만들어 볼래?</string>
 
 </resources>
