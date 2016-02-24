@@ -22,6 +22,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
+import kr.co.bit.osf.flashcard.common.IntentReturnCode;
 import kr.co.bit.osf.flashcard.db.BoxDTO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
@@ -164,6 +165,7 @@ public class BoxListActivity extends AppCompatActivity {
                                             finish();
                                             Intent intent = new Intent(getApplicationContext(),BoxListActivity.class);
                                             startActivity(intent);
+                                            return;
                                         }
                                     }
                                 });
@@ -363,5 +365,19 @@ public class BoxListActivity extends AppCompatActivity {
 
             return view;
         }
+    }
+
+    //boxlist ReFresh
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case IntentReturnCode.BOX_LIST_REFRESH:
+                    gridView.setAdapter(adapter);
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
