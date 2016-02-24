@@ -12,6 +12,8 @@
             android:title="가나다순"/>
         <item android:id="@+id/cardListMenuDescSort"
             android:title="하파타순"/>
+        <item android:id="@+id/cardListMenuInitial"
+            android:title="처음으로"/>
     </group>
     <item android:id="@+id/showDeleteCompleteButton"
         android:title="@string/card_list_menu_complete"
