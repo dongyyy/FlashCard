@@ -62,6 +62,7 @@
     <string name="box_list_menu_list_ASC">가나다순</string>
     <string name="box_list_menu_list_DESC">하파타순</string>
     <string name="box_list_menu_list_Shuffle">박스 섞어보기</string>
+    <string name="box_list_menu_list_id_Asc">처음으로</string>
     <!--splash activity-->
     <string name="splash_message">내가 만드는 플래시카드</string>
     <!--activity dialog title -->

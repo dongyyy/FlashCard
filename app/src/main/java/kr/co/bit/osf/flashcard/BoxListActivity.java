@@ -40,6 +40,8 @@ public class BoxListActivity extends AppCompatActivity {
     // grid view
     private GridView gridView;
     private BoxListAdapter adapter;
+    //dialog
+    private DialogInterface dialogInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,11 +170,6 @@ public class BoxListActivity extends AppCompatActivity {
                                             boxList.remove(position);
                                             Dlog.i("delete box id:" + deleteBoxId);
                                             adapter.notifyDataSetChanged();
-                                            //임시 에러 방지
-                                            finish();
-                                            Intent intent = new Intent(getApplicationContext(), BoxListActivity.class);
-                                            startActivity(intent);
-                                            return;
                                         }
                                     }
                                 });
@@ -182,12 +179,13 @@ public class BoxListActivity extends AppCompatActivity {
                                         // Canceled.
                                     }
                                 });
+                        dialogInterface.dismiss();
                         delete.show();
 
                     }
                 });
                 builder.setView(dlg);
-                builder.show();
+                dialogInterface = builder.show();
 
                 return true;
             }
@@ -253,24 +251,46 @@ public class BoxListActivity extends AppCompatActivity {
                 input.show();
 
                 break;
-            //정렬하기
+            //오름
             case R.id.box_list_menu_list_Asc:
                 Dlog.i("asc sort start");
                 Collections.sort(boxList, new NameAscCompare());
                 Dlog.i("asc sort - collections sort call");
-                for (BoxDTO dto : boxList) {}
+                for (BoxDTO dto : boxList) {
+                }
+                db.updateBoxSeq(boxList);
                 adapter.notifyDataSetChanged();
-                Dlog.i("asc sort for end");
+                Dlog.i("asc sort end");
                 break;
+            //내림
             case R.id.box_list_menu_list_Desc:
                 Dlog.i("desc sort start");
                 Collections.sort(boxList, new NameDescCompare());
                 Dlog.i("desc sort - collections sort call");
-                for (BoxDTO dto : boxList) {}
+                for (BoxDTO dto : boxList) {
+                }
+                db.updateBoxSeq(boxList);
                 adapter.notifyDataSetChanged();
-                Dlog.i("desc sort for end");
+                Dlog.i("desc sort end");
                 break;
+            //무작위
             case R.id.box_list_menu_list_Shuffle:
+                Dlog.i("shuffle start");
+                Collections.shuffle(boxList);
+                Dlog.i("Shuffle - collections sort call");
+                for (BoxDTO dto : boxList) ;
+                db.updateBoxSeq(boxList);
+                adapter.notifyDataSetChanged();
+                Dlog.i("shuffle end");
+                break;
+            case R.id.box_list_menu_list_id_Asc:
+                Dlog.i("Id Asc start");
+                Collections.sort(boxList,new NoAscCompare());
+                Dlog.i("Id Asc - collections sort call");
+                for (BoxDTO dto : boxList) ;
+                db.updateBoxSeq(boxList);
+                adapter.notifyDataSetChanged();
+                Dlog.i("Id Asc end");
                 break;
         }
 
@@ -445,6 +465,23 @@ public class BoxListActivity extends AppCompatActivity {
         public int compare(BoxDTO arg0, BoxDTO arg1) {
             // TODO Auto-generated method stub
             return arg1.getName().compareTo(arg0.getName());
+        }
+    }
+
+    /**
+     * No 오름차순
+     * @author falbb
+     *
+     */
+    static class NoAscCompare implements Comparator<BoxDTO> {
+
+        /**
+         * 오름차순(ASC)
+         */
+        @Override
+        public int compare(BoxDTO arg0, BoxDTO arg1) {
+            // TODO Auto-generated method stub
+            return arg0.getId() < arg1.getId() ? -1 : arg0.getId() > arg1.getId() ? 1:0;
         }
 
     }

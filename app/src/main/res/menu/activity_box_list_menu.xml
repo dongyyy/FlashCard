@@ -13,4 +13,7 @@
     <item android:id="@+id/box_list_menu_list_Shuffle"
         android:title="@string/box_list_menu_list_Shuffle"
         />
+    <item android:id="@+id/box_list_menu_list_id_Asc"
+        android:title="@string/box_list_menu_list_id_Asc"
+        />
 </menu>
