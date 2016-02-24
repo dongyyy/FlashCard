@@ -73,6 +73,11 @@ public class CardListActivity extends AppCompatActivity {
         // read card list
         cardList = dao.getCardByBoxId(state.getBoxId());
 
+        if (state.getCardId() > 0) {
+            Intent intent = new Intent(this, CardViewActivity.class);
+            startActivityForResult(intent, IntentRequestCode.CARD_VIEW);
+        }
+
         cardCustomGridView = (GridView) findViewById(R.id.cardCustomGridView);
         adapter = new CardListAdapter(this);
         cardCustomGridView.setAdapter(adapter);
@@ -147,7 +152,16 @@ public class CardListActivity extends AppCompatActivity {
             }
         });
     }
-
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Dlog.i("state.getBoxId():" + state.getBoxId());
+        // save current state
+        if (db != null) {
+            Dlog.i("onSaveInstanceState:cardId:" + state.getBoxId());
+            db.updateState(state.getBoxId(), 0);
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_card_list_menu, menu);
