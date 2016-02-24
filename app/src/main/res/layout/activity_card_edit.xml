@@ -35,7 +35,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
-                android:src="@drawable/camera"/>
+                android:padding="10dp"
+                android:src="@drawable/default_camera_image"/>
         </FrameLayout>
 
     </RelativeLayout>
@@ -55,6 +56,11 @@
         android:weightSum="1"
         android:background="#FFDDDDDD">
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/frameLayout2"
+            android:background="#FFF">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,6 +71,14 @@
             android:gravity="center_vertical|center_horizontal"
             android:id="@+id/cardEditTextView"
             android:background="#FFF"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:paddingRight="10dp"
+                android:src="@drawable/default_pencil_image"/>
+        </FrameLayout>
 
 
     </LinearLayout>
