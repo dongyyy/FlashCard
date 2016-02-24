@@ -19,12 +19,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
+import kr.co.bit.osf.flashcard.common.IntentExtrasName;
+import kr.co.bit.osf.flashcard.common.IntentRequestCode;
 import kr.co.bit.osf.flashcard.common.IntentReturnCode;
 import kr.co.bit.osf.flashcard.db.BoxDTO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
@@ -80,7 +81,7 @@ public class BoxListActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "state 전송 실패", Toast.LENGTH_SHORT).show();
                 }
                 Intent intent = new Intent(getApplicationContext(), CardListActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, IntentRequestCode.CARD_LIST_VIEW);
                 Dlog.i("box:" + boxList.get(position));
             }
         });
@@ -254,37 +255,20 @@ public class BoxListActivity extends AppCompatActivity {
                 break;
             //정렬하기
             case R.id.box_list_menu_list_Asc:
-                List <BoxDTO>ascList = new ArrayList<>();
-                Dlog.i("asc sort");
+                Dlog.i("asc sort start");
                 Collections.sort(boxList, new NameAscCompare());
                 Dlog.i("asc sort - collections sort call");
-                for (BoxDTO dto : ascList) {
-                   Dlog.i(dto.toString());
-                    ascList.add(dto);
-                }
-                Dlog.i("asc sort - for end");
-                boxList = ascList;
-                Dlog.i("asc sort - boxList = sortList");
+                for (BoxDTO dto : boxList) {}
                 adapter.notifyDataSetChanged();
-                ascList.clear();
+                Dlog.i("asc sort for end");
                 break;
             case R.id.box_list_menu_list_Desc:
-                List <BoxDTO>descList = new ArrayList<>();
                 Dlog.i("desc sort start");
                 Collections.sort(boxList, new NameDescCompare());
-                Dlog.i("desc sort call");
-                for (BoxDTO dto2 : descList) {
-                    Dlog.i(dto2.toString());
-                    descList.add(dto2);
-                }
-                Dlog.i("desc sort for end");
-                boxList = descList;
-                Dlog.i("desc sort boxList = sortList");
-
-                descList.clear();
-                Dlog.i("soltList Clear");
+                Dlog.i("desc sort - collections sort call");
+                for (BoxDTO dto : boxList) {}
                 adapter.notifyDataSetChanged();
-                Dlog.i("desc sort checkSort = true, adapter refresh");
+                Dlog.i("desc sort for end");
                 break;
             case R.id.box_list_menu_list_Shuffle:
                 break;
@@ -414,9 +398,13 @@ public class BoxListActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
+        int returnCode = data.getIntExtra(IntentExtrasName.RETURN_CODE, 0);
         if (resultCode == RESULT_OK) {
-            switch (requestCode) {
+            Dlog.i("returnCode=");
+            switch (returnCode) {
                 case IntentReturnCode.BOX_LIST_REFRESH:
+                    Dlog.i("returnCode=");
+                    adapter.notifyDataSetChanged();
                     gridView.setAdapter(adapter);
                     break;
             }
