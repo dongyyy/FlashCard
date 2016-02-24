@@ -4,12 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-
+    
         <GridView
             android:id="@+id/boxListGridView"
             android:layout_width="match_parent"
@@ -20,23 +15,4 @@
             android:listSelector="@drawable/selector"
             android:numColumns="auto_fit"
             android:stretchMode="columnWidth" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/boxListAddButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/box_list_add_button_text" />
-
-    </LinearLayout>
-
 </LinearLayout>

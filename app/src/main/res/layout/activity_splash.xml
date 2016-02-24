@@ -15,6 +15,6 @@
         android:text="@string/splash_message"
         android:gravity="center_vertical|center_horizontal"
         android:textSize="60dp"
-        android:background="@drawable/textlines"
         android:id="@+id/splashTextView"/>
+
     </RelativeLayout>

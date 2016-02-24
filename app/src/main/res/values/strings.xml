@@ -46,6 +46,8 @@
     <string name="card_edit_text_dialog_message_text">바꿀 카드 이름을 써주세요.</string>
     <string name="card_edit_text_dialog_ok_button_text">바꿀래요</string>
     <string name="card_edit_text_dialog_cancel_button_text">안 바꿀래요</string>
+    <string name="card_edit_error_message_no_image">카드 사진을 선택해 주세요</string>
+    <string name="card_edit_error_message_no_text">예쁜 카드 이름을 지어 주세요</string>
     <!--card view activity-->
     <string name="card_view_edit_dialog_title">카드 편집</string>
     <string name="card_view_edit_dialog_edit_button_text">고칠래요</string>
@@ -55,6 +57,12 @@
     <string name="card_list_menu_add">만들기</string>
     <string name="card_list_menu_delete">지우기</string>
     <string name="card_list_menu_complete">좋아요</string>
+    <!--box list menu-->
+    <string name="box_list_menu_list_create">박스를 만들어 보자</string>
+    <string name="box_list_menu_list_DESC">정렬</string>
     <!--splash activity-->
     <string name="splash_message">내가 만드는 플래시카드</string>
+    <!--activity dialog title -->
+    <string name="dialog_box_update">박스를 바꾸어 보자!</string>
+    <string name="dialog_box_create">박스를 만들어 볼래?</string>
 </resources>
