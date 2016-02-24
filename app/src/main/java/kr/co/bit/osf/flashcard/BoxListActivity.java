@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -54,6 +56,7 @@ public class BoxListActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SplashActivity.class);
             startActivity(intent);
         }
+
 
         // read box list
         db = new FlashCardDB(this);
@@ -162,18 +165,39 @@ public class BoxListActivity extends AppCompatActivity {
             }
         });
 
-        (findViewById(R.id.boxListAddButton)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Dlog.i("onCreateOptionMenu : " + "OK");
+        getMenuInflater().inflate(R.menu.activity_box_list_menu, menu);
+        MenuItem showDeleteCompleteButton = menu.findItem(R.id.showDeleteCompleteButton);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Integer id = item.getItemId();
+
+        switch (id){
+            case R.id.box_list_box_create:
                 Dlog.i("dialog:add box");
                 // add box
                 // set an EditText view to get user input
-                final EditText inputText = new EditText(BoxListActivity.this);
-                inputText.setSingleLine();
+                View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                final EditText inputText = (EditText)dlg.findViewById(R.id.dialogMenuEditTextOne);
+                TextView titleTextView = (TextView)dlg.findViewById(R.id.dialogTitleTextView);
+                TextView textView = (TextView)dlg.findViewById(R.id.dialogMenuTextViewOne);
+                Dlog.i("add R.id.dialog Item");
+                titleTextView.setText(R.string.dialog_box_create);
+                textView.setText(R.string.box_list_add_dialog_message_text);
+                Dlog.i("dialog Item setText");
+                inputText.setVisibility(View.VISIBLE);
+                textView.setVisibility(View.VISIBLE);
+                Dlog.i("dialog Item setVisible");
                 AlertDialog.Builder input = new AlertDialog.Builder(BoxListActivity.this);
-                input.setTitle(R.string.box_list_add_dialog_title_text);
-                input.setMessage(R.string.box_list_add_dialog_message_text);
-                input.setView(inputText);
+                Dlog.i("dialog create");
+                input.setView(dlg);
                 input.setPositiveButton(R.string.box_list_add_dialog_ok_button_text,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -197,11 +221,13 @@ public class BoxListActivity extends AppCompatActivity {
                             }
                         });
                 input.show();
-            }
-        });
+                break;
+//            case R.id.box_list_menu_list_One:
+//                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
-
-
 
     @Override
     protected void onStart() {
@@ -282,7 +308,6 @@ public class BoxListActivity extends AppCompatActivity {
             Dlog.i("position:" + position);
             return position;
         }
-
 
 
         @Override
