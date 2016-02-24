@@ -19,7 +19,6 @@ import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,13 +62,15 @@ public class CardListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
 
-        deleteCardList = new ArrayList<CardDTO>();
-
         // db
         db = new FlashCardDB(this);
         dao = db;
         dto = new CardDTO();//이미지셋팅용 테스트
         state = db.getState();
+
+        setTitle(db.getBox(state.getBoxId()).getName());//카드 박스 이름 정하기
+
+        deleteCardList = new ArrayList<CardDTO>();
         // read card list
         cardList = dao.getCardByBoxId(state.getBoxId());
 
@@ -176,11 +177,6 @@ public class CardListActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.cardListMenuAdd: {
-                /*sendCardListIndex = position;
-                CardDTO sendCard = cardList.get(sendCardListIndex);
-                Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
-                intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_EDIT);
-                intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);*/
                 CardDTO cardToAdd = new CardDTO();
                 cardToAdd.setBoxId(state.getBoxId());
 
@@ -219,25 +215,18 @@ public class CardListActivity extends AppCompatActivity {
             }
             case R.id.cardListMenuShuffle: {
                 Collections.shuffle(cardList);
-                for (CardDTO dto : cardList) {
-                }
                 db.updateCardSeq(cardList);
                 refreshCardList();
-
                 break;
             }
             case R.id.cardListMenuAscSort: {
                 Collections.sort(cardList, new NameAscCompare());
-                for (CardDTO dto : cardList) {
-                }
                 db.updateCardSeq(cardList);
                 refreshCardList();
                 break;
             }
             case R.id.cardListMenuDescSort: {
                 Collections.sort(cardList, new NameDescCompare());
-                for (CardDTO dto : cardList) {
-                }
                 db.updateCardSeq(cardList);
                 refreshCardList();
                 break;
