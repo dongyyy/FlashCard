@@ -262,6 +262,7 @@ public class CardViewActivity extends AppCompatActivity {
                 } else {
                     ttsUnder20(word);
                 }
+                Dlog.i("tts:" + word);
             } catch (Exception e) {
                 Dlog.i(e.toString());
             }
@@ -287,7 +288,7 @@ public class CardViewActivity extends AppCompatActivity {
         // dialog title
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.dialogTitleTextView);
         titleTextView.setText(getString(R.string.card_view_edit_dialog_title));
-        // edit dialog button
+        // edit dialog text view
         TextView dialogEditTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewOne);
         dialogEditTextView.setText(getString(R.string.card_view_edit_dialog_edit_button_text));
         dialogEditTextView.setVisibility(View.VISIBLE);
@@ -295,13 +296,13 @@ public class CardViewActivity extends AppCompatActivity {
         dialogEditTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogClicked(IntentRequestCode.CARD_EDIT);
+                dialogEditTextViewClicked();
                 // http://stackoverflow.com/questions/5713312/closing-a-custom-alert-dialog-on-button-click
                 ((AlertDialog) v.getTag()).cancel();
-                Dlog.i("dialog:edit card:click button");
+                Dlog.i("dialog:edit card:clicked");
             }
         });
-        // dialog delete button
+        // delete dialog text view
         TextView dialogDeleteTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewTwo);
         dialogDeleteTextView.setText(getString(R.string.card_view_edit_dialog_delete_button_text));
         dialogDeleteTextView.setVisibility(View.VISIBLE);
@@ -309,23 +310,58 @@ public class CardViewActivity extends AppCompatActivity {
         dialogDeleteTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogClicked(IntentRequestCode.CARD_DELETE);
+                dialogDeleteTextViewClicked();
                 // http://stackoverflow.com/questions/5713312/closing-a-custom-alert-dialog-on-button-click
                 ((AlertDialog) v.getTag()).cancel();
-                Dlog.i("dialog:delete card:click button");
+                Dlog.i("dialog:delete card:clicked");
             }
         });
         dialog.show();
     }
 
-    private void dialogClicked(int requestCode) {
-        Dlog.i("requestCode:" + requestCode);
+    private void dialogEditTextViewClicked() {
+        startEditAcitivity(IntentRequestCode.CARD_EDIT);
+    }
 
-        // todo: confirm delete card
-        if (requestCode == IntentRequestCode.CARD_DELETE) {
-            requestCode = IntentRequestCode.NONE;
-        }
+    private void dialogDeleteTextViewClicked() {
+        // get user action from dialog
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_title, null);
+        final AlertDialog dialog = dialogBuilder.setView(dialogView).create();
+        // dialog title
+        TextView titleTextView = (TextView) dialogView.findViewById(R.id.dialogTitleTextView);
+        titleTextView.setText(getString(R.string.card_view_edit_dialog_delete_dialog_title_text));
+        // delete confirm text view
+        TextView dialogDeleteConfirmTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewOne);
+        dialogDeleteConfirmTextView.setText(getString(R.string.box_list_edit_dialog_delete_dialog_ok_button_text));
+        dialogDeleteConfirmTextView.setVisibility(View.VISIBLE);
+        dialogDeleteConfirmTextView.setTag(dialog);
+        dialogDeleteConfirmTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startEditAcitivity(IntentRequestCode.CARD_DELETE);
+                // http://stackoverflow.com/questions/5713312/closing-a-custom-alert-dialog-on-button-click
+                ((AlertDialog) v.getTag()).cancel();
+                Dlog.i("dialog:delete card:confirm clicked");
+            }
+        });
+        // delete cancel text view
+        TextView dialogDeleteCancelTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewTwo);
+        dialogDeleteCancelTextView.setText(getString(R.string.box_list_edit_dialog_delete_dialog_cancel_button_text));
+        dialogDeleteCancelTextView.setVisibility(View.VISIBLE);
+        dialogDeleteCancelTextView.setTag(dialog);
+        dialogDeleteCancelTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // http://stackoverflow.com/questions/5713312/closing-a-custom-alert-dialog-on-button-click
+                ((AlertDialog) v.getTag()).cancel();
+                Dlog.i("dialog:delete card:cancel clicked");
+            }
+        });
+        dialog.show();
+    }
 
+    private void startEditAcitivity(int requestCode) {
         // edit card, delete card
         switch (requestCode) {
             case IntentRequestCode.CARD_EDIT:

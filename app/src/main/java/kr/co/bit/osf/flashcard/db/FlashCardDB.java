@@ -178,6 +178,27 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
     }
 
     @Override
+    public boolean addBox(BoxDTO box) {
+        ContentValues values = new ContentValues();
+        values.put(BoxEntry.COLUMN_NAME_NAME, box.getName());
+        values.put(BoxEntry.COLUMN_NAME_TYPE, box.getType());
+        values.put(BoxEntry.COLUMN_NAME_SEQ, box.getSeq());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // http://developer.android.com/intl/ko/training/basics/data-storage/databases.html#WriteDbRow
+        int newRowId = (int)db.insert(BoxEntry.TABLE_NAME, null, values);
+        box.setId(newRowId);
+        db.close();
+
+        if (updateBoxSeq(newRowId, newRowId)) {
+            box.setSeq(newRowId);
+        }
+
+        return (newRowId > 0);
+    }
+
+    @Override
     public BoxDTO getBox(String name) {
         BoxDTO box = null;
 
@@ -233,27 +254,6 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         box.setName(cursor.getString(BoxEntry.COLUMN_ID_NAME));
         box.setType(Integer.parseInt(cursor.getString(BoxEntry.COLUMN_ID_TYPE)));
         box.setSeq(Integer.parseInt(cursor.getString(BoxEntry.COLUMN_ID_SEQ)));
-    }
-
-    @Override
-    public boolean addBox(BoxDTO box) {
-        ContentValues values = new ContentValues();
-        values.put(BoxEntry.COLUMN_NAME_NAME, box.getName());
-        values.put(BoxEntry.COLUMN_NAME_TYPE, box.getType());
-        values.put(BoxEntry.COLUMN_NAME_SEQ, box.getSeq());
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        // http://developer.android.com/intl/ko/training/basics/data-storage/databases.html#WriteDbRow
-        int newRowId = (int)db.insert(BoxEntry.TABLE_NAME, null, values);
-        box.setId(newRowId);
-        db.close();
-
-        if (updateBoxSeq(newRowId, newRowId)) {
-            box.setSeq(newRowId);
-        }
-
-        return (newRowId > 0);
     }
 
     @Override
