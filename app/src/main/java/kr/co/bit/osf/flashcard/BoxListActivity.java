@@ -197,6 +197,8 @@ public class BoxListActivity extends AppCompatActivity {
         });
     }
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -276,6 +278,8 @@ public class BoxListActivity extends AppCompatActivity {
             Dlog.i("position:" + position);
             return position;
         }
+
+
 
         @Override
         public long getItemId(int position) {
