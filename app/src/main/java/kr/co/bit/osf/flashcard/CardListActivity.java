@@ -41,6 +41,8 @@ public class CardListActivity extends AppCompatActivity {
     // list
     List<CardDTO> cardList;
     ArrayList<CardDTO> deleteCardList;
+    //card list update
+    boolean isCardListUpdated=false;
     // grid view
     GridView cardCustomGridView;
     CardListAdapter adapter;
@@ -243,6 +245,7 @@ public class CardListActivity extends AppCompatActivity {
                     Dlog.i("addData:" + cardAdded);
                     cardList.add(cardAdded);
                     refreshCardList();
+                    isCardListUpdated=true;
                     break;
                 case IntentRequestCode.CARD_EDIT:
                     // get result data
@@ -252,6 +255,7 @@ public class CardListActivity extends AppCompatActivity {
                     cardList.set(sendCardListIndex, returnCard);
                     // refresh view pager
                     refreshCardList();
+                    isCardListUpdated=true;
                     break;
                 case IntentRequestCode.CARD_DELETE_LIST:
                     Dlog.i("delete check");
@@ -263,6 +267,7 @@ public class CardListActivity extends AppCompatActivity {
                         Dlog.i("cardList name" + cardList.get(i));
                     }
                     refreshCardList();
+                    isCardListUpdated=true;
                     break;
                 case IntentRequestCode.CARD_VIEW:
                     int returnCode=data.getIntExtra(IntentExtrasName.RETURN_CODE,0);
@@ -285,8 +290,22 @@ public class CardListActivity extends AppCompatActivity {
             }
         }
     }
+
     public void refreshCardList(){
         cardCustomGridView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void finish() {
+        //is update?
+        int returnCode = (isCardListUpdated ? IntentReturnCode.CARD_LIST_REFRESH : IntentReturnCode.NONE);
+        Dlog.i("isCardListUpdated:" + isCardListUpdated);
+        //return data
+        int intentResultCode=RESULT_OK;
+        Intent data = new Intent();
+        data.putExtra(IntentExtrasName.RETURN_CODE, returnCode);
+        setResult(intentResultCode, data);
+        super.finish();
     }
 }
