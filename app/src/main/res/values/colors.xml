@@ -7,4 +7,5 @@
     <color name="non_preesed">#cccccc</color>
     <color name="dialog_pressed">#438ef7</color>
     <color name="dialog_non_pressed">#cccccc</color>
+    <color name="custom_color_gyoo">#fa8072</color>
 </resources>
