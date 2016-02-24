@@ -329,8 +329,13 @@ public class CardEditActivity extends AppCompatActivity {
         // check image
         if (isOk) {
             try {
-                isOk = (card.getImagePath().length() > 0);
-                Dlog.i("getImagePath().length():check:" + card.getImagePath().length());
+                if(card.getType() == FlashCardDB.CardEntry.TYPE_DEMO){
+                    isOk = (card.getImageName().length() > 0);
+                    Dlog.i("getImageName().length():check:" + card.getImageName().length());
+                }else {
+                    isOk = (card.getImagePath().length() > 0);
+                    Dlog.i("getImagePath().length():check:" + card.getImagePath().length());
+                }
             } catch (Exception e) {
                 isOk = false;
                 Dlog.i("getImagePath():error:");
