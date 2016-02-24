@@ -101,13 +101,22 @@ public class BoxListActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
                         Dlog.i("dialog:edit box");
-                        final EditText inputText = new EditText(BoxListActivity.this);
+                        View dlg2 = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                        final EditText inputText = (EditText)dlg2.findViewById(R.id.dialogMenuEditTextOne);
+                        TextView textView = (TextView)dlg2.findViewById(R.id.dialogTitleTextView);
+                        TextView textView2 = (TextView)dlg2.findViewById(R.id.dialogMenuTextViewOne);
+                        Dlog.i("dialog:edit box - add dialog item");
+                        inputText.setVisibility(View.VISIBLE);
+                        textView.setVisibility(View.VISIBLE);
+                        textView2.setVisibility(View.VISIBLE);
+                        Dlog.i("dialog:edit box - set VISIBLE");
                         inputText.setText(boxList.get(position).getName());
                         AlertDialog.Builder input = new AlertDialog.Builder(BoxListActivity.this);
-                        input.setTitle(R.string.box_list_edit_dialog_edit_dialog_title_text);
-                        input.setMessage(R.string.box_list_edit_dialog_edit_dialog_message_text);
-                        input.setView(inputText);
-
+                        textView.setText(R.string.box_list_edit_dialog_edit_dialog_title_text);
+                        textView2.setText(R.string.box_list_edit_dialog_edit_dialog_message_text);
+                        Dlog.i("dialog:edit box - set text");
+                        input.setView(dlg2);
+                        Dlog.i("dialog:edit box - add dialog view");
                         input.setPositiveButton(R.string.box_list_edit_dialog_edit_dialog_ok_button_text,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -128,9 +137,18 @@ public class BoxListActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
                         Dlog.i("dialog:delete box");
+                        View dlg2 = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                        Dlog.i("dialog:delete box - create View");
+                        TextView deleteTitle = (TextView)dlg2.findViewById(R.id.dialogTitleTextView);
+                        TextView deleteMessage = (TextView)dlg2.findViewById(R.id.dialogMenuTextViewOne);
+                        Dlog.i("dialog:delete box - add dialog item");
+                        deleteTitle.setVisibility(View.VISIBLE);
+                        deleteMessage.setVisibility(View.VISIBLE);
+                        Dlog.i("dialog:delete box - item VISIBLE");
                         final AlertDialog.Builder delete = new AlertDialog.Builder(BoxListActivity.this);
-                        delete.setTitle(R.string.box_list_edit_dialog_delete_dialog_title_text);
-                        delete.setMessage(R.string.box_list_edit_dialog_delete_dialog_message_text);
+                        deleteTitle.setText(R.string.box_list_edit_dialog_delete_dialog_title_text);
+                        deleteMessage.setText(R.string.box_list_edit_dialog_delete_dialog_message_text);
+                        delete.setView(dlg2);
                         delete.setPositiveButton(R.string.box_list_edit_dialog_delete_dialog_ok_button_text,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
