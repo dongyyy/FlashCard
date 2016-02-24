@@ -429,7 +429,6 @@ public class CardViewActivity extends AppCompatActivity {
 
     @Override
     public void finish() {
-        super.finish();
         // is updated?
         int returnCode = (isCardUpdated ? IntentReturnCode.CARD_LIST_REFRESH : IntentReturnCode.NONE);
         Dlog.i("isCardUpdated:" + isCardUpdated);
@@ -439,6 +438,7 @@ public class CardViewActivity extends AppCompatActivity {
         data.putExtra(IntentExtrasName.RETURN_CODE, returnCode);
         setResult(intentResultCode, data);
         Dlog.i("setResult:" + intentResultCode + ", returnCode:" + returnCode);
+        super.finish();
     }
 
     // inner class for pager adapter item and flip animation
