@@ -747,7 +747,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         card.setBoxId(3);
         card.setType(CardEntry.TYPE_DEMO);
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 26; i++) {
             card.setName(String.valueOf(Character.toChars('A' + i)));
             card.setImagePath("");
             card.setImageName(context.getResources().getResourceName(R.drawable.z_demo_alphabet_a + i));
