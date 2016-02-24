@@ -46,9 +46,8 @@
     <string name="card_edit_text_dialog_message_text">바꿀 카드 이름을 써주세요.</string>
     <string name="card_edit_text_dialog_ok_button_text">바꿀래요</string>
     <string name="card_edit_text_dialog_cancel_button_text">안 바꿀래요</string>
-    <!--card edit activity yes button dialog -->
-    <string name="card_edit_text_yes_button_title_text">카드 그림과 카드 이름을 넣어주세요</string>
-    <string name="card_edit_text_yes_button_confirm_button_text">네</string>
+    <string name="card_edit_error_message_no_image">카드 사진을 선택해 주세요</string>
+    <string name="card_edit_error_message_no_text">예쁜 카드 이름을 지어 주세요</string>
     <!--card view activity-->
     <string name="card_view_edit_dialog_title">카드 편집</string>
     <string name="card_view_edit_dialog_edit_button_text">고칠래요</string>
