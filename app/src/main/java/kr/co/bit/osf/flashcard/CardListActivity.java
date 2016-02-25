@@ -85,7 +85,7 @@ public class CardListActivity extends AppCompatActivity {
         hashMap=new HashMap<Integer, Boolean>();
 
         for(int i=0; i<cardList.size(); i++){
-            hashMap.put(cardList.get(i).getSeq(),false);
+            hashMap.put(cardList.get(i).getId(),false);
         }
 
         cardCustomGridView = (GridView) findViewById(R.id.cardCustomGridView);
@@ -294,7 +294,7 @@ public class CardListActivity extends AppCompatActivity {
             holder.textView = (TextView) convertView.findViewById(R.id.cardCustomListName);
             holder.checkBox = (CheckBox) convertView.findViewById(R.id.cardCustomCheckBox);
 
-            if(hashMap.get(cardList.get(position).getSeq())){
+            if(hashMap.get(cardList.get(position).getId())){
                 holder.checkBox.setChecked(true);
             }
 
@@ -313,10 +313,10 @@ public class CardListActivity extends AppCompatActivity {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) { //체크를 할 때
                             deleteCardList.add(cardList.get(position));
-                            hashMap.put(cardList.get(position).getSeq(),true);
+                            hashMap.put(cardList.get(position).getId(),true);
                         } else { //체크가 해제될 때
                             deleteCardList.remove(cardList.get(position));
-                            hashMap.put(cardList.get(position).getSeq(),false);
+                            hashMap.put(cardList.get(position).getId(),false);
                         }
                     }
                 });
@@ -405,7 +405,7 @@ public class CardListActivity extends AppCompatActivity {
     public void refreshCardList() {
         hashMap.clear();
         for(int i=0; i<cardList.size(); i++){
-            hashMap.put(cardList.get(i).getSeq(),false);
+            hashMap.put(cardList.get(i).getId(),false);
         }
         isCardListUpdated = true;
         cardCustomGridView.setAdapter(adapter);
