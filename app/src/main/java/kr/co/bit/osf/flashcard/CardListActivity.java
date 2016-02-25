@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -430,7 +429,6 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public int compare(CardDTO arg0, CardDTO arg1) {
-            // TODO Auto-generated method stub
             return arg0.getName().compareTo(arg1.getName());
         }
 
@@ -440,7 +438,6 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public int compare(CardDTO arg0, CardDTO arg1) {
-            // TODO Auto-generated method stub
             return arg1.getName().compareTo(arg0.getName());
         }
 
@@ -450,7 +447,6 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public int compare(CardDTO arg0, CardDTO arg1) {
-            // TODO Auto-generated method stub
             return arg0.getId() < arg1.getId() ? -1 : arg0.getId() > arg1.getId() ? 1 : 0;
         }
 

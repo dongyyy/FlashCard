@@ -450,7 +450,6 @@ public class BoxListActivity extends AppCompatActivity {
          */
         @Override
         public int compare(BoxDTO arg0, BoxDTO arg1) {
-            // TODO Auto-generated method stub
             return arg0.getName().compareTo(arg1.getName());
         }
 
@@ -468,7 +467,6 @@ public class BoxListActivity extends AppCompatActivity {
          */
         @Override
         public int compare(BoxDTO arg0, BoxDTO arg1) {
-            // TODO Auto-generated method stub
             return arg1.getName().compareTo(arg0.getName());
         }
     }
@@ -485,7 +483,6 @@ public class BoxListActivity extends AppCompatActivity {
          */
         @Override
         public int compare(BoxDTO arg0, BoxDTO arg1) {
-            // TODO Auto-generated method stub
             return arg0.getId() < arg1.getId() ? -1 : arg0.getId() > arg1.getId() ? 1:0;
         }
 
