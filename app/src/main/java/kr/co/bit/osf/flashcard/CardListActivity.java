@@ -118,8 +118,8 @@ public class CardListActivity extends AppCompatActivity {
                 TextView textMenuTwo = (TextView) dlg.findViewById(R.id.dialogMenuTextViewTwo);
                 Dlog.i("Card Item long click dialog - add TextView");
                 dlgTitle.setText(R.string.card_view_edit_dialog_title);
-                textMenuOne.setText(R.string.card_view_edit_dialog_edit_button_text);
-                textMenuTwo.setText(R.string.card_view_edit_dialog_delete_button_text);
+                textMenuOne.setText(R.string.edit_dialog_edit);
+                textMenuTwo.setText(R.string.edit_dialog_delete);
 
                 sendCardListIndex = position;
                 //edit card
