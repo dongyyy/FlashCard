@@ -18,7 +18,7 @@
             android:layout_width="100dp"
             android:layout_height="75dp"
             android:gravity="center"
-            android:src="@drawable/default_no_image"
+            android:src="@drawable/default_image_empty_image"
             android:layout_gravity="top" />
 
     </LinearLayout>

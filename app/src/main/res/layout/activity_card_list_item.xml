@@ -11,7 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:src="@drawable/default_no_image"
+            android:src="@drawable/default_image_empty_image"
             android:id="@+id/cardCustomListImage"
             android:padding="7dp"
             android:scaleType="fitXY" />

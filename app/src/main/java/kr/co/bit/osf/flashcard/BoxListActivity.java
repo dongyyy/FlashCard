@@ -399,8 +399,8 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("topCard:" + topCard);
                 ImageUtil.loadCardImageIntoImageView(BoxListActivity.this, topCard, imageView);
             } else {
-                Dlog.i("default_no_image");
-                imageView.setImageResource(R.drawable.default_no_image);
+                Dlog.i("empty_image");
+                imageView.setImageResource(R.drawable.default_image_empty_image);
             }
             // text
             TextView nameTextView = (TextView) view.findViewById(R.id.boxListViewItemText);

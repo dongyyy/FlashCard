@@ -33,7 +33,7 @@ public class CardEditActivity extends AppCompatActivity {
     // view
     private ImageView imageView = null;
     private TextView cardEditTextView = null;
-    // default_camera_image, gallery
+    // camera, gallery
     private File photoFile = null;
     private String photoFilePath = null;
     private DialogInterface dialogInterface;
