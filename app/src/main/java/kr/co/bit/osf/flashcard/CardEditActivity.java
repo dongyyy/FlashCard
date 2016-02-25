@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +41,9 @@ public class CardEditActivity extends AppCompatActivity {
     private DialogInterface dialogInterface;
     // delete card
     List<CardDTO> cardList = null;
+    // activity state
+    private String activityStateDataName = "activityStateDataName";
+    private ActivityState currentState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +52,7 @@ public class CardEditActivity extends AppCompatActivity {
 
         Dlog.i("started");
 
-        // todo: full screen
+        // full screen
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.hide();
 
@@ -83,7 +88,7 @@ public class CardEditActivity extends AppCompatActivity {
                 break;
         }
 
-        // todo: process requested task
+        // process requested task
         Dlog.i("getExtras:sendData:" + card);
         intentResultCode = RESULT_OK;
         if (intentRequestCode == IntentRequestCode.CARD_DELETE) {
@@ -338,11 +343,28 @@ public class CardEditActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        // restore saved activity state
+        currentState = savedInstanceState.getParcelable(activityStateDataName);
+        Dlog.i(currentState.toString());
+        // camera, gallery
+        photoFilePath = currentState.getPhotoFilePath();
+        // image, text
+        try {
+            ImageUtil.loadCardImageIntoImageView(this, currentState.getCard(), imageView);
+            cardEditTextView.setText(currentState.card.getName());
+        } catch (Exception e) {
+            Dlog.e(e.toString());
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        // save current activity state
+        currentState = new ActivityState(intentRequestCode, intentResultCode,
+                photoFilePath, card);
+        outState.putParcelable(activityStateDataName, currentState);
+        Dlog.i(currentState.toString());
     }
 
     @Override
@@ -396,20 +418,19 @@ public class CardEditActivity extends AppCompatActivity {
             }
         }
 
-
-            // check text
-            if (isOk) {
-                try {
-                    isOk = (card.getName().length() > 0);
-                    Dlog.i("getName().length():check:" + card.getName().length());
-                } catch (Exception e) {
-                    isOk = false;
-                    Dlog.i("getName():error:");
-                }
-                if (isOk == false) {
-                    errorMessage = getResources().getString(R.string.card_edit_error_message_no_text);
-                }
+       // check text
+        if (isOk) {
+            try {
+                isOk = (card.getName().length() > 0);
+                Dlog.i("getName().length():check:" + card.getName().length());
+            } catch (Exception e) {
+                isOk = false;
+                Dlog.i("getName():error:");
             }
+            if (isOk == false) {
+                errorMessage = getResources().getString(R.string.card_edit_error_message_no_text);
+            }
+        }
 
         if(printMassege == true) {
             if (isOk == false) {
@@ -420,8 +441,122 @@ public class CardEditActivity extends AppCompatActivity {
         return isOk;
     }
 
-
     public boolean updatedCardIsOk() {
         return updatedCardIsOk(false);
+    }
+
+    private class ActivityState implements Parcelable {
+        // intent
+        private int intentRequestCode;
+        private int intentResultCode;
+        // camera, gallery
+        private String photoFilePath;
+        // card
+        private CardDTO card;
+
+        public ActivityState(int intentRequestCode, int intentResultCode,
+                             String photoFilePath, CardDTO card) {
+            this.intentRequestCode = intentRequestCode;
+            this.intentResultCode = intentResultCode;
+            this.photoFilePath = photoFilePath;
+            this.card = card;
+        }
+
+        protected ActivityState(Parcel in) {
+            intentRequestCode = in.readInt();
+            intentResultCode = in.readInt();
+            photoFilePath = in.readString();
+            card = in.readParcelable(CardDTO.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(intentRequestCode);
+            dest.writeInt(intentResultCode);
+            dest.writeString(photoFilePath);
+            dest.writeParcelable(card, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public final Creator<ActivityState> CREATOR = new Creator<ActivityState>() {
+            @Override
+            public ActivityState createFromParcel(Parcel in) {
+                return new ActivityState(in);
+            }
+
+            @Override
+            public ActivityState[] newArray(int size) {
+                return new ActivityState[size];
+            }
+        };
+
+        public int getIntentRequestCode() {
+            return intentRequestCode;
+        }
+
+        public void setIntentRequestCode(int intentRequestCode) {
+            this.intentRequestCode = intentRequestCode;
+        }
+
+        public int getIntentResultCode() {
+            return intentResultCode;
+        }
+
+        public void setIntentResultCode(int intentResultCode) {
+            this.intentResultCode = intentResultCode;
+        }
+
+        public String getPhotoFilePath() {
+            return photoFilePath;
+        }
+
+        public void setPhotoFilePath(String photoFilePath) {
+            this.photoFilePath = photoFilePath;
+        }
+
+        public CardDTO getCard() {
+            return card;
+        }
+
+        public void setCard(CardDTO card) {
+            this.card = card;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ActivityState that = (ActivityState) o;
+
+            if (intentRequestCode != that.intentRequestCode) return false;
+            if (intentResultCode != that.intentResultCode) return false;
+            if (!photoFilePath.equals(that.photoFilePath)) return false;
+            return card.equals(that.card);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = intentRequestCode;
+            result = 31 * result + intentResultCode;
+            result = 31 * result + photoFilePath.hashCode();
+            result = 31 * result + card.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "ActivityState{" +
+                    "intentRequestCode=" + intentRequestCode +
+                    ", intentResultCode=" + intentResultCode +
+                    ", photoFilePath='" + photoFilePath + '\'' +
+                    ", card=" + card +
+                    '}';
+        }
     }
 }
