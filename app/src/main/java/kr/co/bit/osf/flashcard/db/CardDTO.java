@@ -28,11 +28,6 @@ public class CardDTO implements Parcelable {
         this.type = type;
     }
 
-    public CardDTO(String name, String imagePath, String imageName, int type, int boxId) {
-        this(name, imagePath, type, boxId);
-        this.imageName = imageName;
-    }
-
     public CardDTO(int id, String name, String imagePath, int type, int boxId) {
         this(name, imagePath, type, boxId);
         this.id = id;

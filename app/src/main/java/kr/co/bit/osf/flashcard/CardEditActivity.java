@@ -5,8 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -34,112 +32,32 @@ public class CardEditActivity extends AppCompatActivity {
     private int intentRequestCode = 0;
     private int intentResultCode = RESULT_CANCELED;
     // view
-    private ImageView cardEditImageView = null;
+    private ImageView imageView = null;
     private TextView cardEditTextView = null;
-    // image
+    // default_camera_image, gallery
     private File photoFile = null;
     private String photoFilePath = null;
     // delete card
-    private List<CardDTO> cardList = null;
-    // activity state
-    private String activityStateDataName = "activityStateDataName";
-    private ActivityState currentState;
+    List<CardDTO> cardList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_edit);
-        Dlog.i("");
 
-        // full screen
+        Dlog.i("started");
+
+        // todo: full screen
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.hide();
 
-        // event listener
-        // card image - image view
-        cardEditImageView = (ImageView) findViewById(R.id.cardEditImageView);
-        (findViewById(R.id.cardEditImageFrameLayout)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cardImageClicked();
-            }
-        });
-        // card name - text view
-        cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
-        cardEditTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cardTextClicked();
-            }
-        });
-        // yes button
-        (findViewById(R.id.cardEditButtonYes)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                yesButtonClicked();
-            }
-        });
-        // no button
-        (findViewById(R.id.cardEditNoButton)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intentResultCode = RESULT_CANCELED;
-                finish();
-            }
-        });
-
-        //
-        setupActivity();
-
-        // first ?
-        try {
-            Dlog.i("not first");
-            // restore saved activity state
-            //currentState = savedInstanceState.getParcelable(activityStateDataName);
-            Dlog.i(currentState.toString());
-        } catch (Exception e) {
-            Dlog.i("first");
-            currentState = new ActivityState(intentRequestCode, intentResultCode, photoFilePath, card);
-        }
-        Dlog.i(currentState.toString());
-    }
-
-    private void yesButtonClicked() {
-        Dlog.i("card:" + card);
-        boolean isOk = false;
-        switch (intentRequestCode) {
-            case IntentRequestCode.CARD_ADD:
-            case IntentRequestCode.CARD_EDIT:
-                Dlog.i("intentRequestCode" + intentRequestCode);
-                isOk = isValidCard(true);
-                break;
-        }
-
-        if (isOk) {
-            Dlog.i("check:ok:" + card);
-            FlashCardDB db = new FlashCardDB(getApplicationContext());
-            card.setName(cardEditTextView.getText().toString().trim());
-            if (intentRequestCode == IntentRequestCode.CARD_ADD) {
-                Dlog.i("check:ok:add:" + card);
-                db.addCard(card);
-            } else {
-                Dlog.i("check:ok:update:" + card);
-                db.updateCard(card);
-            }
-            finish();
-        } else {
-            Dlog.i("check:fail:" + card);
-        }
-    }
-
-    private void setupActivity() {
         // get intent data
         Intent intent = getIntent();
         intentRequestCode = intent.getIntExtra(IntentExtrasName.REQUEST_CODE, 0);
         Dlog.i("intentRequestCode:" + intentRequestCode);
-
         switch (intentRequestCode) {
             case IntentRequestCode.CARD_ADD:
+                Dlog.i("intentRequestCode in case:" + intentRequestCode);
                 card = intent.getParcelableExtra(IntentExtrasName.SEND_DATA);
                 card.setType(FlashCardDB.CardEntry.TYPE_USER);
             case IntentRequestCode.CARD_EDIT:
@@ -195,20 +113,76 @@ public class CardEditActivity extends AppCompatActivity {
             }
         }
 
-        // show card
+        imageView = (ImageView) findViewById(R.id.cardEditImageView);
+        cardEditTextView = (TextView) findViewById(R.id.cardEditTextView);
+
+        //show card
         if (intentRequestCode == IntentRequestCode.CARD_EDIT) {
-            ImageUtil.loadCardImageIntoImageView(this, card, cardEditImageView);
+            ImageUtil.loadCardImageIntoImageView(this, card, imageView);
         }
-        try {
+        if (card.getName() != null) {
             cardEditTextView.setText(card.getName());
-        } catch (Exception e) {
-            Dlog.i(e.toString());
         }
 
+        //imageView - card Image
+        (findViewById(R.id.frameLayout)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageClicked();
+            }
+        });
+
+        //textView - card Name
+        (findViewById(R.id.cardEditTextView)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textClicked();
+            }
+        });
+
+        //yes, no Button
+        (findViewById(R.id.cardEditYesButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dlog.i("yes button:check:card:" + card);
+                boolean isOk = false;
+                switch (intentRequestCode) {
+                    case IntentRequestCode.CARD_ADD:
+                    case IntentRequestCode.CARD_EDIT:
+                        Dlog.i("yes button:check:intentRequestCode" + intentRequestCode);
+                        isOk = updatedCardIsOk(true);
+                        break;
+                }
+
+                if (isOk) {
+                    Dlog.i("yes button:check:ok:" + card);
+                    FlashCardDB db = new FlashCardDB(getApplicationContext());
+                    card.setName(cardEditTextView.getText().toString().trim());
+                    if (intentRequestCode == IntentRequestCode.CARD_ADD) {
+                        Dlog.i("yes button:check:ok:add" + card);
+                        db.addCard(card);
+                    } else {
+                        Dlog.i("yes button:check:ok:update" + card);
+                        db.updateCard(card);
+                    }
+                    finish();
+                } else {
+                    Dlog.i("yes button:check:fail:" + card);
+                }
+            }
+        });
+
+        (findViewById(R.id.cardEditNoButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intentResultCode = RESULT_CANCELED;
+                finish();
+            }
+        });
     }
 
-    private void cardImageClicked() {
-        Dlog.i("");
+    private void imageClicked() {
+        Dlog.i("CardEditActivity: imageClicked");
 
         // get user action from dialog
         final CharSequence[] items = {
@@ -224,6 +198,7 @@ public class CardEditActivity extends AppCompatActivity {
                 Dlog.i("dialog:which:" + which + ", itemName:" + itemName);
 
                 if (itemName.equals(getString(R.string.card_edit_image_dialog_camera_button_text))) {
+
                     Dlog.i("cardEdit:photoCaptureButton clicked");
                     //capture card
                     photoFile = ImageUtil.getOutputMediaFile(ImageUtil.MEDIA_TYPE_IMAGE);
@@ -235,6 +210,7 @@ public class CardEditActivity extends AppCompatActivity {
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         startActivityForResult(intent, IntentRequestCode.CAPTURE_IMAGE);
                     }
+
                 } else if (itemName.equals(getString(R.string.card_edit_image_dialog_gallery_button_text))) {
                     Dlog.i("cardEdit:galleryButton clicked");
                     // select card in gallery
@@ -254,26 +230,29 @@ public class CardEditActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void cardTextClicked() {
-        Dlog.i("");
+    private void textClicked() {
+        Dlog.i("CardEditActivity: textClicked");
 
         AlertDialog.Builder alert = new AlertDialog.Builder(CardEditActivity.this);
+        Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder");
+
         alert.setTitle(R.string.card_edit_text_dialog_title_text);
         alert.setMessage(R.string.card_edit_text_dialog_message_text);
+        Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setTitle");
 
         // Set an EditText view to get user input
         final EditText input = new EditText(this);
         input.setGravity(Gravity.CENTER);
         alert.setView(input);
         input.setGravity(Gravity.CENTER);
-        Dlog.i("AlertDialog.Builder:setView");
+        Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setView");
         if (card.getName() != null) {
             input.setText(card.getName());
             input.setSelection(card.getName().length());
         } else {
             input.setText("");
         }
-        Dlog.i("AlertDialog.Builder:setText");
+        Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setText");
         alert.setPositiveButton(R.string.card_edit_text_dialog_ok_button_text, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String name = input.getText().toString();
@@ -304,7 +283,7 @@ public class CardEditActivity extends AppCompatActivity {
                     card.setType(FlashCardDB.CardEntry.TYPE_USER);
                     Dlog.i("photoFilePath:" + photoFilePath);
                     Dlog.i("photoFilePath:" + card);
-                    ImageUtil.loadCardImageIntoImageView(this, card, cardEditImageView);
+                    ImageUtil.loadCardImageIntoImageView(this, card, imageView);
                     Dlog.i("photoFilePath:" + card.getImagePath());
                     Dlog.i("photoFilePath:" + card.getImagePath());
                     break;
@@ -315,30 +294,11 @@ public class CardEditActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        // restore saved activity state
-        currentState = savedInstanceState.getParcelable(activityStateDataName);
-        Dlog.i(currentState.toString());
-        // camera, gallery
-        photoFilePath = currentState.getPhotoFilePath();
-        // image, text
-        try {
-            ImageUtil.loadCardImageIntoImageView(this, currentState.getCard(), cardEditImageView);
-            cardEditTextView.setText(currentState.card.getName());
-        } catch (Exception e) {
-            Dlog.e(e.toString());
-        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // camera, gallery
-        currentState.setPhotoFilePath(photoFilePath);
-        // card
-        currentState.setCard(card);
-        // save current activity state
-        outState.putParcelable(activityStateDataName, currentState);
-        Dlog.i(currentState.toString());
     }
 
     @Override
@@ -350,10 +310,10 @@ public class CardEditActivity extends AppCompatActivity {
                 case IntentRequestCode.CARD_ADD:
                 case IntentRequestCode.CARD_EDIT:
                 case IntentRequestCode.CARD_DELETE:
-                    if (isValidCard() == true) {
+                    if (updatedCardIsOk() == true) {
                         data.putExtra(IntentExtrasName.RETURN_DATA, card);
                     } else {
-                        Dlog.i("isValidCard() == false");
+                        Dlog.i("updatedCardIsOk() == false");
                         intentResultCode = RESULT_CANCELED;
                     }
                     break;
@@ -368,7 +328,7 @@ public class CardEditActivity extends AppCompatActivity {
         super.finish();
     }
 
-    public boolean isValidCard(boolean isPrintMessage) {
+    public boolean updatedCardIsOk(boolean printMassege) {
         // check card content
         boolean isOk = (card != null);
         String errorMessage = "";
@@ -392,21 +352,22 @@ public class CardEditActivity extends AppCompatActivity {
             }
         }
 
-        // check text
-        if (isOk) {
-            try {
-                isOk = (card.getName().length() > 0);
-                Dlog.i("getName().length():check:" + card.getName().length());
-            } catch (Exception e) {
-                isOk = false;
-                Dlog.i("getName():error:");
-            }
-            if (isOk == false) {
-                errorMessage = getResources().getString(R.string.card_edit_error_message_no_text);
-            }
-        }
 
-        if(isPrintMessage == true) {
+            // check text
+            if (isOk) {
+                try {
+                    isOk = (card.getName().length() > 0);
+                    Dlog.i("getName().length():check:" + card.getName().length());
+                } catch (Exception e) {
+                    isOk = false;
+                    Dlog.i("getName():error:");
+                }
+                if (isOk == false) {
+                    errorMessage = getResources().getString(R.string.card_edit_error_message_no_text);
+                }
+            }
+
+        if(printMassege == true) {
             if (isOk == false) {
                 Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
@@ -415,122 +376,8 @@ public class CardEditActivity extends AppCompatActivity {
         return isOk;
     }
 
-    private boolean isValidCard() {
-        return isValidCard(false);
-    }
 
-    private class ActivityState implements Parcelable {
-        // intent
-        private int intentRequestCode;
-        private int intentResultCode;
-        // camera, gallery
-        private String photoFilePath;
-        // card
-        private CardDTO card;
-
-        public ActivityState(int intentRequestCode, int intentResultCode,
-                             String photoFilePath, CardDTO card) {
-            this.intentRequestCode = intentRequestCode;
-            this.intentResultCode = intentResultCode;
-            this.photoFilePath = photoFilePath;
-            this.card = card;
-        }
-
-        protected ActivityState(Parcel in) {
-            intentRequestCode = in.readInt();
-            intentResultCode = in.readInt();
-            photoFilePath = in.readString();
-            card = in.readParcelable(CardDTO.class.getClassLoader());
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(intentRequestCode);
-            dest.writeInt(intentResultCode);
-            dest.writeString(photoFilePath);
-            dest.writeParcelable(card, flags);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public final Creator<ActivityState> CREATOR = new Creator<ActivityState>() {
-            @Override
-            public ActivityState createFromParcel(Parcel in) {
-                return new ActivityState(in);
-            }
-
-            @Override
-            public ActivityState[] newArray(int size) {
-                return new ActivityState[size];
-            }
-        };
-
-        public int getIntentRequestCode() {
-            return intentRequestCode;
-        }
-
-        public void setIntentRequestCode(int intentRequestCode) {
-            this.intentRequestCode = intentRequestCode;
-        }
-
-        public int getIntentResultCode() {
-            return intentResultCode;
-        }
-
-        public void setIntentResultCode(int intentResultCode) {
-            this.intentResultCode = intentResultCode;
-        }
-
-        public String getPhotoFilePath() {
-            return photoFilePath;
-        }
-
-        public void setPhotoFilePath(String photoFilePath) {
-            this.photoFilePath = photoFilePath;
-        }
-
-        public CardDTO getCard() {
-            return card;
-        }
-
-        public void setCard(CardDTO card) {
-            this.card = card;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            ActivityState that = (ActivityState) o;
-
-            if (intentRequestCode != that.intentRequestCode) return false;
-            if (intentResultCode != that.intentResultCode) return false;
-            if (!photoFilePath.equals(that.photoFilePath)) return false;
-            return card.equals(that.card);
-
-        }
-
-        @Override
-        public int hashCode() {
-            int result = intentRequestCode;
-            result = 31 * result + intentResultCode;
-            result = 31 * result + photoFilePath.hashCode();
-            result = 31 * result + card.hashCode();
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "ActivityState{" +
-                    "intentRequestCode=" + intentRequestCode +
-                    ", intentResultCode=" + intentResultCode +
-                    ", photoFilePath='" + photoFilePath + '\'' +
-                    ", card=" + card +
-                    '}';
-        }
+    public boolean updatedCardIsOk() {
+        return updatedCardIsOk(false);
     }
 }
