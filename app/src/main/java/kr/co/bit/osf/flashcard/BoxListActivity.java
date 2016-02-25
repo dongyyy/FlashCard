@@ -119,6 +119,7 @@ public class BoxListActivity extends AppCompatActivity {
                         textView2.setVisibility(View.VISIBLE);
                         Dlog.i("dialog:edit box - set VISIBLE");
                         inputText.setText(boxList.get(position).getName());
+                        inputText.setSelection(inputText.length());
                         AlertDialog.Builder input = new AlertDialog.Builder(BoxListActivity.this);
                         textView.setText(R.string.box_list_edit_dialog_edit_dialog_title_text);
                         textView2.setText(R.string.box_list_edit_dialog_edit_dialog_message_text);
@@ -224,7 +225,6 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("add R.id.dialog Item");
                 titleTextView.setText(R.string.dialog_box_create);
                 textView.setText(R.string.box_list_add_dialog_message_text);
-                //가운데정렬
                 Dlog.i("dialog Item setText");
                 inputText.setVisibility(View.VISIBLE);
                 textView.setVisibility(View.VISIBLE);

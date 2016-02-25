@@ -7,11 +7,11 @@
         <item name="colorPrimaryDark">@color/custom_color_gyoo</item>
         <item name="colorAccent">@color/custom_color_gyoo</item>
         <item name="android:actionBarSize">@dimen/actionbar_height</item>
-        <item name="android:textColor">@color/custom_color_gyoo</item>
+        <item name="android:textColorAlertDialogListItem">#000000</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
+        <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
     </style>
 
