@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/custom_color_gyoo</item>
         <item name="colorPrimaryDark">@color/custom_color_gyoo</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:actionBarSize">@dimen/actionbar_height</item>
+        <item name="android:textColor">@color/custom_color_gyoo</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
