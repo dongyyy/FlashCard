@@ -158,7 +158,7 @@ public class BoxListActivity extends AppCompatActivity {
                         deleteTitle.setText(R.string.box_list_edit_dialog_delete_dialog_title_text);
                         deleteMessage.setText(R.string.box_list_edit_dialog_delete_dialog_message_text);
                         delete.setView(dlg2);
-                        delete.setPositiveButton(R.string.box_list_edit_dialog_delete_dialog_ok_button_text,
+                        delete.setPositiveButton(R.string.edit_dialog_delete_dialog_ok_button_text,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                         // delete box
@@ -172,7 +172,7 @@ public class BoxListActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
-                        delete.setNegativeButton(R.string.box_list_edit_dialog_delete_dialog_cancel_button_text,
+                        delete.setNegativeButton(R.string.edit_dialog_delete_dialog_cancel_button_text,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                         // Canceled.

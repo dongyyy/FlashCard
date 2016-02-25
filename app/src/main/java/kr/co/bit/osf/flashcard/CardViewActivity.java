@@ -290,7 +290,7 @@ public class CardViewActivity extends AppCompatActivity {
         titleTextView.setText(getString(R.string.card_view_edit_dialog_title));
         // edit dialog text view
         TextView dialogEditTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewOne);
-        dialogEditTextView.setText(getString(R.string.card_view_edit_dialog_edit_button_text));
+        dialogEditTextView.setText(getString(R.string.edit_dialog_edit));
         dialogEditTextView.setVisibility(View.VISIBLE);
         dialogEditTextView.setTag(dialog);
         dialogEditTextView.setOnClickListener(new View.OnClickListener() {
@@ -304,7 +304,7 @@ public class CardViewActivity extends AppCompatActivity {
         });
         // delete dialog text view
         TextView dialogDeleteTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewTwo);
-        dialogDeleteTextView.setText(getString(R.string.card_view_edit_dialog_delete_button_text));
+        dialogDeleteTextView.setText(getString(R.string.edit_dialog_delete));
         dialogDeleteTextView.setVisibility(View.VISIBLE);
         dialogDeleteTextView.setTag(dialog);
         dialogDeleteTextView.setOnClickListener(new View.OnClickListener() {
@@ -330,10 +330,10 @@ public class CardViewActivity extends AppCompatActivity {
         final AlertDialog dialog = dialogBuilder.setView(dialogView).create();
         // dialog title
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.dialogTitleTextView);
-        titleTextView.setText(getString(R.string.card_view_edit_dialog_delete_dialog_title_text));
+        titleTextView.setText(getString(R.string.card_view_edit_dialog_delete_dialog_message));
         // delete confirm text view
         TextView dialogDeleteConfirmTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewOne);
-        dialogDeleteConfirmTextView.setText(getString(R.string.box_list_edit_dialog_delete_dialog_ok_button_text));
+        dialogDeleteConfirmTextView.setText(getString(R.string.edit_dialog_delete_dialog_ok_button_text));
         dialogDeleteConfirmTextView.setVisibility(View.VISIBLE);
         dialogDeleteConfirmTextView.setTag(dialog);
         dialogDeleteConfirmTextView.setOnClickListener(new View.OnClickListener() {
@@ -347,7 +347,7 @@ public class CardViewActivity extends AppCompatActivity {
         });
         // delete cancel text view
         TextView dialogDeleteCancelTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewTwo);
-        dialogDeleteCancelTextView.setText(getString(R.string.box_list_edit_dialog_delete_dialog_cancel_button_text));
+        dialogDeleteCancelTextView.setText(getString(R.string.edit_dialog_delete_dialog_cancel_button_text));
         dialogDeleteCancelTextView.setVisibility(View.VISIBLE);
         dialogDeleteCancelTextView.setTag(dialog);
         dialogDeleteCancelTextView.setOnClickListener(new View.OnClickListener() {
