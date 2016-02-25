@@ -268,7 +268,7 @@ public class CardEditActivity extends AppCompatActivity {
             editText.setText("");
         }
         Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setText");
-        alert.setPositiveButton(R.string.edit_dialog_edit, new DialogInterface.OnClickListener() {
+        alert.setPositiveButton(R.string.card_edit_text_dialog_ok_button_text, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String name = editText.getText().toString();
                 cardEditTextView.setText(name);

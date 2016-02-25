@@ -6,15 +6,15 @@
         android:icon="@drawable/default_image_plus"
         yourapp:showAsAction="always"/>
     <item android:id="@+id/box_list_menu_list_Asc"
-        android:title="@string/actionbar_menu_asc"
+        android:title="@string/box_list_menu_list_ASC"
         />
     <item android:id="@+id/box_list_menu_list_Desc"
-        android:title="@string/actionbar_menu_desc"
+        android:title="@string/box_list_menu_list_DESC"
         />
     <item android:id="@+id/box_list_menu_list_Shuffle"
         android:title="@string/box_list_menu_list_Shuffle"
         />
     <item android:id="@+id/box_list_menu_list_id_Asc"
-        android:title="@string/actionbar_menu_return"
+        android:title="@string/box_list_menu_list_id_Asc"
         />
 </menu>
