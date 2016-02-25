@@ -55,8 +55,12 @@
     <string name="card_view_edit_dialog_delete_dialog_title_text">카드 지우기</string>
     <!--card list menu-->
     <string name="card_list_menu_add">만들기</string>
-    <string name="card_list_menu_delete">지우기</string>
     <string name="card_list_menu_complete">좋아요</string>
+    <string name="card_list_menu_list_delete">지우기</string>
+    <string name="card_list_menu_list_ASC">가나다순</string>
+    <string name="card_list_menu_list_DESC">하파타순</string>
+    <string name="card_list_menu_list_Shuffle">상자 섞어보기</string>
+    <string name="card_list_menu_list_id_Asc">처음으로</string>
     <string name="card_list_edit_dialog_title">카드 바꿀래요?</string>
     <string name="card_list_edit_dialog_edit">바꿀래요?</string>
     <string name="card_list_edit_dialog_delete">지울래요?</string>
