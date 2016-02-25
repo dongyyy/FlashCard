@@ -23,6 +23,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
@@ -44,6 +45,7 @@ public class CardListActivity extends AppCompatActivity {
     // list
     List<CardDTO> cardList=null;
     ArrayList<CardDTO> deleteCardList=null;
+    HashMap<Integer, Boolean> hashMap=null;
     //card list update
     boolean isCardListUpdated = false;
     // grid view
@@ -52,6 +54,7 @@ public class CardListActivity extends AppCompatActivity {
     // send card
     int sendCardListIndex = 0;
     // menu
+    MenuItem cardListMenuAdd=null;
     MenuItem showDeleteCompleteButton=null;
     Menu optionMenuGroup=null;
     boolean deleteMenuClicked = false;
@@ -79,6 +82,11 @@ public class CardListActivity extends AppCompatActivity {
         deleteCardList = new ArrayList<CardDTO>();
         // read card list
         cardList = dao.getCardByBoxId(state.getBoxId());
+        hashMap=new HashMap<Integer, Boolean>();
+
+        for(int i=0; i<cardList.size(); i++){
+            hashMap.put(cardList.get(i).getId(),false);
+        }
 
         cardCustomGridView = (GridView) findViewById(R.id.cardCustomGridView);
         adapter = new CardListAdapter(this);
@@ -175,6 +183,7 @@ public class CardListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_card_list_menu, menu);
+        cardListMenuAdd = menu.findItem(R.id.cardListMenuAdd);
         showDeleteCompleteButton = menu.findItem(R.id.showDeleteCompleteButton);
         optionMenuGroup = menu;
         return true;
@@ -200,6 +209,8 @@ public class CardListActivity extends AppCompatActivity {
                 showDeleteCompleteButton.setVisible(true);
                 deleteMenuClicked = true;
                 optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, false); //option menu 비활성화
+                cardListMenuAdd.setVisible(false);
+
                 adapter.notifyDataSetChanged();
                 return true;
             }
@@ -208,6 +219,7 @@ public class CardListActivity extends AppCompatActivity {
                 showDeleteCompleteButton.setVisible(false);
                 deleteMenuClicked = false;
                 optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, true); //option menu 활성화
+                cardListMenuAdd.setVisible(true);
                 adapter.notifyDataSetChanged();
 
                 if (deleteCardList.size() != 0) {
@@ -282,6 +294,10 @@ public class CardListActivity extends AppCompatActivity {
             holder.textView = (TextView) convertView.findViewById(R.id.cardCustomListName);
             holder.checkBox = (CheckBox) convertView.findViewById(R.id.cardCustomCheckBox);
 
+            if(hashMap.get(cardList.get(position).getId())){
+                holder.checkBox.setChecked(true);
+            }
+
             String cardListName = cardList.get(position).getName();
             holder.textView.setText(cardListName);//이름
             ImageUtil.loadCardImageIntoImageView(CardListActivity.this, cardList.get(position), holder.imageView);
@@ -297,10 +313,10 @@ public class CardListActivity extends AppCompatActivity {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) { //체크를 할 때
                             deleteCardList.add(cardList.get(position));
-                            for (int i = 0; i < deleteCardList.size(); i++)
-                                Log.d("isChecked", deleteCardList.get(i).getName());
+                            hashMap.put(cardList.get(position).getId(),true);
                         } else { //체크가 해제될 때
                             deleteCardList.remove(cardList.get(position));
+                            hashMap.put(cardList.get(position).getId(),false);
                         }
                     }
                 });
@@ -387,6 +403,10 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     public void refreshCardList() {
+        hashMap.clear();
+        for(int i=0; i<cardList.size(); i++){
+            hashMap.put(cardList.get(i).getId(),false);
+        }
         isCardListUpdated = true;
         cardCustomGridView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

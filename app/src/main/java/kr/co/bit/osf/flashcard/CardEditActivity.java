@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,6 +36,7 @@ public class CardEditActivity extends AppCompatActivity {
     // default_camera_image, gallery
     private File photoFile = null;
     private String photoFilePath = null;
+    private DialogInterface dialogInterface;
     // delete card
     List<CardDTO> cardList = null;
 
@@ -183,59 +183,102 @@ public class CardEditActivity extends AppCompatActivity {
 
     private void imageClicked() {
         Dlog.i("CardEditActivity: imageClicked");
-
+        View dlg = CardEditActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
         // get user action from dialog
         final CharSequence[] items = {
                 getString(R.string.card_edit_image_dialog_camera_button_text),
                 getString(R.string.card_edit_image_dialog_gallery_button_text),
         };
         AlertDialog.Builder builder = new AlertDialog.Builder(CardEditActivity.this);
-        builder.setTitle(getString(R.string.card_edit_image_dialog_title));
-        builder.setItems(items, new DialogInterface.OnClickListener() {
+        TextView editTitle = (TextView)dlg.findViewById(R.id.dialogTitleTextView);
+        editTitle.setText(R.string.card_edit_image_dialog_title);
+        editTitle.setVisibility(View.VISIBLE);
+
+        TextView editMenuOne = (TextView)dlg.findViewById(R.id.dialogMenuTextViewOne);
+        editMenuOne.setText(R.string.card_edit_image_dialog_camera_button_text);
+        editMenuOne.setVisibility(View.VISIBLE);
+        editMenuOne.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String itemName = items[which].toString();
-                Dlog.i("dialog:which:" + which + ", itemName:" + itemName);
+            public void onClick(View v) {
+                Dlog.i("cardEdit:photoCaptureButton clicked");
+                //capture card
+                photoFile = ImageUtil.getOutputMediaFile(ImageUtil.MEDIA_TYPE_IMAGE);
+                Dlog.i("cardEdit:photoCaptureButton clicked");
+                photoFilePath = photoFile.getAbsolutePath();
 
-                if (itemName.equals(getString(R.string.card_edit_image_dialog_camera_button_text))) {
-
-                    Dlog.i("cardEdit:photoCaptureButton clicked");
-                    //capture card
-                    photoFile = ImageUtil.getOutputMediaFile(ImageUtil.MEDIA_TYPE_IMAGE);
-                    Dlog.i("cardEdit:photoCaptureButton clicked");
-                    photoFilePath = photoFile.getAbsolutePath();
-
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                    if (intent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(intent, IntentRequestCode.CAPTURE_IMAGE);
-                    }
-
-                } else if (itemName.equals(getString(R.string.card_edit_image_dialog_gallery_button_text))) {
-                    Dlog.i("cardEdit:galleryButton clicked");
-                    // select card in gallery
-                    Intent intent = new Intent(Intent.ACTION_PICK,
-                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setType("image/*");
-                    startActivityForResult(
-                            Intent.createChooser(intent, "Select Picture"),
-                            IntentRequestCode.SELECT_PICTURE);
-
-                  /*  } else if (itemName.equals(getString(R.string.card_edit_image_dialog_cancel_button_text))) {
-                        Dlog.i("dialog:cancelled");
-                        //dialog.dismiss();*/
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(intent, IntentRequestCode.CAPTURE_IMAGE);
                 }
+                dialogInterface.dismiss();
             }
         });
-        builder.show();
+
+        TextView editmenuTwo = (TextView)dlg.findViewById(R.id.dialogMenuTextViewTwo);
+        editmenuTwo.setText(R.string.card_edit_image_dialog_gallery_button_text);
+        editmenuTwo.setVisibility(View.VISIBLE);
+        editmenuTwo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dlog.i("cardEdit:galleryButton clicked");
+                // select card in gallery
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");
+                startActivityForResult(
+                        Intent.createChooser(intent, "Select Picture"),
+                        IntentRequestCode.SELECT_PICTURE);
+                dialogInterface.dismiss();
+            }
+
+        });
+        builder.setView(dlg);
+        dialogInterface = builder.show();
     }
 
     private void textClicked() {
+
         Dlog.i("CardEditActivity: textClicked");
 
         AlertDialog.Builder alert = new AlertDialog.Builder(CardEditActivity.this);
         Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder");
+        View dlg = CardEditActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
 
+        TextView editTitle = (TextView)dlg.findViewById(R.id.dialogTitleTextView);
+        editTitle.setText(R.string.card_edit_text_dialog_title_text);
+        editTitle.setVisibility(View.VISIBLE);
+
+        TextView editMenuOne = (TextView)dlg.findViewById(R.id.dialogMenuTextViewOne);
+        editMenuOne.setText(R.string.card_edit_text_dialog_message_text);
+        editMenuOne.setVisibility(View.VISIBLE);
+
+        final EditText editText = (EditText)dlg.findViewById(R.id.dialogMenuEditTextOne);
+        editText.setVisibility(View.VISIBLE);
+        Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setView");
+        if (card.getName() != null) {
+            editText.setText(card.getName());
+            editText.setSelection(card.getName().length());
+        } else {
+            editText.setText("");
+        }
+        Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setText");
+        alert.setPositiveButton(R.string.card_edit_text_dialog_ok_button_text, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String name = editText.getText().toString();
+                cardEditTextView.setText(name);
+                card.setName(name);
+            }
+        });
+
+        alert.setNegativeButton(R.string.card_edit_text_dialog_cancel_button_text, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+
+/*
         alert.setTitle(R.string.card_edit_text_dialog_title_text);
         alert.setMessage(R.string.card_edit_text_dialog_message_text);
         Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setTitle");
@@ -266,8 +309,9 @@ public class CardEditActivity extends AppCompatActivity {
                 // Canceled.
             }
         });
-
-        alert.show();
+*/
+        alert.setView(dlg);
+        dialogInterface = alert.show();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
