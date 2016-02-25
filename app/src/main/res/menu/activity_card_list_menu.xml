@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/cardListMenuAdd"
-        android:icon="@drawable/plus"
+        android:icon="@drawable/z_demo_plus"
         android:title="@string/card_list_menu_add"
         yourapp:showAsAction="always"/>
     <group android:id="@+id/optionMenuGroup">
