@@ -142,16 +142,46 @@ public class CardListActivity extends AppCompatActivity {
                 textMenuTwo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(cardList.size() >= sendCardListIndex) {
-                            CardDTO sendCard = cardList.get(sendCardListIndex);
-                            if (sendCard != null) {
-                                Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
-                                intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE);
-                                intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
-                                startActivityForResult(intent, IntentRequestCode.CARD_DELETE);
-                                dialogInterface.dismiss();
-                            }
-                        }
+                        View dlg2 = CardListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+
+                        TextView deleteTitle = (TextView) dlg2.findViewById(R.id.dialogTitleTextView);
+                        TextView deleteMessage = (TextView) dlg2.findViewById(R.id.dialogMenuTextViewOne);
+
+                        deleteTitle.setVisibility(View.VISIBLE);
+                        deleteMessage.setVisibility(View.VISIBLE);
+
+                        final AlertDialog.Builder delete = new AlertDialog.Builder(CardListActivity.this);
+
+                        deleteTitle.setText(R.string.card_list_edit_dialog_delete_dialog_title_text);
+                        deleteMessage.setText(R.string.card_list_edit_dialog_delete_dialog_message_text);
+
+                        delete.setView(dlg2);
+
+                        delete.setPositiveButton(R.string.edit_dialog_delete_dialog_ok_button_text,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (cardList.size() >= sendCardListIndex) {
+                                            CardDTO sendCard = cardList.get(sendCardListIndex);
+                                            if (sendCard != null) {
+                                                Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
+                                                intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE);
+                                                intent.putExtra(IntentExtrasName.SEND_DATA, sendCard);
+                                                startActivityForResult(intent, IntentRequestCode.CARD_DELETE);
+                                                dialogInterface.dismiss();
+                                            }
+                                        }
+                                    }
+                                });
+                        delete.setNegativeButton(R.string.edit_dialog_delete_dialog_cancel_button_text,
+                                new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        // Canceled.
+                                    }
+                                });
+                        dialogInterface.dismiss();
+                        delete.show();
                     }
                 });
 
