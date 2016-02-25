@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -85,7 +84,7 @@ public class CardListActivity extends AppCompatActivity {
         hashMap=new HashMap<Integer, Boolean>();
 
         for(int i=0; i<cardList.size(); i++){
-            hashMap.put(cardList.get(i).getSeq(),false);
+            hashMap.put(cardList.get(i).getId(),false);
         }
 
         cardCustomGridView = (GridView) findViewById(R.id.cardCustomGridView);
@@ -294,7 +293,7 @@ public class CardListActivity extends AppCompatActivity {
             holder.textView = (TextView) convertView.findViewById(R.id.cardCustomListName);
             holder.checkBox = (CheckBox) convertView.findViewById(R.id.cardCustomCheckBox);
 
-            if(hashMap.get(cardList.get(position).getSeq())){
+            if(hashMap.get(cardList.get(position).getId())){
                 holder.checkBox.setChecked(true);
             }
 
@@ -313,10 +312,10 @@ public class CardListActivity extends AppCompatActivity {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) { //체크를 할 때
                             deleteCardList.add(cardList.get(position));
-                            hashMap.put(cardList.get(position).getSeq(),true);
+                            hashMap.put(cardList.get(position).getId(),true);
                         } else { //체크가 해제될 때
                             deleteCardList.remove(cardList.get(position));
-                            hashMap.put(cardList.get(position).getSeq(),false);
+                            hashMap.put(cardList.get(position).getId(),false);
                         }
                     }
                 });
@@ -405,7 +404,7 @@ public class CardListActivity extends AppCompatActivity {
     public void refreshCardList() {
         hashMap.clear();
         for(int i=0; i<cardList.size(); i++){
-            hashMap.put(cardList.get(i).getSeq(),false);
+            hashMap.put(cardList.get(i).getId(),false);
         }
         isCardListUpdated = true;
         cardCustomGridView.setAdapter(adapter);
@@ -430,7 +429,6 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public int compare(CardDTO arg0, CardDTO arg1) {
-            // TODO Auto-generated method stub
             return arg0.getName().compareTo(arg1.getName());
         }
 
@@ -440,7 +438,6 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public int compare(CardDTO arg0, CardDTO arg1) {
-            // TODO Auto-generated method stub
             return arg1.getName().compareTo(arg0.getName());
         }
 
@@ -450,7 +447,6 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public int compare(CardDTO arg0, CardDTO arg1) {
-            // TODO Auto-generated method stub
             return arg0.getId() < arg1.getId() ? -1 : arg0.getId() > arg1.getId() ? 1 : 0;
         }
 

@@ -71,7 +71,7 @@ public class CardViewActivity extends AppCompatActivity {
             }
         });
 
-        // todo: full screen
+        // full screen
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.hide();
 

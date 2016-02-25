@@ -399,8 +399,8 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("topCard:" + topCard);
                 ImageUtil.loadCardImageIntoImageView(BoxListActivity.this, topCard, imageView);
             } else {
-                Dlog.i("default_no_image");
-                imageView.setImageResource(R.drawable.default_no_image);
+                Dlog.i("empty_image");
+                imageView.setImageResource(R.drawable.default_image_empty_image);
             }
             // text
             TextView nameTextView = (TextView) view.findViewById(R.id.boxListViewItemText);
@@ -450,7 +450,6 @@ public class BoxListActivity extends AppCompatActivity {
          */
         @Override
         public int compare(BoxDTO arg0, BoxDTO arg1) {
-            // TODO Auto-generated method stub
             return arg0.getName().compareTo(arg1.getName());
         }
 
@@ -468,7 +467,6 @@ public class BoxListActivity extends AppCompatActivity {
          */
         @Override
         public int compare(BoxDTO arg0, BoxDTO arg1) {
-            // TODO Auto-generated method stub
             return arg1.getName().compareTo(arg0.getName());
         }
     }
@@ -485,7 +483,6 @@ public class BoxListActivity extends AppCompatActivity {
          */
         @Override
         public int compare(BoxDTO arg0, BoxDTO arg1) {
-            // TODO Auto-generated method stub
             return arg0.getId() < arg1.getId() ? -1 : arg0.getId() > arg1.getId() ? 1:0;
         }
 
