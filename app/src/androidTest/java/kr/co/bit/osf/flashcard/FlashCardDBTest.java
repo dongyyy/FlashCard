@@ -397,7 +397,7 @@ public class FlashCardDBTest extends AndroidTestCase {
         // box 2
         int findBoxId = 1;
         int findId = 2;
-        String findName = "chick";
+        String findName = "lion";
         int findImageId = R.drawable.z_demo_animal_02;
         String findImageName = context.getResources().getResourceName(findImageId);
 
@@ -409,7 +409,7 @@ public class FlashCardDBTest extends AndroidTestCase {
 
         // box 3
         findBoxId = 3;
-        findId = 9+3+20;
+        findId = 9+(10+20); // alphabet + (animal + number)
         findName = "I";
         findImageId = R.drawable.z_demo_alphabet_i;
         findImageName = context.getResources().getResourceName(findImageId);

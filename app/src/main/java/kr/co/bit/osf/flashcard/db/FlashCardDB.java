@@ -700,7 +700,8 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
     }
 
     public boolean createCardDemoDataAnimal() {
-        String nameList[] = {"pig", "chick", "rat" };
+        String nameList[] = {"tiger", "lion", "elephant", "eagle", "sheep",
+                "whale", "turtle", "pig", "chick", "rat" };
 
         CardDTO card = new CardDTO();
         card.setBoxId(1);
