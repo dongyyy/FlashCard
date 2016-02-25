@@ -98,9 +98,9 @@ public class BoxListActivity extends AppCompatActivity {
                 TextView textView1 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewOne);
                 TextView textView2 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewTwo);
                 Dlog.i("Item long click dialog - add item");
-                textView1.setText("바꿀래요");
+                textView1.setText(R.string.box_list_dialog_list_Yes);
                 textView1.setVisibility(View.VISIBLE);
-                textView2.setText("지울래요");
+                textView2.setText(R.string.box_list_dialog_list_Yes);
                 textView2.setVisibility(View.VISIBLE);
                 Dlog.i("Item long click dialog - update Text,VISIBLE");
                 //update box dialog
