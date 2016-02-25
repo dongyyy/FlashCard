@@ -21,6 +21,7 @@ import java.util.List;
 import kr.co.bit.osf.flashcard.R;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
+import kr.co.bit.osf.flashcard.debug.Dlog;
 
 public class ImageUtil {
     private static final String TAG = "ImageUtilLog";
@@ -143,10 +144,14 @@ public class ImageUtil {
             if (card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
                 // load image from sd card(glide)
                 String imagePath = card.getImagePath();
-                if (imagePath.length() > 0) {
-                    Glide.with(context).load(card.getImagePath()).into(imageView);
-                } else {
-                    Glide.with(context).fromResource().load(R.drawable.default_no_image).into(imageView);
+                try {
+                    if (imagePath.length() > 0) {
+                        Glide.with(context).load(card.getImagePath()).into(imageView);
+                    } else {
+                        Glide.with(context).fromResource().load(R.drawable.default_no_image).into(imageView);
+                    }
+                } catch (Exception e) {
+                    Dlog.e(e.toString());
                 }
             } else {
                 // card demo data(glide)

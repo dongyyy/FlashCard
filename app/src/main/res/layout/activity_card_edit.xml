@@ -7,112 +7,112 @@
     tools:context="kr.co.bit.osf.flashcard.CardEditActivity">
 
     <RelativeLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical|center_horizontal"
         android:layout_above="@+id/linearLayout"
-        android:id="@+id/linearLayout2"
-        android:paddingTop="30dp"
+        android:layout_gravity="center_horizontal"
+        android:background="#FFDDDDDD"
+        android:gravity="center_vertical|center_horizontal"
         android:paddingBottom="30dp"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
-        android:background="#FFDDDDDD">
+        android:paddingTop="30dp">
 
         <FrameLayout
+            android:id="@+id/cardEditImageFrameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/frameLayout"
             android:background="#FFF">
+
             <ImageView
+                android:id="@+id/cardEditImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/cardEditImageView"
-                android:padding="15dp"
                 android:layout_gravity="center_vertical|center_horizontal"
-                android:src="@drawable/default_no_image"/>
+                android:padding="15dp"
+                android:src="@drawable/default_no_image" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
                 android:padding="10dp"
-                android:src="@drawable/default_camera_image"/>
+                android:src="@drawable/default_camera_image" />
         </FrameLayout>
 
     </RelativeLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical|center_horizontal"
-        android:id="@+id/linearLayout"
         android:layout_above="@+id/relativeLayout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:paddingTop="10dp"
+        android:layout_gravity="center_horizontal"
+        android:background="#FFDDDDDD"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal"
         android:paddingBottom="10dp"
-        android:weightSum="1"
-        android:background="#FFDDDDDD">
+        android:paddingTop="10dp"
+        android:weightSum="1">
 
         <FrameLayout
+            android:id="@+id/frameLayout2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/frameLayout2"
             android:background="#FFF">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:textSize="25dp"
-            android:padding="10dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:id="@+id/cardEditTextView"
-            android:background="#FFF"/>
+
+            <TextView
+                android:id="@+id/cardEditTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFF"
+                android:gravity="center_vertical|center_horizontal"
+                android:padding="10dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="25dp" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:paddingRight="10dp"
-                android:src="@drawable/default_pencil_image"/>
+                android:src="@drawable/default_pencil_image" />
         </FrameLayout>
 
 
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/linearLayout"
+        android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/linearLayout"
-        android:id="@+id/relativeLayout"
-        android:padding="10dp"
-        android:background="#FFDDDDDD">
+        android:background="#FFDDDDDD"
+        android:padding="10dp">
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/card_edit_no_button_text"
             android:id="@+id/cardEditNoButton"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/card_edit_yes_button_text"
-            android:id="@+id/cardEditYesButton"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
-    </RelativeLayout>
+            android:text="@string/card_edit_no_button_text" />
 
+        <Button
+            android:id="@+id/cardEditButtonYes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/card_edit_yes_button_text" />
+    </RelativeLayout>
 
 
 </RelativeLayout>
