@@ -118,8 +118,8 @@ public class CardListActivity extends AppCompatActivity {
                 TextView textMenuTwo = (TextView) dlg.findViewById(R.id.dialogMenuTextViewTwo);
                 Dlog.i("Card Item long click dialog - add TextView");
                 dlgTitle.setText(R.string.card_view_edit_dialog_title);
-                textMenuOne.setText(R.string.card_view_edit_dialog_edit_button_text);
-                textMenuTwo.setText(R.string.card_view_edit_dialog_delete_button_text);
+                textMenuOne.setText(R.string.edit_dialog_edit);
+                textMenuTwo.setText(R.string.edit_dialog_delete);
 
                 sendCardListIndex = position;
                 //edit card
@@ -312,10 +312,10 @@ public class CardListActivity extends AppCompatActivity {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) { //체크를 할 때
                             deleteCardList.add(cardList.get(position));
-                            hashMap.put(cardList.get(position).getId(),true);
+                            hashMap.put(cardList.get(position).getId(), true);
                         } else { //체크가 해제될 때
                             deleteCardList.remove(cardList.get(position));
-                            hashMap.put(cardList.get(position).getId(),false);
+                            hashMap.put(cardList.get(position).getId(), false);
                         }
                     }
                 });
@@ -341,7 +341,7 @@ public class CardListActivity extends AppCompatActivity {
                     try{
                         if(data.getParcelableExtra(IntentExtrasName.RETURN_DATA)!=null) {
                             CardDTO cardAdded = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
-                            Dlog.i("addData:"+cardAdded);
+                            Dlog.i("addData:" + cardAdded);
                             if(db.getCard(cardAdded.getId()) != null) {
                                 Dlog.i("db.getCard(cardAdded.getId()) : " + db.getCard(cardAdded.getId()));
                                 cardList.add(cardAdded);

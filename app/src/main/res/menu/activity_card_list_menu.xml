@@ -3,22 +3,22 @@
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/cardListMenuAdd"
         android:icon="@drawable/default_image_plus"
-        android:title="@string/card_list_menu_add"
+        android:title="@string/actionbar_menu_add"
         yourapp:showAsAction="always"/>
     <group android:id="@+id/optionMenuGroup">
         <item android:id="@+id/cardListMenuDelete"
-            android:title="@string/card_list_menu_list_delete"/>
+            android:title="@string/actionbar_menu_delete"/>
         <item android:id="@+id/cardListMenuShuffle"
             android:title="@string/card_list_menu_list_Shuffle"/>
         <item android:id="@+id/cardListMenuAscSort"
-            android:title="@string/card_list_menu_list_ASC"/>
+            android:title="@string/actionbar_menu_asc"/>
         <item android:id="@+id/cardListMenuDescSort"
-            android:title="@string/card_list_menu_list_DESC"/>
+            android:title="@string/actionbar_menu_desc"/>
         <item android:id="@+id/cardListMenuInitial"
-            android:title="@string/card_list_menu_list_id_Asc"/>
+            android:title="@string/actionbar_menu_return"/>
     </group>
     <item android:id="@+id/showDeleteCompleteButton"
-        android:title="@string/card_list_menu_complete"
+        android:title="@string/actionbar_menu_confirm"
         android:visible="false"
         yourapp:showAsAction="always"/>
 </menu>
