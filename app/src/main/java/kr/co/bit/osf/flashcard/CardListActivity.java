@@ -23,6 +23,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
@@ -44,6 +45,7 @@ public class CardListActivity extends AppCompatActivity {
     // list
     List<CardDTO> cardList=null;
     ArrayList<CardDTO> deleteCardList=null;
+    HashMap<Integer, Boolean> hashMap=null;
     //card list update
     boolean isCardListUpdated = false;
     // grid view
@@ -80,6 +82,11 @@ public class CardListActivity extends AppCompatActivity {
         deleteCardList = new ArrayList<CardDTO>();
         // read card list
         cardList = dao.getCardByBoxId(state.getBoxId());
+        hashMap=new HashMap<Integer, Boolean>();
+
+        for(int i=0; i<cardList.size(); i++){
+            hashMap.put(cardList.get(i).getSeq(),false);
+        }
 
         cardCustomGridView = (GridView) findViewById(R.id.cardCustomGridView);
         adapter = new CardListAdapter(this);
@@ -287,6 +294,10 @@ public class CardListActivity extends AppCompatActivity {
             holder.textView = (TextView) convertView.findViewById(R.id.cardCustomListName);
             holder.checkBox = (CheckBox) convertView.findViewById(R.id.cardCustomCheckBox);
 
+            if(hashMap.get(cardList.get(position).getSeq())){
+                holder.checkBox.setChecked(true);
+            }
+
             String cardListName = cardList.get(position).getName();
             holder.textView.setText(cardListName);//이름
             ImageUtil.loadCardImageIntoImageView(CardListActivity.this, cardList.get(position), holder.imageView);
@@ -302,10 +313,10 @@ public class CardListActivity extends AppCompatActivity {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) { //체크를 할 때
                             deleteCardList.add(cardList.get(position));
-                            for (int i = 0; i < deleteCardList.size(); i++)
-                                Log.d("isChecked", deleteCardList.get(i).getName());
+                            hashMap.put(cardList.get(position).getSeq(),true);
                         } else { //체크가 해제될 때
                             deleteCardList.remove(cardList.get(position));
+                            hashMap.put(cardList.get(position).getSeq(),false);
                         }
                     }
                 });
@@ -392,6 +403,10 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     public void refreshCardList() {
+        hashMap.clear();
+        for(int i=0; i<cardList.size(); i++){
+            hashMap.put(cardList.get(i).getSeq(),false);
+        }
         isCardListUpdated = true;
         cardCustomGridView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
