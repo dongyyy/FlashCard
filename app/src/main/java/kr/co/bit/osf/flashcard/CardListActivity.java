@@ -52,6 +52,7 @@ public class CardListActivity extends AppCompatActivity {
     // send card
     int sendCardListIndex = 0;
     // menu
+    MenuItem cardListMenuAdd=null;
     MenuItem showDeleteCompleteButton=null;
     Menu optionMenuGroup=null;
     boolean deleteMenuClicked = false;
@@ -175,6 +176,7 @@ public class CardListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_card_list_menu, menu);
+        cardListMenuAdd = menu.findItem(R.id.cardListMenuAdd);
         showDeleteCompleteButton = menu.findItem(R.id.showDeleteCompleteButton);
         optionMenuGroup = menu;
         return true;
@@ -200,6 +202,8 @@ public class CardListActivity extends AppCompatActivity {
                 showDeleteCompleteButton.setVisible(true);
                 deleteMenuClicked = true;
                 optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, false); //option menu 비활성화
+                cardListMenuAdd.setVisible(false);
+
                 adapter.notifyDataSetChanged();
                 return true;
             }
@@ -208,6 +212,7 @@ public class CardListActivity extends AppCompatActivity {
                 showDeleteCompleteButton.setVisible(false);
                 deleteMenuClicked = false;
                 optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, true); //option menu 활성화
+                cardListMenuAdd.setVisible(true);
                 adapter.notifyDataSetChanged();
 
                 if (deleteCardList.size() != 0) {

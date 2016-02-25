@@ -9,20 +9,6 @@
     android:paddingTop="5dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        >
-        <TextView
-            android:id="@+id/boxListViewItemCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:foreground="#f00"
-            android:text="99"
-            android:textColor="#000000"
-            android:textSize="10dp" />
-    </LinearLayout>
-    <FrameLayout
         android:layout_width="100dp"
         android:layout_height="75dp"
         android:layout_gravity="center">
@@ -35,14 +21,32 @@
             android:src="@drawable/default_no_image"
             android:layout_gravity="top" />
 
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        >
+        <TextView
+            android:id="@+id/boxListViewItemText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:singleLine="true"
+            android:text="TEXT"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/boxListViewItemCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:foreground="#f00"
+            android:padding="2dp"
+            android:text="99"
+            android:visibility="invisible"
+            android:textColor="#000000"
+            android:textSize="10dp" />
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/boxListViewItemText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:singleLine="true"
-        android:text="TEXT"
-        android:textSize="20dp" />
 </LinearLayout>
