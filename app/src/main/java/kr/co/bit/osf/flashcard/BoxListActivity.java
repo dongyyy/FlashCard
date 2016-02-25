@@ -224,6 +224,7 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("add R.id.dialog Item");
                 titleTextView.setText(R.string.dialog_box_create);
                 textView.setText(R.string.box_list_add_dialog_message_text);
+                //가운데정렬
                 Dlog.i("dialog Item setText");
                 inputText.setVisibility(View.VISIBLE);
                 textView.setVisibility(View.VISIBLE);

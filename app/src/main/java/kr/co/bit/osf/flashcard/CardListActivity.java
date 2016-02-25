@@ -327,8 +327,11 @@ public class CardListActivity extends AppCompatActivity {
                         if(data.getParcelableExtra(IntentExtrasName.RETURN_DATA)!=null) {
                             CardDTO cardAdded = data.getParcelableExtra(IntentExtrasName.RETURN_DATA);
                             Dlog.i("addData:"+cardAdded);
-                            cardList.add(cardAdded);
-                            refreshCardList();
+                            if(db.getCard(cardAdded.getId()) != null) {
+                                Dlog.i("db.getCard(cardAdded.getId()) : " + db.getCard(cardAdded.getId()));
+                                cardList.add(cardAdded);
+                                refreshCardList();
+                            }
                         }
                     } catch (Exception e){
                         e.toString();
