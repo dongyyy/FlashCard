@@ -68,6 +68,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="25dp"
             android:padding="10dp"
+            android:text="@string/card_edit_text_view_hint"
             android:gravity="center_vertical|center_horizontal"
             android:id="@+id/cardEditTextView"
             android:background="#FFF"/>
