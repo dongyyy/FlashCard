@@ -36,10 +36,4 @@
         android:text="TEXT"
         android:textSize="15dp"
         android:layout_gravity="center"/>
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar" />
 </LinearLayout>
