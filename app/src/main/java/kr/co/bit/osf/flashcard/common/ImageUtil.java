@@ -140,28 +140,42 @@ public class ImageUtil {
     }
 
     public static void loadCardImageIntoImageView(Context context, CardDTO card, ImageView imageView) {
-        if (card != null) {
+        Dlog.i(card.toString());
+        int imageId = 0;
+        try {
             if (card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
+                Dlog.i("user type");
                 // load image from sd card(glide)
                 String imagePath = card.getImagePath();
-                try {
-                    if (imagePath.length() > 0) {
+                if (imagePath.length() > 0) {
+                    File imageFile = new File(imagePath);
+                    if (imageFile.exists()) {
+                        Dlog.i("image file exist");
                         Glide.with(context).load(card.getImagePath()).into(imageView);
                     } else {
-                        Glide.with(context).fromResource().load(R.drawable.default_image_empty_image).into(imageView);
+                        Dlog.i("image file not found!");
+                        imageId = R.drawable.default_image_empty_image;
                     }
-                } catch (Exception e) {
-                    Dlog.e(e.toString());
                 }
             } else {
+                Dlog.i("demo type");
                 // card demo data(glide)
-                int imageId = context.getResources().getIdentifier(card.getImageName(),
+                imageId = context.getResources().getIdentifier(card.getImageName(),
                         "drawable", context.getPackageName());
-                if (imageId == 0) {
+                if (imageId > 0) {
+                    Glide.with(context).fromResource().load(imageId).into(imageView);
+                } else {
                     imageId = R.drawable.default_image_empty_image;
                 }
-                Glide.with(context).fromResource().load(imageId).into(imageView);
             }
+        } catch (Exception e) {
+            imageId = R.drawable.default_image_empty_image;
+            Dlog.e(e.toString());
+        }
+        // empty image or not found
+        if (imageId == R.drawable.default_image_empty_image) {
+            Dlog.i("empty_image");
+            Glide.with(context).fromResource().load(imageId).into(imageView);
         }
     }
 
