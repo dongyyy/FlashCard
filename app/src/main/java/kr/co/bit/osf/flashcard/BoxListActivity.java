@@ -137,6 +137,7 @@ public class BoxListActivity extends AppCompatActivity {
                                         Dlog.i("new box name:" + newBoxName);
                                     }
                                 });
+                        dialogInterface.dismiss();
                         input.show();
                     }
                 });
