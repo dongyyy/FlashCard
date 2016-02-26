@@ -58,11 +58,6 @@ public class BoxListActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CardListActivity.class);
             startActivity(intent);
         }
-        if (cardState.getBoxId() == -1) {
-            Intent intent = new Intent(this, SplashActivity.class);
-            startActivity(intent);
-        }
-
 
         // read box list
         boxList = db.getBoxAll();

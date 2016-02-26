@@ -146,16 +146,13 @@ public class ImageUtil {
             if (card.getType() == FlashCardDB.CardEntry.TYPE_USER) {
                 Dlog.i("user type");
                 // load image from sd card(glide)
-                String imagePath = card.getImagePath();
-                if (imagePath.length() > 0) {
-                    File imageFile = new File(imagePath);
-                    if (imageFile.exists()) {
-                        Dlog.i("image file exist");
-                        Glide.with(context).load(card.getImagePath()).into(imageView);
-                    } else {
-                        Dlog.i("image file not found!");
-                        imageId = R.drawable.default_image_empty_image;
-                    }
+                File imageFile = new File(card.getImagePath());
+                if (imageFile.exists()) {
+                    Dlog.i("image file exist");
+                    Glide.with(context).load(card.getImagePath()).into(imageView);
+                } else {
+                    Dlog.i("image file not found!");
+                    imageId = R.drawable.default_image_empty_image;
                 }
             } else {
                 Dlog.i("demo type");
