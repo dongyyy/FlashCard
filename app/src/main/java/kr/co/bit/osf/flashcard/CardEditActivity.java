@@ -345,7 +345,11 @@ public class CardEditActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         // restore saved activity state
         currentState = savedInstanceState.getParcelable(activityStateDataName);
-        Dlog.i(currentState.toString());
+        try {
+            Dlog.i(currentState.toString());
+        } catch (Exception e) {
+            Dlog.e(e.toString());
+        }
         // camera, gallery
         photoFilePath = currentState.getPhotoFilePath();
         // image, text

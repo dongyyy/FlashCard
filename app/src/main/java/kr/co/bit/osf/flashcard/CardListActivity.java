@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -203,13 +202,18 @@ public class CardListActivity extends AppCompatActivity {
         });
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_card_list_menu, menu);
         cardListMenuAdd = menu.findItem(R.id.cardListMenuAdd);
         showDeleteCompleteButton = menu.findItem(R.id.showDeleteCompleteButton);
         optionMenuGroup = menu;
+
+        // restore instance state
+        if (deleteMenuClicked) {
+            setupDeleteMenuClicked();
+        }
+
         return true;
     }
 
@@ -230,12 +234,7 @@ public class CardListActivity extends AppCompatActivity {
                 return true;
             }
             case R.id.cardListMenuDelete: {
-                showDeleteCompleteButton.setVisible(true);
-                deleteMenuClicked = true;
-                optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, false); //option menu 비활성화
-                cardListMenuAdd.setVisible(false);
-
-                adapter.notifyDataSetChanged();
+                setupDeleteMenuClicked();
                 return true;
             }
             case R.id.showDeleteCompleteButton: {
@@ -291,6 +290,15 @@ public class CardListActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupDeleteMenuClicked() {
+        showDeleteCompleteButton.setVisible(true);
+        deleteMenuClicked = true;
+        optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, false); //option menu 비활성화
+        cardListMenuAdd.setVisible(false);
+
+        adapter.notifyDataSetChanged();
     }
 
     public class CardListAdapter extends BaseAdapter {
@@ -487,14 +495,16 @@ public class CardListActivity extends AppCompatActivity {
         }
    }
 
-    final String TAG = "CardListInstanceState";
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // restore saved activity state
         currentState = savedInstanceState.getParcelable(activityStateDataName);
-        Log.i(TAG, currentState.toString());
+        try {
+            Dlog.i(currentState.toString());
+        } catch (Exception e) {
+            Dlog.e(e.toString());
+        }
         // delete menu
         deleteMenuClicked = currentState.isDeleteMenuClicked();
         // delete card id map
@@ -514,7 +524,7 @@ public class CardListActivity extends AppCompatActivity {
         // save current activity state
         currentState = new ActivityState(deleteMenuClicked, deleteCardIdMap);
         outState.putParcelable(activityStateDataName, currentState);
-        Log.i(TAG, currentState.toString());
+        Dlog.i(currentState.toString());
     }
 
     private class ActivityState implements Parcelable {
