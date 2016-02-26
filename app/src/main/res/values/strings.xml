@@ -60,7 +60,6 @@
     <string name="card_edit_error_message_no_text">예쁜 카드 이름을 지어 주세요</string>
     <!--card view activity-->
     <string name="card_view_edit_dialog_title">카드를 바꾸어 보자!</string>
-    <string name="card_view_edit_dialog_delete_dialog_message">정말 이 카드를 지울래요?</string>
     <!--actionbar-->
     <string name="actionbar_menu_add">만들기</string>
     <string name="actionbar_menu_confirm">좋아요</string>
