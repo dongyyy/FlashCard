@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,12 +39,10 @@ public class CardListActivity extends AppCompatActivity {
     // db
     FlashCardDB db = null;
     CardDAO dao = null;
-    CardDTO dto = null;
     StateDTO state = null;
     // list
     List<CardDTO> cardList = null;
-    ArrayList<CardDTO> deleteCardList = null;
-    HashMap<Integer, Boolean> hashMap = null;
+    HashMap<Integer, Boolean> deleteCardIdMap = null;
     //card list update
     boolean isCardListUpdated = false;
     // grid view
@@ -60,6 +57,7 @@ public class CardListActivity extends AppCompatActivity {
     boolean deleteMenuClicked = false;
     // dialog
     DialogInterface dialogInterface = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,26 +65,24 @@ public class CardListActivity extends AppCompatActivity {
 
         // db
         db = new FlashCardDB(this);
-        dao = db;
-        dto = new CardDTO(); //이미지셋팅용 테스트
         state = db.getState();
-
         if (state.getCardId() > 0) {
             Intent intent = new Intent(this, CardViewActivity.class);
             startActivityForResult(intent, IntentRequestCode.CARD_VIEW);
         }
 
-        setTitle(db.getBox(state.getBoxId()).getName()); //카드 박스 이름 정하기
-
-        deleteCardList = new ArrayList<CardDTO>();
-        // read card list
-        cardList = dao.getCardByBoxId(state.getBoxId());
-        hashMap = new HashMap<Integer, Boolean>();
-
-        for (int i = 0; i < cardList.size(); i++) {
-            hashMap.put(cardList.get(i).getId(), false);
+        //카드 박스 이름 정하기
+        try {
+            setTitle(db.getBox(state.getBoxId()).getName());
+        } catch (Exception e) {
+            Dlog.e(e.toString());
         }
 
+        // read card list
+        cardList = db.getCardByBoxId(state.getBoxId());
+        deleteCardIdMap = new HashMap<>();
+
+        // grid view
         cardCustomGridView = (GridView) findViewById(R.id.cardCustomGridView);
         adapter = new CardListAdapter(this);
         cardCustomGridView.setAdapter(adapter);
@@ -95,7 +91,6 @@ public class CardListActivity extends AppCompatActivity {
         cardCustomGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 // card view
                 int boxId = cardList.get(position).getBoxId();
                 int cardId = cardList.get(position).getId();
@@ -253,16 +248,24 @@ public class CardListActivity extends AppCompatActivity {
                 optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, true); //option menu 활성화
                 cardListMenuAdd.setVisible(true);
 
-                adapter.notifyDataSetChanged();
-                if (deleteCardList.size() != 0) {
-                    Dlog.i("startActivityForResult");
-                    Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
-                    intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE_LIST);
-                    intent.putParcelableArrayListExtra(IntentExtrasName.SEND_DATA, deleteCardList);
-                    startActivityForResult(intent, IntentRequestCode.CARD_DELETE_LIST);
-                    Dlog.i("DELETE:startActivityForResult");
-                    return true;
+                if (deleteCardIdMap.size() > 0) {
+                    ArrayList<CardDTO> deleteList = new ArrayList<>();
+                    for(CardDTO card : cardList) {
+                        if (deleteCardIdMap.get(card.getId()) != null) {
+                            deleteList.add(card);
+                        }
+                    }
+                    if (deleteList.size() > 0) {
+                        Dlog.i("startActivityForResult");
+                        Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
+                        intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE_LIST);
+                        intent.putParcelableArrayListExtra(IntentExtrasName.SEND_DATA, deleteList);
+                        startActivityForResult(intent, IntentRequestCode.CARD_DELETE_LIST);
+                        Dlog.i("DELETE:startActivityForResult");
+                    }
+                    deleteCardIdMap.clear();
                 }
+                adapter.notifyDataSetChanged();
                 break;
             }
             case R.id.cardListMenuShuffle: {
@@ -317,18 +320,19 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.activity_card_list_item, null);
 
+            final ViewHolder holder = new ViewHolder();
             holder.layout = (LinearLayout) convertView.findViewById(R.id.cardListItemBackground);
             holder.imageView = (ImageView) convertView.findViewById(R.id.cardCustomListImage);
             holder.textView = (TextView) convertView.findViewById(R.id.cardCustomListName);
             holder.checkBox = (CheckBox) convertView.findViewById(R.id.cardCustomCheckBox);
 
-            if (hashMap.get(cardList.get(position).getId())) {
+            Boolean isChecked = deleteCardIdMap.get(cardList.get(position).getId());
+            if (isChecked != null) {
                 holder.checkBox.setChecked(true);
-            } else{
+            } else {
                 holder.checkBox.setChecked(false);
             }
 
@@ -338,40 +342,31 @@ public class CardListActivity extends AppCompatActivity {
             convertView.setTag(holder);
 
             Dlog.i("position:" + position + ", box:" + cardList.get(position).getName());
-            final ViewHolder takeHolder = (ViewHolder) convertView.getTag();
 
             if (deleteMenuClicked) { //삭제 메뉴 버튼 클릭 되었을 때
-                takeHolder.checkBox.setVisibility(View.VISIBLE);
-                takeHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) { //체크를 할 때
-                            deleteCardList.add(cardList.get(position));
-                            hashMap.put(cardList.get(position).getId(), true);
-                        } else { //체크가 해제될 때
-                            deleteCardList.remove(cardList.get(position));
-                            hashMap.put(cardList.get(position).getId(), false);
-                        }
-                    }
-
-                });
-                takeHolder.layout.setOnClickListener(new View.OnClickListener() {
+                holder.checkBox.setVisibility(View.VISIBLE);
+                holder.layout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Dlog.i("onItemClicked");
                         if (deleteMenuClicked) { //삭제 메뉴 버튼 클릭 되었을 때
                             Dlog.i("deleteMenuClicked:onItemClicked");
-                            if (hashMap.get(cardList.get(position).getId()) == false) { //체크를 할 때
-                                takeHolder.checkBox.setChecked(true);
-                            } else { //체크가 해제될 때
-                                takeHolder.checkBox.setChecked(false);
+
+                            int cardId = cardList.get(position).getId();
+                            Boolean isChecked = deleteCardIdMap.get(cardId);
+                            if (isChecked != null) {
+                                holder.checkBox.setChecked(false);
+                                deleteCardIdMap.remove(cardId);
+                            } else {
+                                holder.checkBox.setChecked(true);
+                                deleteCardIdMap.put(cardId, true);
                             }
                         }
                         Dlog.i("layout.onClickFinished");
                     }
                 });
             } else { //삭제 완료 했을 때
-                takeHolder.checkBox.setVisibility(View.INVISIBLE);
+                holder.checkBox.setVisibility(View.INVISIBLE);
                 Dlog.i("delete completed");
             }
             return convertView;
@@ -402,7 +397,7 @@ public class CardListActivity extends AppCompatActivity {
                             }
                         }
                     } catch (Exception e) {
-                        e.toString();
+                        Dlog.e(e.toString());
                     }
                     break;
                 case IntentRequestCode.CARD_EDIT:
@@ -414,7 +409,7 @@ public class CardListActivity extends AppCompatActivity {
                             refreshCardList();
                         }
                     } catch (Exception e) {
-                        e.toString();
+                        Dlog.e(e.toString());
                     }
                     break;
                 case IntentRequestCode.CARD_DELETE:
@@ -424,9 +419,8 @@ public class CardListActivity extends AppCompatActivity {
                 case IntentRequestCode.CARD_DELETE_LIST:
                     Dlog.i("delete check");
                     Dlog.i("Delete Box ID " + state.getBoxId());
-                    deleteCardList.clear();
                     cardList.clear();
-                    cardList = dao.getCardByBoxId(state.getBoxId());
+                    cardList = db.getCardByBoxId(state.getBoxId());
                     for (int i = 0; i < cardList.size(); i++) {
                         Dlog.i("cardList name" + cardList.get(i));
                     }
@@ -442,7 +436,7 @@ public class CardListActivity extends AppCompatActivity {
                         }
                         case IntentReturnCode.CARD_LIST_REFRESH: {
                             cardList.clear();
-                            cardList = dao.getCardByBoxId(state.getBoxId());
+                            cardList = db.getCardByBoxId(state.getBoxId());
                             refreshCardList();
                             break;
                         }
@@ -456,10 +450,6 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     public void refreshCardList() {
-        hashMap.clear();
-        for (int i = 0; i < cardList.size(); i++) {
-            hashMap.put(cardList.get(i).getId(), false);
-        }
         isCardListUpdated = true;
         cardCustomGridView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -480,30 +470,23 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     static class NameAscCompare implements Comparator<CardDTO> {
-
         @Override
         public int compare(CardDTO arg0, CardDTO arg1) {
             return arg0.getName().compareTo(arg1.getName());
         }
-
     }
 
     static class NameDescCompare implements Comparator<CardDTO> {
-
         @Override
         public int compare(CardDTO arg0, CardDTO arg1) {
             return arg1.getName().compareTo(arg0.getName());
         }
-
     }
 
     static class NoAscCompare implements Comparator<CardDTO> {
-
         @Override
         public int compare(CardDTO arg0, CardDTO arg1) {
             return arg0.getId() < arg1.getId() ? -1 : arg0.getId() > arg1.getId() ? 1 : 0;
         }
-
-    }
-
+   }
 }

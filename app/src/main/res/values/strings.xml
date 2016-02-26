@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FlashCard</string>
+    <string name="app_name">그림카드</string>
     <!--activity title-->
     <string name="title_activity_box_list">그림카드</string>
     <string name="title_activity_card_list">카드 상자</string>
