@@ -50,6 +50,7 @@ public class CardListActivity extends AppCompatActivity {
     // grid view
     GridView cardCustomGridView=null;
     CardListAdapter adapter=null;
+    ViewHolder holder = new ViewHolder();
     // send card
     int sendCardListIndex = 0;
     // menu
@@ -95,6 +96,7 @@ public class CardListActivity extends AppCompatActivity {
         cardCustomGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 // card view
                 int boxId = cardList.get(position).getBoxId();
                 int cardId = cardList.get(position).getId();
@@ -314,7 +316,6 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = new ViewHolder();
 
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.activity_card_list_item, null);
@@ -342,11 +343,28 @@ public class CardListActivity extends AppCompatActivity {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) { //체크를 할 때
                             deleteCardList.add(cardList.get(position));
-                            hashMap.put(cardList.get(position).getId(),true);
+                            hashMap.put(cardList.get(position).getId(), true);
                         } else { //체크가 해제될 때
                             deleteCardList.remove(cardList.get(position));
-                            hashMap.put(cardList.get(position).getId(),false);
+                            hashMap.put(cardList.get(position).getId(), false);
                         }
+                    }
+                });
+                holder.imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Dlog.i("onItemClicked");
+                        if (deleteMenuClicked) { //삭제 메뉴 버튼 클릭 되었을 때
+                            Dlog.i("deleteMenuClicked:onItemClicked");
+                            if (hashMap.get(cardList.get(position).getId()) == false) { //체크를 할 때
+                                deleteCardList.add(cardList.get(position));
+                                hashMap.put(cardList.get(position).getId(), true);
+                            } else { //체크가 해제될 때
+                                deleteCardList.remove(cardList.get(position));
+                                hashMap.put(cardList.get(position).getId(), false);
+                            }
+                        }
+                        Dlog.i("imageView.onClickFinished");
                     }
                 });
             } else { //삭제 완료 했을 때
