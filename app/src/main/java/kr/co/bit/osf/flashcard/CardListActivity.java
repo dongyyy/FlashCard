@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
@@ -57,6 +61,9 @@ public class CardListActivity extends AppCompatActivity {
     boolean deleteMenuClicked = false;
     // dialog
     DialogInterface dialogInterface = null;
+    // activity state
+    private String activityStateDataName = "activityStateDataName";
+    private ActivityState currentState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,16 +203,6 @@ public class CardListActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Dlog.i("state.getBoxId():" + state.getBoxId());
-        // save current state
-        if (db != null) {
-            Dlog.i("onSaveInstanceState:cardId:" + state.getBoxId());
-            db.updateState(state.getBoxId(), 0);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -489,4 +486,115 @@ public class CardListActivity extends AppCompatActivity {
             return arg0.getId() < arg1.getId() ? -1 : arg0.getId() > arg1.getId() ? 1 : 0;
         }
    }
+
+    final String TAG = "CardListInstanceState";
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // restore saved activity state
+        currentState = savedInstanceState.getParcelable(activityStateDataName);
+        Log.i(TAG, currentState.toString());
+        // delete menu
+        deleteMenuClicked = currentState.isDeleteMenuClicked();
+        // delete card id map
+        deleteCardIdMap = currentState.getDeleteCardIdMap();
+        // refresh grid
+        refreshCardList();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // save current state
+        if (db != null) {
+            db.updateState(state.getBoxId(), 0);
+            Dlog.i("state.getBoxId:" + state.getBoxId());
+        }
+        // save current activity state
+        currentState = new ActivityState(deleteMenuClicked, deleteCardIdMap);
+        outState.putParcelable(activityStateDataName, currentState);
+        Log.i(TAG, currentState.toString());
+    }
+
+    private class ActivityState implements Parcelable {
+        private boolean deleteMenuClicked;
+        HashMap<Integer, Boolean> deleteCardIdMap;
+
+        public ActivityState(boolean deleteMenuClicked, HashMap<Integer, Boolean> deleteCardIdMap) {
+            this.deleteMenuClicked = deleteMenuClicked;
+            this.deleteCardIdMap = deleteCardIdMap;
+        }
+
+        protected ActivityState(Parcel in) {
+            deleteMenuClicked = in.readByte() != 0;
+            // http://stackoverflow.com/questions/22498746/android-implement-parcelable-object-which-has-hashmap
+            final int size = in.readInt();
+            if (size > 0) {
+                deleteCardIdMap = new HashMap<>();
+                for (int i = 0; i < size; i++) {
+                    final int key = in.readInt();
+                    final boolean value = in.readByte() != 0;
+                    deleteCardIdMap.put(key, value);
+                }
+            }
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeByte((byte) (deleteMenuClicked ? 1 : 0));
+
+            if (deleteCardIdMap != null) {
+                // http://stackoverflow.com/questions/22498746/android-implement-parcelable-object-which-has-hashmap
+                dest.writeInt(deleteCardIdMap.size());
+                for (Map.Entry<Integer, Boolean> entry : deleteCardIdMap.entrySet()) {
+                    dest.writeInt(entry.getKey());
+                    dest.writeByte((byte) (entry.getValue() ? 1 : 0));
+                }
+            } else {
+                dest.writeInt(0);
+            }
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public final Creator<ActivityState> CREATOR = new Creator<ActivityState>() {
+            @Override
+            public ActivityState createFromParcel(Parcel in) {
+                return new ActivityState(in);
+            }
+
+            @Override
+            public ActivityState[] newArray(int size) {
+                return new ActivityState[size];
+            }
+        };
+
+        public boolean isDeleteMenuClicked() {
+            return deleteMenuClicked;
+        }
+
+        public void setDeleteMenuClicked(boolean deleteMenuClicked) {
+            this.deleteMenuClicked = deleteMenuClicked;
+        }
+
+        public HashMap<Integer, Boolean> getDeleteCardIdMap() {
+            return deleteCardIdMap;
+        }
+
+        public void setDeleteCardIdMap(HashMap<Integer, Boolean> deleteCardIdMap) {
+            this.deleteCardIdMap = deleteCardIdMap;
+        }
+
+        @Override
+        public String toString() {
+            return "ActivityState{" +
+                    "deleteMenuClicked=" + deleteMenuClicked +
+                    ", deleteCardIdMap=" + deleteCardIdMap +
+                    '}';
+        }
+    }
 }
