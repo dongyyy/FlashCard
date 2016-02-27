@@ -18,10 +18,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import kr.co.bit.osf.flashcard.common.ActivityId;
 import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
 import kr.co.bit.osf.flashcard.common.IntentRequestCode;
@@ -57,6 +60,24 @@ public class BoxListActivity extends AppCompatActivity {
         if (cardState.getBoxId() > 0) {
             Intent intent = new Intent(this, CardListActivity.class);
             startActivity(intent);
+        }
+
+        // help image
+        ImageView helpImageView = (ImageView) (findViewById(R.id.boxListHelpImage));
+        if (db.isShowHelp(ActivityId.BoxList)) {
+            Dlog.i("show help image");
+            Glide.with(this).fromResource().load(R.drawable.help_image_box_list).into(helpImageView);
+            helpImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dlog.i("help image clicked");
+                    v.setVisibility(View.GONE);
+                    // update help count
+                    db.updateHelpCount(ActivityId.BoxList);
+                }
+            });
+        } else {
+            helpImageView.setVisibility(View.GONE);
         }
 
         // read box list
@@ -185,7 +206,6 @@ public class BoxListActivity extends AppCompatActivity {
                 return true;
             }
         });
-
     }
 
     //menu option
