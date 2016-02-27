@@ -54,8 +54,8 @@ public class CardListActivity extends AppCompatActivity {
     // send card
     int sendCardListIndex = 0;
     // menu
-    MenuItem cardListMenuAdd = null;
-    MenuItem showDeleteCompleteButton = null;
+    MenuItem menuItemAddCard = null;
+    MenuItem menuItemDeleteConfirm = null;
     Menu optionMenuGroup = null;
     boolean deleteMenuClicked = false;
     // dialog
@@ -205,8 +205,8 @@ public class CardListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_card_list_menu, menu);
-        cardListMenuAdd = menu.findItem(R.id.cardListMenuAdd);
-        showDeleteCompleteButton = menu.findItem(R.id.showDeleteCompleteButton);
+        menuItemAddCard = menu.findItem(R.id.card_list_menu_add);
+        menuItemDeleteConfirm = menu.findItem(R.id.card_list_menu_delete_confirm);
         optionMenuGroup = menu;
 
         // restore instance state
@@ -222,7 +222,7 @@ public class CardListActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.cardListMenuAdd: {
+            case R.id.card_list_menu_add: {
                 CardDTO cardToAdd = new CardDTO();
                 cardToAdd.setBoxId(state.getBoxId());
 
@@ -233,16 +233,16 @@ public class CardListActivity extends AppCompatActivity {
                 Dlog.i("ADD:startActivityForResult");
                 return true;
             }
-            case R.id.cardListMenuDelete: {
+            case R.id.card_list_menu_delete: {
                 setupDeleteMenuClicked();
                 return true;
             }
-            case R.id.showDeleteCompleteButton: {
-                Dlog.i("R.id.showDeleteCompleteButton");
-                showDeleteCompleteButton.setVisible(false);
+            case R.id.card_list_menu_delete_confirm: {
+                Dlog.i("delete confirm button");
+                menuItemDeleteConfirm.setVisible(false);
                 deleteMenuClicked = false;
                 optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, true); //option menu 활성화
-                cardListMenuAdd.setVisible(true);
+                menuItemAddCard.setVisible(true);
 
                 if (deleteCardIdMap.size() > 0) {
                     ArrayList<CardDTO> deleteList = new ArrayList<>();
@@ -264,25 +264,25 @@ public class CardListActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 break;
             }
-            case R.id.cardListMenuShuffle: {
+            case R.id.card_list_menu_sort_shuffle: {
                 Collections.shuffle(cardList);
                 db.updateCardSeq(cardList);
                 refreshCardList();
                 break;
             }
-            case R.id.cardListMenuAscSort: {
+            case R.id.card_list_menu_sort_asc: {
                 Collections.sort(cardList, new NameAscCompare());
                 db.updateCardSeq(cardList);
                 refreshCardList();
                 break;
             }
-            case R.id.cardListMenuDescSort: {
+            case R.id.card_list_menu_sort_desc: {
                 Collections.sort(cardList, new NameDescCompare());
                 db.updateCardSeq(cardList);
                 refreshCardList();
                 break;
             }
-            case R.id.cardListMenuInitial: {
+            case R.id.card_list_menu_sort_reset: {
                 Collections.sort(cardList, new NoAscCompare());
                 db.updateCardSeq(cardList);
                 refreshCardList();
@@ -293,10 +293,10 @@ public class CardListActivity extends AppCompatActivity {
     }
 
     private void setupDeleteMenuClicked() {
-        showDeleteCompleteButton.setVisible(true);
+        menuItemDeleteConfirm.setVisible(true);
         deleteMenuClicked = true;
         optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, false); //option menu 비활성화
-        cardListMenuAdd.setVisible(false);
+        menuItemAddCard.setVisible(false);
 
         adapter.notifyDataSetChanged();
     }

@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/cardListMenuAdd"
+    <item android:id="@+id/card_list_menu_add"
         android:icon="@drawable/default_image_plus"
         android:title="@string/actionbar_menu_add_card"
         yourapp:showAsAction="always"/>
     <group android:id="@+id/optionMenuGroup">
-        <item android:id="@+id/cardListMenuDelete"
+        <item android:id="@+id/card_list_menu_delete"
             android:title="@string/actionbar_menu_delete"/>
-        <item android:id="@+id/cardListMenuShuffle"
+        <item android:id="@+id/card_list_menu_sort_shuffle"
             android:title="@string/actionbar_menu_sort_shuffle_card"/>
-        <item android:id="@+id/cardListMenuAscSort"
+        <item android:id="@+id/card_list_menu_sort_asc"
             android:title="@string/actionbar_menu_sort_asc"/>
-        <item android:id="@+id/cardListMenuDescSort"
+        <item android:id="@+id/card_list_menu_sort_desc"
             android:title="@string/actionbar_menu_sort_desc"/>
-        <item android:id="@+id/cardListMenuInitial"
+        <item android:id="@+id/card_list_menu_sort_reset"
             android:title="@string/actionbar_menu_sort_reset"/>
     </group>
-    <item android:id="@+id/showDeleteCompleteButton"
+    <item android:id="@+id/card_list_menu_delete_confirm"
+        android:icon="@drawable/default_image_delete"
         android:title="@string/actionbar_menu_delete_confirm"
         android:visible="false"
         yourapp:showAsAction="always"/>
