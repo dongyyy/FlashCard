@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -17,8 +18,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,10 +62,10 @@ public class BoxListActivity extends AppCompatActivity {
         }
 
         // help image
+        boolean isPortrait = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
         ImageView helpImageView = (ImageView) (findViewById(R.id.boxListHelpImage));
-        if (db.isShowHelp(ActivityId.BoxList)) {
+        if (db.isShowHelp(ActivityId.BoxList) && isPortrait) {
             Dlog.i("show help image");
-            Glide.with(this).fromResource().load(R.drawable.help_image_box_list).into(helpImageView);
             helpImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.bit.osf.flashcard.common.ActivityId;
 import kr.co.bit.osf.flashcard.common.ImageUtil;
 import kr.co.bit.osf.flashcard.common.IntentExtrasName;
 import kr.co.bit.osf.flashcard.common.IntentRequestCode;
@@ -76,6 +78,24 @@ public class CardListActivity extends AppCompatActivity {
         if (state.getCardId() > 0) {
             Intent intent = new Intent(this, CardViewActivity.class);
             startActivityForResult(intent, IntentRequestCode.CARD_VIEW);
+        }
+
+        // help image
+        boolean isPortrait = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT);
+        ImageView helpImageView = (ImageView) (findViewById(R.id.cardListHelpImage));
+        if (db.isShowHelp(ActivityId.CardList) && isPortrait) {
+            Dlog.i("show help image");
+            helpImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Dlog.i("help image clicked");
+                    v.setVisibility(View.GONE);
+                    // update help count
+                    db.updateHelpCount(ActivityId.CardList);
+                }
+            });
+        } else {
+            helpImageView.setVisibility(View.GONE);
         }
 
         // box name

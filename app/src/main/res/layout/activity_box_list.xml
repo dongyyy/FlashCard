@@ -30,12 +30,11 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/boxListHelpImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/boxListHelpImage"
             android:scaleType="centerCrop"
-            android:visibility="visible"
-            android:src="@drawable/help_image_box_list" />
+            android:src="@drawable/help_image_box_list"
+            android:visibility="visible" />
     </LinearLayout>
-
 </FrameLayout>
