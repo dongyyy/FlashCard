@@ -399,6 +399,10 @@ public class CardListActivity extends AppCompatActivity {
                                 Dlog.i("db.getCard(cardAdded.getId()) : " + db.getCard(cardAdded.getId()));
                                 cardList.add(cardAdded);
                                 refreshCardList();
+                                // move last position
+                                if (adapter.getCount() > 0) {
+                                    cardCustomGridView.smoothScrollToPosition(adapter.getCount() - 1);
+                                }
                             }
                         }
                     } catch (Exception e) {
@@ -499,18 +503,22 @@ public class CardListActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // restore saved activity state
-        currentState = savedInstanceState.getParcelable(activityStateDataName);
         try {
+            currentState = savedInstanceState.getParcelable(activityStateDataName);
             Dlog.i(currentState.toString());
+            // delete menu
+            deleteMenuClicked = currentState.isDeleteMenuClicked();
+            // delete card id map
+            deleteCardIdMap = currentState.getDeleteCardIdMap();
+            // refresh grid
+            refreshCardList();
+            // http://stackoverflow.com/questions/12712050/set-first-visible-item-in-gridview
+            int firstVisiblePositoin = currentState.getFirstVisiblePosition();
+            Dlog.i("first visible position:" + firstVisiblePositoin);
+            cardCustomGridView.smoothScrollToPosition(firstVisiblePositoin);
         } catch (Exception e) {
             Dlog.e(e.toString());
         }
-        // delete menu
-        deleteMenuClicked = currentState.isDeleteMenuClicked();
-        // delete card id map
-        deleteCardIdMap = currentState.getDeleteCardIdMap();
-        // refresh grid
-        refreshCardList();
     }
 
     @Override
@@ -522,21 +530,32 @@ public class CardListActivity extends AppCompatActivity {
             Dlog.i("state.getBoxId:" + state.getBoxId());
         }
         // save current activity state
-        currentState = new ActivityState(deleteMenuClicked, deleteCardIdMap);
-        outState.putParcelable(activityStateDataName, currentState);
-        Dlog.i(currentState.toString());
+        try {
+            currentState = new ActivityState(cardCustomGridView.getFirstVisiblePosition(),
+                    deleteMenuClicked, deleteCardIdMap);
+            outState.putParcelable(activityStateDataName, currentState);
+            Dlog.i(currentState.toString());
+            // http://stackoverflow.com/questions/7992368/grid-view-get-items-which-are-visible-to-user
+            Dlog.i("first visible position:" + currentState.getFirstVisiblePosition());
+        } catch (Exception e) {
+            Dlog.e(e.toString());
+        }
     }
 
     private class ActivityState implements Parcelable {
+        private int firstVisiblePosition;
         private boolean deleteMenuClicked;
         HashMap<Integer, Boolean> deleteCardIdMap;
 
-        public ActivityState(boolean deleteMenuClicked, HashMap<Integer, Boolean> deleteCardIdMap) {
+        public ActivityState(int firstVisiblePosition, boolean deleteMenuClicked,
+                             HashMap<Integer, Boolean> deleteCardIdMap) {
+            this.firstVisiblePosition = firstVisiblePosition;
             this.deleteMenuClicked = deleteMenuClicked;
             this.deleteCardIdMap = deleteCardIdMap;
         }
 
         protected ActivityState(Parcel in) {
+            firstVisiblePosition = in.readInt();
             deleteMenuClicked = in.readByte() != 0;
             // http://stackoverflow.com/questions/22498746/android-implement-parcelable-object-which-has-hashmap
             final int size = in.readInt();
@@ -552,6 +571,7 @@ public class CardListActivity extends AppCompatActivity {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(firstVisiblePosition);
             dest.writeByte((byte) (deleteMenuClicked ? 1 : 0));
 
             if (deleteCardIdMap != null) {
@@ -583,6 +603,14 @@ public class CardListActivity extends AppCompatActivity {
             }
         };
 
+        public int getFirstVisiblePosition() {
+            return firstVisiblePosition;
+        }
+
+        public void setFirstVisiblePosition(int firstVisiblePosition) {
+            this.firstVisiblePosition = firstVisiblePosition;
+        }
+
         public boolean isDeleteMenuClicked() {
             return deleteMenuClicked;
         }
@@ -602,7 +630,8 @@ public class CardListActivity extends AppCompatActivity {
         @Override
         public String toString() {
             return "ActivityState{" +
-                    "deleteMenuClicked=" + deleteMenuClicked +
+                    "firstVisiblePosition=" + firstVisiblePosition +
+                    ", deleteMenuClicked=" + deleteMenuClicked +
                     ", deleteCardIdMap=" + deleteCardIdMap +
                     '}';
         }
