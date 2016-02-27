@@ -281,40 +281,6 @@ public class CardEditActivity extends AppCompatActivity {
                 // Canceled.
             }
         });
-
-
-/*
-        alert.setTitle(R.string.card_edit_text_dialog_title_text);
-        alert.setMessage(R.string.card_edit_text_dialog_message_text);
-        Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setTitle");
-
-        // Set an EditText view to get user input
-        final EditText input = new EditText(this);
-        input.setGravity(Gravity.CENTER);
-        alert.setView(input);
-        input.setGravity(Gravity.CENTER);
-        Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setView");
-        if (card.getName() != null) {
-            input.setText(card.getName());
-            input.setSelection(card.getName().length());
-        } else {
-            input.setText("");
-        }
-        Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder:setText");
-        alert.setPositiveButton(R.string.card_edit_text_dialog_ok_button_text, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String name = input.getText().toString();
-                cardEditTextView.setText(name);
-                card.setName(name);
-            }
-        });
-
-        alert.setNegativeButton(R.string.card_edit_text_dialog_cancel_button_text, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-*/
         alert.setView(dlg);
         dialogInterface = alert.show();
     }
@@ -355,7 +321,10 @@ public class CardEditActivity extends AppCompatActivity {
         // image, text
         try {
             ImageUtil.loadCardImageIntoImageView(this, currentState.getCard(), imageView);
-            cardEditTextView.setText(currentState.card.getName());
+            cardEditTextView.setText(getResources().getString(R.string.card_edit_text_view_hint));
+            if (currentState.card.getName().length() > 0) {
+                cardEditTextView.setText(currentState.card.getName());
+            }
         } catch (Exception e) {
             Dlog.e(e.toString());
         }
