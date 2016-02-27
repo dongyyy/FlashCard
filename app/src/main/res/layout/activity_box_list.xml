@@ -20,7 +20,7 @@
             android:columnWidth="150dp"
             android:divider="#ffffff"
             android:dividerHeight="0px"
-            android:listSelector="@drawable/selector"
+            android:listSelector="@drawable/list_selector"
             android:numColumns="auto_fit"
             android:stretchMode="columnWidth" />
     </LinearLayout>

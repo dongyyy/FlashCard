@@ -14,9 +14,7 @@ import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import kr.co.bit.osf.flashcard.R;
 import kr.co.bit.osf.flashcard.db.CardDTO;
@@ -88,55 +86,6 @@ public class ImageUtil {
     // http://stackoverflow.com/questions/7429228/check-whether-the-sd-card-is-available-or-not-programmatically
     public static boolean isSDPresent() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
-    }
-
-    public static List<File> getImageListFromDefaultAlbum(Context context) {
-        List<File> imageList = new ArrayList<>();
-
-        String[] projection = new String[]{
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-                MediaStore.Images.Media.DATE_TAKEN,
-                MediaStore.Images.Media.DATA
-        };
-
-        // content:// style URI for the "primary" external storage volume
-        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
-        // Make the query.
-        Cursor cur = context.getContentResolver().query(images,
-                projection, // Which columns to return
-                null,       // Which rows to return (all rows)
-                null,       // Selection arguments (none)
-                null        // Ordering
-        );
-        if (cur == null) {
-            return imageList;
-        }
-
-        if (cur.moveToFirst()) {
-            String bucket;
-            String data;
-
-            int bucketColumn = cur.getColumnIndex(
-                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-
-            int dataColumn = cur.getColumnIndex(
-                    MediaStore.Images.Media.DATA);
-
-            do {
-                // Get the field values
-                bucket = cur.getString(bucketColumn);
-                data = cur.getString(dataColumn);
-
-                // Do something with the values.
-                if (ALBUM_NAME.equals(bucket)) {
-                    imageList.add(new File(data));
-                }
-            } while (cur.moveToNext());
-        }
-
-        return imageList;
     }
 
     public static void loadCardImageIntoImageView(Context context, CardDTO card, ImageView imageView) {
