@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.bit.osf.flashcard.R;
+import kr.co.bit.osf.flashcard.common.ActivityId;
 
 // http://www.androidhive.info/2013/09/android-sqlite-database-with-multiple-tables/
-public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, StateDAO {
+public class FlashCardDB extends SQLiteOpenHelper
+        implements BoxDAO, CardDAO, StateDAO, HelpCountDAO {
     // context
     Context context = null;
 
@@ -128,12 +130,41 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
 
         // field list
         public static final String FIELD_LIST =  COLUMN_NAME_ENTRY_ID
-                + "," + COLUMN_NAME_BOX_ID+ "," + COLUMN_NAME_CARD_ID;
+                + "," + COLUMN_NAME_BOX_ID + "," + COLUMN_NAME_CARD_ID;
 
         // column id
         public static final int COLUMN_ID_ENTRY_ID = 0;
         public static final int COLUMN_ID_BOX_ID = 1;
         public static final int COLUMN_ID_CARD_ID = 2;
+    }
+
+    public static abstract class HelpCountEntry implements BaseColumns {
+        // table name
+        public static final String TABLE_NAME = "help_count";
+
+        // column name
+        public static final String COLUMN_NAME_ENTRY_ID = "id";
+        public static final String COLUMN_NAME_ACTIVITY_ID = "activity_id";
+        public static final String COLUMN_NAME_COUNT = "activity_count";
+
+        // table create statement
+        public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME
+                + "(" + COLUMN_NAME_ENTRY_ID + " INTEGER PRIMARY KEY"
+                + "," + COLUMN_NAME_ACTIVITY_ID + " INTEGER"
+                + "," + COLUMN_NAME_COUNT + " INTEGER"
+                + ")";
+
+        // table drop statement
+        public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+
+        // field list
+        public static final String FIELD_LIST =  COLUMN_NAME_ENTRY_ID
+                + "," + COLUMN_NAME_ACTIVITY_ID + "," + COLUMN_NAME_COUNT;
+
+        // column id
+        public static final int COLUMN_ID_ENTRY_ID = 0;
+        public static final int COLUMN_ID_ACTIVITY_ID = 1;
+        public static final int COLUMN_ID_COUNT = 2;
     }
 
     public FlashCardDB(Context context){
@@ -153,6 +184,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         db.execSQL(BoxEntry.CREATE_TABLE);
         db.execSQL(CardEntry.CREATE_TABLE);
         db.execSQL(StateEntry.CREATE_TABLE);
+        db.execSQL(HelpCountEntry.CREATE_TABLE);
     }
 
     @Override
@@ -161,6 +193,7 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         db.execSQL(BoxEntry.DROP_TABLE);
         db.execSQL(CardEntry.DROP_TABLE);
         db.execSQL(StateEntry.DROP_TABLE);
+        db.execSQL(HelpCountEntry.DROP_TABLE);
 
         // create new tables
         onCreate(db);
@@ -685,6 +718,57 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         return updateState(new StateDTO(1,boxId, cardId));
     }
 
+    @Override
+    public boolean addHelpCount(int activityId) {
+        ContentValues values = new ContentValues();
+        values.put(HelpCountEntry.COLUMN_NAME_ACTIVITY_ID, activityId);
+        values.put(HelpCountEntry.COLUMN_NAME_COUNT , 0);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        int newRowId = (int)db.insert(HelpCountEntry.TABLE_NAME, null, values);
+        db.close();
+
+        return (newRowId > 0);
+    }
+
+    @Override
+    public void updateHelpCount(int activityId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "update " + HelpCountEntry.TABLE_NAME
+                + " set " + HelpCountEntry.COLUMN_NAME_COUNT + " = 1"
+                + " where " + HelpCountEntry.COLUMN_NAME_ACTIVITY_ID + " = " + activityId;
+        db.execSQL(query);
+        db.close();
+    }
+
+    @Override
+    public int getHelpCount(int activityId) {
+        int helpCount = 0;
+
+        String query = "select " + HelpCountEntry.FIELD_LIST
+                + " from " + HelpCountEntry.TABLE_NAME
+                + " where " + HelpCountEntry.COLUMN_NAME_ACTIVITY_ID + " = " + activityId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                helpCount = Integer.parseInt(cursor.getString(HelpCountEntry.COLUMN_ID_COUNT));
+            }
+            cursor.close();
+        }
+
+        db.close();
+
+        return helpCount;
+    }
+
+    @Override
+    public boolean isShowHelp(int activityId) {
+        return (getHelpCount(activityId) == 0);
+    }
+
     // demo data
     public boolean createBoxDemoData() {
         BoxDTO [] demoBox = {
@@ -761,10 +845,25 @@ public class FlashCardDB extends SQLiteOpenHelper implements BoxDAO, CardDAO, St
         return true;
     }
 
+    public boolean createHelpCountData() {
+        boolean isOk = true;
+
+        int[] activityIdList = {ActivityId.BoxList, ActivityId.CardList, ActivityId.CardView};
+        for (int activityId : activityIdList) {
+            if (!addHelpCount(activityId)) {
+                isOk = false;
+                break;
+            }
+        }
+
+        return isOk;
+    }
+
     // initialize db
     public boolean initialize() {
         return createBoxDemoData()
                 && createCardDemoData()
+                && createHelpCountData()
                 && addState(-1, 0);
     }
 }

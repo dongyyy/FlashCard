@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.bit.osf.flashcard.common.ActivityId;
 import kr.co.bit.osf.flashcard.db.BoxDAO;
 import kr.co.bit.osf.flashcard.db.BoxDTO;
 import kr.co.bit.osf.flashcard.db.CardDAO;
 import kr.co.bit.osf.flashcard.db.CardDTO;
 import kr.co.bit.osf.flashcard.db.FlashCardDB;
+import kr.co.bit.osf.flashcard.db.HelpCountDAO;
 import kr.co.bit.osf.flashcard.db.StateDAO;
 import kr.co.bit.osf.flashcard.db.StateDTO;
 
@@ -23,6 +25,7 @@ public class FlashCardDBTest extends AndroidTestCase {
     private BoxDAO boxDao;
     private CardDAO cardDao;
     private StateDAO stateDao;
+    private HelpCountDAO helpCountDao;
 
     private Context context = null;
 
@@ -49,6 +52,7 @@ public class FlashCardDBTest extends AndroidTestCase {
         boxDao = db;
         cardDao = db;
         stateDao = db;
+        helpCountDao = db;
     }
 
     @Override
@@ -438,8 +442,12 @@ public class FlashCardDBTest extends AndroidTestCase {
 
         StateDTO state = stateDao.getState();
         assertNotNull(state);
-        assertEquals(true, (state.getBoxId() == 0));
+        assertEquals(true, (state.getBoxId() == -1));
         assertEquals(true, (state.getCardId() == 0));
+
+        assertEquals(true, helpCountDao.isShowHelp(ActivityId.BoxList));
+        helpCountDao.updateHelpCount(ActivityId.CardList);
+        assertEquals(false, helpCountDao.isShowHelp(ActivityId.CardList));
     }
 
 }
