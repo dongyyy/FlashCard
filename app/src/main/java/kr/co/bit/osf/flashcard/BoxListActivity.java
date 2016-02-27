@@ -197,7 +197,6 @@ public class BoxListActivity extends AppCompatActivity {
         }
         Dlog.i("onCreateOptionMenu : " + "OK");
         getMenuInflater().inflate(R.menu.activity_box_list_menu, menu);
-        MenuItem showDeleteCompleteButton = menu.findItem(R.id.showDeleteCompleteButton);
         return true;
     }
 
@@ -211,8 +210,7 @@ public class BoxListActivity extends AppCompatActivity {
         switch (id) {
             // add box
             // set an EditText view to get user input
-            case R.id.box_list_box_create:
-
+            case R.id.box_list_menu_add:
                 Dlog.i("dialog:add box");
                 View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
                 final EditText inputText = (EditText) dlg.findViewById(R.id.dialogMenuEditTextOne);
@@ -259,7 +257,7 @@ public class BoxListActivity extends AppCompatActivity {
 
                 break;
             //오름
-            case R.id.box_list_menu_list_Asc:
+            case R.id.box_list_menu_sort_asc:
                 Dlog.i("asc sort start");
                 Collections.sort(boxList, new NameAscCompare());
                 Dlog.i("asc sort - collections sort call");
@@ -268,7 +266,7 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("asc sort end");
                 break;
             //내림
-            case R.id.box_list_menu_list_Desc:
+            case R.id.box_list_menu_sort_desc:
                 Dlog.i("desc sort start");
                 Collections.sort(boxList, new NameDescCompare());
                 Dlog.i("desc sort - collections sort call");
@@ -277,7 +275,7 @@ public class BoxListActivity extends AppCompatActivity {
                 Dlog.i("desc sort end");
                 break;
             //무작위
-            case R.id.box_list_menu_list_Shuffle:
+            case R.id.box_list_menu_sort_shuffle:
                 Dlog.i("shuffle start");
                 Collections.shuffle(boxList);
                 Dlog.i("Shuffle - collections sort call");
@@ -285,7 +283,7 @@ public class BoxListActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 Dlog.i("shuffle end");
                 break;
-            case R.id.box_list_menu_list_id_Asc:
+            case R.id.box_list_menu_sort_reset:
                 Dlog.i("Id Asc start");
                 Collections.sort(boxList,new NoAscCompare());
                 Dlog.i("Id Asc - collections sort call");
@@ -299,30 +297,6 @@ public class BoxListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Dlog.i("onStart");
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Dlog.i("onRestoreInstanceState");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Dlog.i("onResume");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Dlog.i("onPause");
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Dlog.i("");
@@ -330,24 +304,6 @@ public class BoxListActivity extends AppCompatActivity {
         if (db != null) {
             db.updateState(0, 0);
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Dlog.i("onStop");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Dlog.i("onRestart");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Dlog.i("onDestroy");
     }
 
     public class BoxListAdapter extends BaseAdapter {

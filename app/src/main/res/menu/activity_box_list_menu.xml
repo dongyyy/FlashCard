@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:yourapp="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/box_list_box_create"
-        android:title="@string/actionbar_menu_add_box"
+    <item
+        android:id="@+id/box_list_menu_add"
         android:icon="@drawable/default_image_plus"
-        yourapp:showAsAction="always"/>
-    <item android:id="@+id/box_list_menu_list_Asc"
-        android:title="@string/actionbar_menu_sort_asc"
-        />
-    <item android:id="@+id/box_list_menu_list_Desc"
-        android:title="@string/actionbar_menu_sort_desc"
-        />
-    <item android:id="@+id/box_list_menu_list_Shuffle"
-        android:title="@string/actionbar_menu_sort_shuffle_box"
-        />
-    <item android:id="@+id/box_list_menu_list_id_Asc"
-        android:title="@string/actionbar_menu_sort_reset"
-        />
+        android:title="@string/actionbar_menu_add_box"
+        yourapp:showAsAction="always" />
+    <item
+        android:id="@+id/box_list_menu_sort_asc"
+        android:title="@string/actionbar_menu_sort_asc" />
+    <item
+        android:id="@+id/box_list_menu_sort_desc"
+        android:title="@string/actionbar_menu_sort_desc" />
+    <item
+        android:id="@+id/box_list_menu_sort_shuffle"
+        android:title="@string/actionbar_menu_sort_shuffle_box" />
+    <item
+        android:id="@+id/box_list_menu_sort_reset"
+        android:title="@string/actionbar_menu_sort_reset" />
 </menu>
