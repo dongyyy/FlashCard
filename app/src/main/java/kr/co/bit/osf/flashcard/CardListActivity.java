@@ -119,7 +119,7 @@ public class CardListActivity extends AppCompatActivity {
                 TextView textMenuOne = (TextView) dlg.findViewById(R.id.dialogMenuTextViewOne);
                 TextView textMenuTwo = (TextView) dlg.findViewById(R.id.dialogMenuTextViewTwo);
                 Dlog.i("Card Item long click dialog - add TextView");
-                dlgTitle.setText(R.string.card_view_edit_dialog_title);
+                dlgTitle.setText(R.string.card_edit_dialog_menu_title);
                 textMenuOne.setText(R.string.card_edit_dialog_menu_edit_text);
                 textMenuTwo.setText(R.string.card_edit_dialog_menu_delete_text);
 
