@@ -12,6 +12,6 @@
         android:layout_height="match_parent"
         android:id="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/default_image_intro"
+        android:src="@drawable/splash"
         android:padding="30dp" />
 </RelativeLayout>
