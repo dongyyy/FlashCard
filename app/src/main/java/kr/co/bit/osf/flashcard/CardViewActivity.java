@@ -284,14 +284,14 @@ public class CardViewActivity extends AppCompatActivity {
         Dlog.i("sendCardListIndex:" + sendCardListIndex);
         // get user action from dialog
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_title, null);
+        View dialogView = getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
         final AlertDialog dialog = dialogBuilder.setView(dialogView).create();
         // dialog title
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.dialogTitleTextView);
-        titleTextView.setText(getString(R.string.card_view_edit_dialog_title));
+        titleTextView.setText(getString(R.string.card_edit_dialog_menu_title));
         // edit dialog text view
         TextView dialogEditTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewOne);
-        dialogEditTextView.setText(getString(R.string.edit_dialog_edit));
+        dialogEditTextView.setText(getString(R.string.card_edit_dialog_menu_edit_text));
         dialogEditTextView.setVisibility(View.VISIBLE);
         dialogEditTextView.setTag(dialog);
         dialogEditTextView.setOnClickListener(new View.OnClickListener() {
@@ -305,7 +305,7 @@ public class CardViewActivity extends AppCompatActivity {
         });
         // delete dialog text view
         TextView dialogDeleteTextView = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewTwo);
-        dialogDeleteTextView.setText(getString(R.string.edit_dialog_delete));
+        dialogDeleteTextView.setText(getString(R.string.card_edit_dialog_menu_delete_text));
         dialogDeleteTextView.setVisibility(View.VISIBLE);
         dialogDeleteTextView.setTag(dialog);
         dialogDeleteTextView.setOnClickListener(new View.OnClickListener() {
@@ -327,18 +327,18 @@ public class CardViewActivity extends AppCompatActivity {
     private void dialogDeleteTextViewClicked() {
         // get user action from dialog
         // dialog view
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_title, null);
+        View dialogView = getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
         TextView titleTextView = (TextView) dialogView.findViewById(R.id.dialogTitleTextView);
-        titleTextView.setText(getString(R.string.card_list_edit_dialog_delete_dialog_title_text));
+        titleTextView.setText(getString(R.string.card_edit_dialog_delete_title));
         // delete confirm message
         TextView dialogDeleteConfirmMessage = (TextView) dialogView.findViewById(R.id.dialogMenuTextViewOne);
-        dialogDeleteConfirmMessage.setText(getString(R.string.card_list_edit_dialog_delete_dialog_message_text));
+        dialogDeleteConfirmMessage.setText(getString(R.string.card_edit_dialog_delete_message));
         dialogDeleteConfirmMessage.setVisibility(View.VISIBLE);
         // delete dialog
         final AlertDialog.Builder confirmDialog = new AlertDialog.Builder(this);
         confirmDialog.setView(dialogView);
         // positive button
-        confirmDialog.setPositiveButton(R.string.edit_dialog_delete_dialog_ok_button_text,
+        confirmDialog.setPositiveButton(R.string.box_edit_dialog_menu_delete_text,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -346,7 +346,7 @@ public class CardViewActivity extends AppCompatActivity {
                     }
                 });
         // negative button
-        confirmDialog.setNegativeButton(R.string.edit_dialog_delete_dialog_cancel_button_text,
+        confirmDialog.setNegativeButton(R.string.box_edit_dialog_delete_cancel_button_text,
                 new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {

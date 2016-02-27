@@ -188,7 +188,7 @@ public class CardEditActivity extends AppCompatActivity {
 
     private void imageClicked() {
         Dlog.i("CardEditActivity: imageClicked");
-        View dlg = CardEditActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+        View dlg = CardEditActivity.this.getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
         // get user action from dialog
         final CharSequence[] items = {
                 getString(R.string.card_edit_image_dialog_camera_button_text),
@@ -248,14 +248,14 @@ public class CardEditActivity extends AppCompatActivity {
 
         AlertDialog.Builder alert = new AlertDialog.Builder(CardEditActivity.this);
         Dlog.i("CardEditActivity: textClicked:AlertDialog.Builder");
-        View dlg = CardEditActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+        View dlg = CardEditActivity.this.getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
 
         TextView editTitle = (TextView)dlg.findViewById(R.id.dialogTitleTextView);
-        editTitle.setText(R.string.card_edit_text_dialog_title_text);
+        editTitle.setText(R.string.card_edit_text_dialog_title);
         editTitle.setVisibility(View.VISIBLE);
 
         TextView editMenuOne = (TextView)dlg.findViewById(R.id.dialogMenuTextViewOne);
-        editMenuOne.setText(R.string.card_edit_text_dialog_message_text);
+        editMenuOne.setText(R.string.card_edit_text_dialog_message);
         editMenuOne.setVisibility(View.VISIBLE);
 
         final EditText editText = (EditText)dlg.findViewById(R.id.dialogMenuEditTextOne);

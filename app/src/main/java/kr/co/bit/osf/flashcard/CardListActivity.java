@@ -111,7 +111,7 @@ public class CardListActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 // start card edit activity
-                View dlg = CardListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                View dlg = CardListActivity.this.getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
                 Dlog.i("Card Item long click dialog - add View");
                 final AlertDialog.Builder builder = new AlertDialog.Builder(CardListActivity.this);
                 Dlog.i("Card Item long click dialog - add AlertDialog.Builder");
@@ -120,8 +120,8 @@ public class CardListActivity extends AppCompatActivity {
                 TextView textMenuTwo = (TextView) dlg.findViewById(R.id.dialogMenuTextViewTwo);
                 Dlog.i("Card Item long click dialog - add TextView");
                 dlgTitle.setText(R.string.card_view_edit_dialog_title);
-                textMenuOne.setText(R.string.edit_dialog_edit);
-                textMenuTwo.setText(R.string.edit_dialog_delete);
+                textMenuOne.setText(R.string.card_edit_dialog_menu_edit_text);
+                textMenuTwo.setText(R.string.card_edit_dialog_menu_delete_text);
 
                 sendCardListIndex = position;
                 //edit card
@@ -144,7 +144,7 @@ public class CardListActivity extends AppCompatActivity {
                 textMenuTwo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        View dlg2 = CardListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                        View dlg2 = CardListActivity.this.getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
 
                         TextView deleteTitle = (TextView) dlg2.findViewById(R.id.dialogTitleTextView);
                         TextView deleteMessage = (TextView) dlg2.findViewById(R.id.dialogMenuTextViewOne);
@@ -154,12 +154,12 @@ public class CardListActivity extends AppCompatActivity {
 
                         final AlertDialog.Builder delete = new AlertDialog.Builder(CardListActivity.this);
 
-                        deleteTitle.setText(R.string.card_list_edit_dialog_delete_dialog_title_text);
-                        deleteMessage.setText(R.string.card_list_edit_dialog_delete_dialog_message_text);
+                        deleteTitle.setText(R.string.card_edit_dialog_delete_title);
+                        deleteMessage.setText(R.string.card_edit_dialog_delete_message);
 
                         delete.setView(dlg2);
 
-                        delete.setPositiveButton(R.string.edit_dialog_delete_dialog_ok_button_text,
+                        delete.setPositiveButton(R.string.card_edit_dialog_delete_ok_button_text,
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -175,7 +175,7 @@ public class CardListActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
-                        delete.setNegativeButton(R.string.edit_dialog_delete_dialog_cancel_button_text,
+                        delete.setNegativeButton(R.string.card_edit_dialog_delete_cancel_button_text,
                                 new DialogInterface.OnClickListener() {
 
                                     public void onClick(DialogInterface dialog, int whichButton) {

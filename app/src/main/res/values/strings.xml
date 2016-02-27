@@ -9,74 +9,58 @@
     <string name="box_demo_data_name1">동물</string>
     <string name="box_demo_data_name2">숫자</string>
     <string name="box_demo_data_name3">알파벳</string>
-    <!--box1 card demo data-->
-    <string name="box1_card_demo_data_name1">pig</string>
-    <string name="box1_card_demo_data_name2">chick</string>
-    <string name="box1_card_demo_data_name3">rat</string>
-    <!--card list activity-->
-    <string name="card_list_add_button_text">카드 만들기</string>
-    <string name="card_list_add_dialog_title_text">상자 만들기</string>
-    <string name="card_list_add_dialog_message_text">만들 카드 이름을 써주세요</string>
-    <string name="card_list_add_dialog_ok_button_text">만들래요</string>
-    <string name="card_list_add_dialog_cancel_button_text">안 만들래요</string>
-    <string name="card_list_edit_dialog_title">카드 바꿀래요?</string>
-    <string name="card_list_edit_dialog_edit_dialog_title_text">카드 이름 바꾸기</string>
-    <string name="card_list_edit_dialog_edit_dialog_message_text">바꿀 카드 이름을 써주세요.</string>
-    <string name="card_list_edit_dialog_edit_dialog_ok_button_text">바꿀래요</string>
-    <string name="card_list_edit_dialog_edit_dialog_cancel_button_text">안 바꿀래요</string>
-    <string name="card_list_edit_dialog_delete_dialog_title_text">카드 지우기</string>
-    <string name="card_list_edit_dialog_delete_dialog_message_text">정말 이 카드를 지울래요?</string>
-    <!--box list activity-->
-    <string name="box_list_add_button_text">카드 상자 만들기</string>
-    <string name="box_list_add_dialog_title_text">상자 만들기</string>
-    <string name="box_list_add_dialog_message_text">만들 상자 이름을 써주세요</string>
-    <string name="box_list_add_dialog_ok_button_text">만들래요</string>
-    <string name="box_list_add_dialog_cancel_button_text">안 만들래요</string>
-    <string name="box_list_edit_dialog_title">상자 바꾸기</string>
-    <string name="box_list_edit_dialog_edit_dialog_title_text">상자 이름 바꾸기</string>
-    <string name="box_list_edit_dialog_edit_dialog_message_text">바꿀 상자 이름을 써주세요.</string>
-    <string name="box_list_edit_dialog_edit_dialog_ok_button_text">바꿀래요</string>
-    <string name="box_list_edit_dialog_edit_dialog_cancel_button_text">안 바꿀래요</string>
-    <string name="box_list_edit_dialog_delete_dialog_title_text">상자 지우기</string>
-    <string name="box_list_edit_dialog_delete_dialog_message_text">카드도 다 지워지는데 지울래요?</string>
-    <string name="edit_dialog_delete_dialog_ok_button_text">지울래요</string>
-    <string name="edit_dialog_delete_dialog_cancel_button_text">아니요</string>
-    <!--card edit activity-->
-    <string name="card_edit_yes_button_text">좋아요</string>
-    <string name="card_edit_no_button_text">아니요</string>
-    <string name="card_edit_text_view_hint">카드 이름을 써주세요</string>
-    <string name="card_edit_gallery_title">좋은 사진 고를래요</string>
-    <!--card edit activity image dialog -->
+    <!--actionbar-->
+    <string name="actionbar_menu_add_box">상자 만들기</string>
+    <string name="actionbar_menu_add_card">만들기</string>
+    <string name="actionbar_menu_delete">지우기</string>
+    <string name="actionbar_menu_delete_confirm">삭제 확인</string>
+    <string name="actionbar_menu_sort_asc">오름차순 정렬</string>
+    <string name="actionbar_menu_sort_desc">내림차순 정렬</string>
+    <string name="actionbar_menu_sort_shuffle_card">카드 섞기</string>
+    <string name="actionbar_menu_sort_shuffle_box">상자 섞기</string>
+    <string name="actionbar_menu_sort_reset">정렬 초기화</string>
+    <!--box add dialog-->
+    <string name="box_edit_dialog_add_title">상자를 만들어 볼래요?</string>
+    <string name="box_edit_dialog_add_message">만들 상자 이름을 써주세요</string>
+    <string name="box_edit_dialog_add_ok_button_text">만들래요</string>
+    <string name="box_edit_dialog_add_cancel_button_text">안 만들래요</string>
+    <!--box edit menu dialog-->
+    <string name="box_edit_dialog_menu_title">상자를 바꾸어 보자!</string>
+    <string name="box_edit_dialog_menu_edit_text">바꿀래요</string>
+    <string name="box_edit_dialog_menu_delete_text">지울래요</string>
+    <!--box edit dialog-->
+    <string name="box_edit_dialog_edit_title">상자 이름 바꾸기</string>
+    <string name="box_edit_dialog_edit_message">바꿀 상자 이름을 써주세요.</string>
+    <string name="box_edit_dialog_edit_ok_button_text">바꿀래요</string>
+    <!--box delete dialog-->
+    <string name="box_edit_dialog_delete_title">상자 지우기</string>
+    <string name="box_edit_dialog_delete_message">카드도 다 지워지는데 지울래요?</string>
+    <string name="box_edit_dialog_delete_ok_button_text">지울래요</string>
+    <string name="box_edit_dialog_delete_cancel_button_text">아니요</string>
+    <!--card edit menu dialog-->
+    <string name="card_edit_dialog_menu_title">카드를 바꾸어 보자!</string>
+    <string name="card_edit_dialog_menu_edit_text">바꿀래요</string>
+    <string name="card_edit_dialog_menu_delete_text">지울래요</string>
+    <!--card delete dialog-->
+    <string name="card_edit_dialog_delete_title">카드 지우기</string>
+    <string name="card_edit_dialog_delete_message">정말 이 카드를 지울래요?</string>
+    <string name="card_edit_dialog_delete_ok_button_text">지울래요</string>
+    <string name="card_edit_dialog_delete_cancel_button_text">아니요</string>
+    <!--card edit image dialog -->
     <string name="card_edit_image_dialog_title">카드 사진을 바꾸어 보자!</string>
     <string name="card_edit_image_dialog_camera_button_text">사진 찍을래요</string>
     <string name="card_edit_image_dialog_gallery_button_text">갤러리에서 사진 고를래요</string>
     <string name="card_edit_image_dialog_cancel_button_text">나갈래요</string>
-    <!--card edit activity text dialog -->
-    <string name="card_edit_text_dialog_title_text">카드 이름 바꾸어 보자!</string>
-    <string name="card_edit_text_dialog_message_text">바꿀 카드 이름을 써주세요.</string>
+    <!--card edit text dialog-->
+    <string name="card_edit_text_dialog_title">카드 이름 바꾸어 보자!</string>
+    <string name="card_edit_text_dialog_message">바꿀 카드 이름을 써주세요.</string>
     <string name="card_edit_text_dialog_ok_button_text">바꿀래요</string>
     <string name="card_edit_text_dialog_cancel_button_text">안 바꿀래요</string>
+    <!--card edit error-->
     <string name="card_edit_error_message_no_image">카드 사진을 선택해 주세요</string>
     <string name="card_edit_error_message_no_text">예쁜 카드 이름을 지어 주세요</string>
-    <!--card view activity-->
-    <string name="card_view_edit_dialog_title">카드를 바꾸어 보자!</string>
-    <!--actionbar-->
-    <string name="actionbar_menu_add">만들기</string>
-    <string name="actionbar_menu_confirm">좋아요</string>
-    <string name="actionbar_menu_delete">지우기</string>
-    <string name="actionbar_menu_asc">오름차순 정렬</string>
-    <string name="actionbar_menu_desc">내림차순 정렬</string>
-    <string name="card_list_menu_list_Shuffle">카드 섞기</string>
-    <string name="actionbar_menu_return">정렬 초기화</string>
-    <string name="box_list_menu_list_Shuffle">상자 섞기</string>
-    <string name="box_list_menu_list_create">상자 만들기</string>
-    <!--dialog-->
-    <string name="edit_dialog_edit">바꿀래요</string>
-    <string name="edit_dialog_delete">지울래요</string>
-
-    <!--splash activity-->
-    <string name="splash_message">내가 만드는 플래시카드</string>
-    <!--activity dialog title -->
-    <string name="dialog_box_update">상자를 바꾸어 보자!</string>
-    <string name="dialog_box_create">상자를 만들어 볼래요?</string>
+    <!--card edit layout-->
+    <string name="card_edit_yes_button_text">좋아요</string>
+    <string name="card_edit_no_button_text">아니요</string>
+    <string name="card_edit_text_view_hint">카드 이름을 써주세요</string>
 </resources>

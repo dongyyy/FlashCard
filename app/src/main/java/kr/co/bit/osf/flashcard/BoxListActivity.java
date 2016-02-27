@@ -86,16 +86,16 @@ public class BoxListActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 // get user action from dialog
                 Dlog.i("Item long click dialog: start");
-                View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
                 Dlog.i("Item long click dialog - add View");
                 AlertDialog.Builder builder = new AlertDialog.Builder(BoxListActivity.this);
                 Dlog.i("Item long click dialog - add AlertDialog.Builder");
                 TextView textView1 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewOne);
                 TextView textView2 = (TextView) dlg.findViewById(R.id.dialogMenuTextViewTwo);
                 Dlog.i("Item long click dialog - add item");
-                textView1.setText(R.string.box_list_edit_dialog_edit_dialog_ok_button_text);
+                textView1.setText(R.string.box_edit_dialog_menu_edit_text);
                 textView1.setVisibility(View.VISIBLE);
-                textView2.setText(R.string.edit_dialog_delete_dialog_ok_button_text);
+                textView2.setText(R.string.box_edit_dialog_menu_delete_text);
                 textView2.setVisibility(View.VISIBLE);
                 Dlog.i("Item long click dialog - update Text,VISIBLE");
                 //update box dialog
@@ -104,7 +104,7 @@ public class BoxListActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
                         Dlog.i("dialog:edit box");
-                        View dlg2 = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                        View dlg2 = BoxListActivity.this.getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
                         final EditText inputText = (EditText) dlg2.findViewById(R.id.dialogMenuEditTextOne);
                         TextView textView = (TextView) dlg2.findViewById(R.id.dialogTitleTextView);
                         TextView textView2 = (TextView) dlg2.findViewById(R.id.dialogMenuTextViewOne);
@@ -116,12 +116,12 @@ public class BoxListActivity extends AppCompatActivity {
                         inputText.setText(boxList.get(position).getName());
                         inputText.setSelection(inputText.length());
                         AlertDialog.Builder input = new AlertDialog.Builder(BoxListActivity.this);
-                        textView.setText(R.string.box_list_edit_dialog_edit_dialog_title_text);
-                        textView2.setText(R.string.box_list_edit_dialog_edit_dialog_message_text);
+                        textView.setText(R.string.box_edit_dialog_edit_title);
+                        textView2.setText(R.string.box_edit_dialog_edit_message);
                         Dlog.i("dialog:edit box - set text");
                         input.setView(dlg2);
                         Dlog.i("dialog:edit box - add dialog view");
-                        input.setPositiveButton(R.string.box_list_edit_dialog_edit_dialog_ok_button_text,
+                        input.setPositiveButton(R.string.box_edit_dialog_edit_ok_button_text,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                         // set new box name
@@ -142,7 +142,7 @@ public class BoxListActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
                         Dlog.i("dialog:delete box");
-                        View dlg2 = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                        View dlg2 = BoxListActivity.this.getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
                         Dlog.i("dialog:delete box - create View");
                         TextView deleteTitle = (TextView) dlg2.findViewById(R.id.dialogTitleTextView);
                         TextView deleteMessage = (TextView) dlg2.findViewById(R.id.dialogMenuTextViewOne);
@@ -151,10 +151,10 @@ public class BoxListActivity extends AppCompatActivity {
                         deleteMessage.setVisibility(View.VISIBLE);
                         Dlog.i("dialog:delete box - item VISIBLE");
                         final AlertDialog.Builder delete = new AlertDialog.Builder(BoxListActivity.this);
-                        deleteTitle.setText(R.string.box_list_edit_dialog_delete_dialog_title_text);
-                        deleteMessage.setText(R.string.box_list_edit_dialog_delete_dialog_message_text);
+                        deleteTitle.setText(R.string.box_edit_dialog_delete_title);
+                        deleteMessage.setText(R.string.box_edit_dialog_delete_message);
                         delete.setView(dlg2);
-                        delete.setPositiveButton(R.string.edit_dialog_delete_dialog_ok_button_text,
+                        delete.setPositiveButton(R.string.box_edit_dialog_delete_ok_button_text,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                         // delete box
@@ -168,7 +168,7 @@ public class BoxListActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
-                        delete.setNegativeButton(R.string.edit_dialog_delete_dialog_cancel_button_text,
+                        delete.setNegativeButton(R.string.box_edit_dialog_delete_cancel_button_text,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
                                         // Canceled.
@@ -214,13 +214,13 @@ public class BoxListActivity extends AppCompatActivity {
             case R.id.box_list_box_create:
 
                 Dlog.i("dialog:add box");
-                View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.dialog_title, null);
+                View dlg = BoxListActivity.this.getLayoutInflater().inflate(R.layout.edit_dialog_title, null);
                 final EditText inputText = (EditText) dlg.findViewById(R.id.dialogMenuEditTextOne);
                 TextView titleTextView = (TextView) dlg.findViewById(R.id.dialogTitleTextView);
                 TextView textView = (TextView) dlg.findViewById(R.id.dialogMenuTextViewOne);
                 Dlog.i("add R.id.dialog Item");
-                titleTextView.setText(R.string.dialog_box_create);
-                textView.setText(R.string.box_list_add_dialog_message_text);
+                titleTextView.setText(R.string.box_edit_dialog_add_title);
+                textView.setText(R.string.box_edit_dialog_add_message);
                 Dlog.i("dialog Item setText");
                 inputText.setVisibility(View.VISIBLE);
                 textView.setVisibility(View.VISIBLE);
@@ -228,7 +228,7 @@ public class BoxListActivity extends AppCompatActivity {
                 AlertDialog.Builder input = new AlertDialog.Builder(BoxListActivity.this);
                 Dlog.i("dialog create");
                 input.setView(dlg);
-                input.setPositiveButton(R.string.box_list_add_dialog_ok_button_text,
+                input.setPositiveButton(R.string.box_edit_dialog_add_ok_button_text,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // add box
@@ -244,7 +244,7 @@ public class BoxListActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                input.setNegativeButton(R.string.box_list_add_dialog_cancel_button_text,
+                input.setNegativeButton(R.string.box_edit_dialog_add_cancel_button_text,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Canceled.
