@@ -310,6 +310,11 @@ public class BoxListActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 Dlog.i("Id Asc end");
                 break;
+            case R.id.box_list_menu_credit:
+                Dlog.i("credit");
+                Intent intent = new Intent(this, CreditActivity.class);
+                startActivity(intent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);

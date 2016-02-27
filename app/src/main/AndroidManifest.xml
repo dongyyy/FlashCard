@@ -26,9 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BoxListActivity"
-            android:label="@string/title_activity_box_list">
-        </activity>
+        <activity
+            android:name=".BoxListActivity"
+            android:label="@string/title_activity_box_list"></activity>
         <activity
             android:name=".CardListActivity"
             android:label="@string/title_activity_card_list" />
@@ -38,6 +38,7 @@
         <activity
             android:name=".CardEditActivity"
             android:label="@string/title_activity_card_edit" />
+        <activity android:name=".CreditActivity"></activity>
     </application>
 
 </manifest>

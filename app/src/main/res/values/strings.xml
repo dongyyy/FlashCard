@@ -19,6 +19,7 @@
     <string name="actionbar_menu_sort_shuffle_card">카드 섞기</string>
     <string name="actionbar_menu_sort_shuffle_box">상자 섞기</string>
     <string name="actionbar_menu_sort_reset">정렬 초기화</string>
+    <string name="actionbar_menu_credit">만든 사람들</string>
     <!--box add dialog-->
     <string name="box_edit_dialog_add_title">상자를 만들어 볼래요?</string>
     <string name="box_edit_dialog_add_message">만들 상자 이름을 써주세요</string>
