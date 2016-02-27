@@ -240,7 +240,12 @@ public class BoxListActivity extends AppCompatActivity {
                                     Dlog.i("refresh list:size():before:" + boxList.size());
                                     boxList.add(box);
                                     Dlog.i("refresh list:size():after:" + boxList.size());
+                                    gridView.setAdapter(adapter);
                                     adapter.notifyDataSetChanged();
+                                    // move last position
+                                    if (adapter.getCount() > 0) {
+                                        gridView.smoothScrollToPosition(adapter.getCount() - 1);
+                                    }
                                 }
                             }
                         });
@@ -372,7 +377,6 @@ public class BoxListActivity extends AppCompatActivity {
             return position;
         }
 
-
         @Override
         public long getItemId(int position) {
             return position;
@@ -380,13 +384,9 @@ public class BoxListActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = convertView;
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.activity_box_list_item, null);
 
-            if (view == null) {
-                Dlog.i("view == null");
-                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.activity_box_list_item, null);
-            }
             Dlog.i("box position:" + position + ", box:" + list.get(position));
             // image
             ImageView imageView = (ImageView) view.findViewById(R.id.boxListViewItemImage);
@@ -409,7 +409,6 @@ public class BoxListActivity extends AppCompatActivity {
         }
     }
 
-    //boxlist ReFresh
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Dlog.i("requestCode=" + requestCode + ",resultCode=" + resultCode);
@@ -432,7 +431,6 @@ public class BoxListActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
     /**
      * 이름 오름차순
