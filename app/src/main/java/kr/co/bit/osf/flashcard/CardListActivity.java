@@ -56,6 +56,7 @@ public class CardListActivity extends AppCompatActivity {
     // menu
     MenuItem menuItemAddCard = null;
     MenuItem menuItemDeleteConfirm = null;
+    MenuItem menuItemDeleteCancel = null;
     Menu optionMenuGroup = null;
     boolean deleteMenuClicked = false;
     // dialog
@@ -77,7 +78,7 @@ public class CardListActivity extends AppCompatActivity {
             startActivityForResult(intent, IntentRequestCode.CARD_VIEW);
         }
 
-        //카드 박스 이름 정하기
+        // box name
         try {
             setTitle(db.getBox(state.getBoxId()).getName());
         } catch (Exception e) {
@@ -207,11 +208,12 @@ public class CardListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.activity_card_list_menu, menu);
         menuItemAddCard = menu.findItem(R.id.card_list_menu_add);
         menuItemDeleteConfirm = menu.findItem(R.id.card_list_menu_delete_confirm);
+        menuItemDeleteCancel = menu.findItem(R.id.card_list_menu_delete_cancel);
         optionMenuGroup = menu;
 
         // restore instance state
         if (deleteMenuClicked) {
-            setupDeleteMenuClicked();
+            setupDeleteMenuClicked(true);
         }
 
         return true;
@@ -222,7 +224,7 @@ public class CardListActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.card_list_menu_add: {
+            case R.id.card_list_menu_add:
                 CardDTO cardToAdd = new CardDTO();
                 cardToAdd.setBoxId(state.getBoxId());
 
@@ -232,72 +234,74 @@ public class CardListActivity extends AppCompatActivity {
                 startActivityForResult(intent, IntentRequestCode.CARD_ADD);
                 Dlog.i("ADD:startActivityForResult");
                 return true;
-            }
-            case R.id.card_list_menu_delete: {
+            case R.id.card_list_menu_delete:
                 setupDeleteMenuClicked();
                 return true;
-            }
-            case R.id.card_list_menu_delete_confirm: {
-                Dlog.i("delete confirm button");
-                menuItemDeleteConfirm.setVisible(false);
-                deleteMenuClicked = false;
-                optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, true); //option menu 활성화
-                menuItemAddCard.setVisible(true);
-
-                if (deleteCardIdMap.size() > 0) {
-                    ArrayList<CardDTO> deleteList = new ArrayList<>();
-                    for(CardDTO card : cardList) {
-                        if (deleteCardIdMap.get(card.getId()) != null) {
-                            deleteList.add(card);
-                        }
-                    }
-                    if (deleteList.size() > 0) {
-                        Dlog.i("startActivityForResult");
-                        Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
-                        intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE_LIST);
-                        intent.putParcelableArrayListExtra(IntentExtrasName.SEND_DATA, deleteList);
-                        startActivityForResult(intent, IntentRequestCode.CARD_DELETE_LIST);
-                        Dlog.i("DELETE:startActivityForResult");
-                    }
-                    deleteCardIdMap.clear();
-                }
-                adapter.notifyDataSetChanged();
+            case R.id.card_list_menu_delete_confirm:
+                runMenuDeleteConfirm();
                 break;
-            }
-            case R.id.card_list_menu_sort_shuffle: {
+            case R.id.card_list_menu_delete_cancel:
+                deleteCardIdMap.clear();
+                runMenuDeleteConfirm();
+                break;
+            case R.id.card_list_menu_sort_shuffle:
                 Collections.shuffle(cardList);
                 db.updateCardSeq(cardList);
                 refreshCardList();
                 break;
-            }
-            case R.id.card_list_menu_sort_asc: {
+            case R.id.card_list_menu_sort_asc:
                 Collections.sort(cardList, new NameAscCompare());
                 db.updateCardSeq(cardList);
                 refreshCardList();
                 break;
-            }
-            case R.id.card_list_menu_sort_desc: {
+            case R.id.card_list_menu_sort_desc:
                 Collections.sort(cardList, new NameDescCompare());
                 db.updateCardSeq(cardList);
                 refreshCardList();
                 break;
-            }
-            case R.id.card_list_menu_sort_reset: {
+            case R.id.card_list_menu_sort_reset:
                 Collections.sort(cardList, new NoAscCompare());
                 db.updateCardSeq(cardList);
                 refreshCardList();
                 break;
-            }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupDeleteMenuClicked() {
-        menuItemDeleteConfirm.setVisible(true);
-        deleteMenuClicked = true;
-        optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, false); //option menu 비활성화
-        menuItemAddCard.setVisible(false);
+    private void runMenuDeleteConfirm() {
+        Dlog.i("delete confirm button");
+        setupDeleteMenuClicked(false);
 
+        if (deleteCardIdMap.size() > 0) {
+            ArrayList<CardDTO> deleteList = new ArrayList<>();
+            for(CardDTO card : cardList) {
+                if (deleteCardIdMap.get(card.getId()) != null) {
+                    deleteList.add(card);
+                }
+            }
+            if (deleteList.size() > 0) {
+                Dlog.i("startActivityForResult");
+                Intent intent = new Intent(getApplicationContext(), CardEditActivity.class);
+                intent.putExtra(IntentExtrasName.REQUEST_CODE, IntentRequestCode.CARD_DELETE_LIST);
+                intent.putParcelableArrayListExtra(IntentExtrasName.SEND_DATA, deleteList);
+                startActivityForResult(intent, IntentRequestCode.CARD_DELETE_LIST);
+                Dlog.i("DELETE:startActivityForResult");
+            }
+            deleteCardIdMap.clear();
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setupDeleteMenuClicked() {
+        setupDeleteMenuClicked(true);
+    }
+
+    private void setupDeleteMenuClicked(boolean isMenuOn) {
+        deleteMenuClicked = isMenuOn;
+        menuItemDeleteConfirm.setVisible(isMenuOn);
+        menuItemDeleteCancel.setVisible(isMenuOn);
+        optionMenuGroup.setGroupEnabled(R.id.optionMenuGroup, !isMenuOn);
+        menuItemAddCard.setVisible(!isMenuOn);
         adapter.notifyDataSetChanged();
     }
 

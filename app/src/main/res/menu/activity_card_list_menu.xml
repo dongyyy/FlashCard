@@ -17,6 +17,11 @@
         <item android:id="@+id/card_list_menu_sort_reset"
             android:title="@string/actionbar_menu_sort_reset"/>
     </group>
+    <item android:id="@+id/card_list_menu_delete_cancel"
+        android:icon="@drawable/default_image_delete_cancel"
+        android:title="@string/actionbar_menu_delete_confirm"
+        android:visible="false"
+        yourapp:showAsAction="always"/>
     <item android:id="@+id/card_list_menu_delete_confirm"
         android:icon="@drawable/default_image_delete"
         android:title="@string/actionbar_menu_delete_confirm"
