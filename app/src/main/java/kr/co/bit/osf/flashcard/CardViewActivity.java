@@ -63,14 +63,7 @@ public class CardViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_card_view);
 
         // tts
-        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    tts.setLanguage(Locale.US);
-                }
-            }
-        });
+        ttsLoad();
 
         // full screen
         ActionBar actionBar = getSupportActionBar();
@@ -553,11 +546,49 @@ public class CardViewActivity extends AppCompatActivity {
     }
 
     // tts
-    public void onPause(){
-        if(tts !=null){
-            tts.stop();
-            tts.shutdown();
-        }
+    public void onPause() {
         super.onPause();
+        ttsUnload();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ttsLoad();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ttsUnload();
+    }
+
+    private void ttsLoad() {
+        try {
+            if (tts == null) {
+                tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            tts.setLanguage(Locale.US);
+                        }
+                    }
+                });
+            }
+        } catch (Exception e) {
+            Dlog.e(e.toString());
+        }
+    }
+
+    private void ttsUnload() {
+        try {
+            if (tts != null) {
+                tts.stop();
+                tts.shutdown();
+                tts = null;
+            }
+        } catch (Exception e) {
+            Dlog.e(e.toString());
+        }
     }
 }
