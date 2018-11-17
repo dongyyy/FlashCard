@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/cardViewPagerItemImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff" />
+        android:background="@drawable/border" />
 
     <TextView
         android:id="@+id/cardViewPagerItemText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
+        android:background="@drawable/border"
         android:gravity="center_vertical|center_horizontal"
         android:text="TEXT"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#000000"
-        android:textStyle="bold"
-        android:textSize="50dp" />
+        android:textSize="50dp"
+        android:textStyle="bold" />
 </FrameLayout>
